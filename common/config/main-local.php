@@ -12,5 +12,8 @@ return [
             'class' => 'yii\swiftmailer\Mailer',
             'viewPath' => '@common/mail',
         ],
+        'gii' => [
+            'class'=>'yii\gii\Module',
+        ]
     ],
 ];
