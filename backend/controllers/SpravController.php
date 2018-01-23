@@ -1,11 +1,12 @@
 <?php
 namespace backend\controllers;
 
+use app\models\CityRecord;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use app\models\City;
+use yii\helpers\Html;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -27,7 +28,7 @@ class SpravController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['cityindex'],
+                        'actions' => ['city'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -37,11 +38,27 @@ class SpravController extends Controller
     }
 
 
-    public function actionCityindex()
+    public function actionCity($m='index')
     {
-        $citys=City::find()->all();
+        switch($m)
+        {
+            case 'index';
+                return $this->cityIndex();
+            case 'add':
+                return $this->cityAdd();
+            case 'update':
+                $id=yii::$app->request->get('id',1);
+                return $this->cityUpdate($id);
+            case 'delete':
+                return $this->cityDelete();
+        }
+    }
+
+    private function cityIndex()
+    {
+        $citys=CityRecord::find()->all();
         $dataProvider = new ActiveDataProvider([
-            'query' => City::find(),
+            'query' => CityRecord::find(),
             'sort' => [ // сортировка по умолчанию
                 'defaultOrder' => ['name' => SORT_DESC],
             ],
@@ -50,5 +67,38 @@ class SpravController extends Controller
             ],
         ]);
         return $this->render('city',['citys'=>$citys,'data'=>$dataProvider]);
+    }
+
+    private function cityAdd()
+    {
+        $form=new CityRecord();
+        if ($form->load(Yii::$app->request->post(),'CityRecord'))
+        {
+            if ($form->save())
+                return $this->redirect(Url::to(['city','m'=>'index']));
+            else
+                Yii::$app->getSession()->setFlash('error', Html::errorSummary($form));
+        }
+        return $this->render('cityForm',['model'=>$form]);
+    }
+
+    private function cityUpdate($id)
+    {
+        $form=CityRecord::findOne($id);
+        if ($form->load(Yii::$app->request->post(),'CityRecord'))
+        {
+            if ($form->save())
+                return $this->redirect(Url::to(['city','m'=>'index']));
+            else
+                Yii::$app->getSession()->setFlash('error', Html::errorSummary($form));
+        }
+        return $this->render('cityForm',['model'=>$form]);
+    }
+
+    private function cityDelete()
+    {
+        $id=yii::$app->request->get('id',-1);
+        CityRecord::findOne((int)$id)->delete();
+        return $this->redirect(Url::to(['city','m'=>'index']));
     }
 }

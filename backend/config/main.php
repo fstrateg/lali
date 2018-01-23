@@ -40,8 +40,26 @@ return [
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'showScriptName' => true,
+            'showScriptName' => false,
             'rules' => [
+                '' => 'site/index',
+                'sprav/city/<m:\w+>'=>'sprav/city',
+                '<action>'=>'site/<action>',
+            ],
+        ],
+        'request' => [
+            'baseUrl' => '/admin'
+        ],
+        'i18n' => [
+            'translations' => [
+                '*' => [
+                    'class' => 'yii\i18n\PhpMessageSource',
+                    'basePath' => '@yii/messages',
+                    'sourceLanguage' => 'ru-RU',
+                    'fileMap' => [
+                        'app' => 'app.php',
+                    ],
+                ],
             ],
         ],
     ],
