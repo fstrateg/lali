@@ -1,0 +1,50 @@
+<?php
+namespace app\models;
+
+use Yii;
+use yii\db\ActiveRecord;
+
+class SMSSettings extends ActiveRecord
+{
+    public static function tableName()
+    {
+        return '{{settings_sms}}';
+    }
+
+    public function rules()
+    {
+        return [
+            [['sms_on'],'integer'],
+            [['sms_text'],'string'],
+        ];
+    }
+
+    public static function getPages()
+    {
+        $rez=[];
+        $id=SMSSettings::find()->select('city')->distinct()->all();
+
+        foreach($id as $i)
+        {
+            $rez[]=['id'=>$i->city,'name'=>CityRecord::findOne($i->city)->name];
+        }
+
+        return $rez;
+    }
+
+    public static function saveData($data)
+    {
+        $err=false;
+        foreach($data as $k=>$row)
+        {
+            $rw=SMSSettings::findOne($k);
+            $data['SMSSettings']=$row;
+            $rw->load($data);
+            $err=$err||!$rw->save();
+        }
+        if ($err)
+            \Yii::$app->getSession()->setFlash('error', 'Проблемма с сохранением, что-то не так!');
+        else
+            \Yii::$app->getSession()->setFlash('success', 'Данные успешно внесены в базу!');
+    }
+}

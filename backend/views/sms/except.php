@@ -1,0 +1,92 @@
+<?php
+use app\models\ClientsRecord;
+use yii\grid\GridView;
+use yii\jui\AutoComplete;
+use yii\helpers\Url;
+use yii\web\JsExpression;
+use yii\helpers\Html;
+use yii\widgets\Pjax;
+/* @var $this yii\web\View
+ *  @var $pages array
+ */
+
+$this->title = 'Исключения для СМС рассылок';
+//if (count($pages)==0) return;
+$clients=new ClientsRecord();
+
+?>
+<ul class="nav nav-tabs">
+    <?
+    $class=' class="active"';
+    /*foreach($pages as $page)
+    {?>
+        <li<?= $class;?>><a data-toggle="tab" href="#page<?= $page['id']?>"><?= $page['name'] ?></a></li>
+        <?
+        $class='';
+    } */?>
+</ul>
+
+<? Pjax::begin(['enablePushState' => false]);?>
+
+<?= Html::beginForm(['exceptadd'],'post',['data-pjax' => '', 'class' => 'form-inline']); ?>
+<?= Html::label("Номер телефона") ?>
+<?= AutoComplete::widget([
+    'clientOptions' => [
+        'source' => Url::to(['clients']),
+        'minLength'=>'2',
+        'select'=>new JsExpression("function( event, ui ) { $('#idClient').val(ui.item.id); }")
+    ],
+]);
+?>
+<?= Html::input('hidden','idclient','',['id'=>'idClient']) ?>
+<?= Html::submitButton('Добавить'); ?>
+<? Pjax::end(); ?>
+<?
+$data=ClientsRecord::getDataProvider();
+echo GridView::widget([
+    // полученные данные
+    'dataProvider' => $data,
+    // Отображать 5 страниц
+    'pager' => ['maxButtonCount' => 5],
+    // колонки с данными
+    'columns' => [
+        [
+            'label' =>"ID", // название столбца
+            'attribute' => 'id', // атрибут
+            //'value'=>function($data){return $data->id;} // объявлена анонимная функция и получен результат
+        ],
+        [
+            'label' => 'Клиент',
+            'attribute' => 'name',
+            //'value' => function($data) { return $data->name; },
+        ],
+        [
+            'label' => 'Примечание',
+            'attribute'=>'note',
+        ],
+        [
+            'label' => 'Статус',
+            'value' => function ($data) {
+                $r=array();
+                if ($data->exception_5) $r[]='5';
+                if ($data->exception_21) $r[]='21';
+                if ($data->exception_42) $r[]='42';
+                return implode(',',$r); },
+        ],
+        ['class' => 'yii\grid\ActionColumn',
+            'template' => '{delete}',
+            'buttons' => [
+                'delete' => function ($url, $model, $key) {
+                    $url=Url::to(['exceptdelete','id'=>$key]);
+                    return Html::a('<span class="glyphicon glyphicon-remove"></span>', $url, [
+                        'title' => 'Удалить',
+                        'data-confirm' => 'Вы уверены что хотите удалить?',
+                        'data-method' => 'post',
+                        'data-pjax' => '0',
+                    ]);
+                },
+            ],
+        ],
+    ],
+]);
+?>

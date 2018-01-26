@@ -118,3 +118,11 @@ a.desc:after {
 .nav > li > form > button.logout:focus {
     outline: none;
 }
+
+.pt1 {padding-top: 1em;}
+.pt2 {padding-top: 2em;}
+.pt3 {padding-top: 3em;}
+.mt1 {margin-top: 1em;}
+.mt2 {margin-top: 2em;}
+.mt3 {margin-top: 3em;}
+

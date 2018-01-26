@@ -41,6 +41,13 @@ AppAsset::register($this);
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
+        $menuItems[] = ['label' => 'Настройки',
+                        'items'=>[
+                            ['label'=>'Города','url'=>['/sprav/city']],
+                            ['label'=>'СМС рассылка','url'=>['/sms/config']],
+                            ['label'=>'СМС исключения','url'=>['/sms/except']],
+                        ]
+                        ];
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
@@ -70,7 +77,7 @@ AppAsset::register($this);
     <div class="container">
         <p class="pull-left">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
 
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <p class="pull-right">Красивые ноги заканчиваются в сердце мужчины</p>
     </div>
 </footer>
 
