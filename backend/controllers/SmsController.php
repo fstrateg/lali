@@ -24,7 +24,7 @@ class SmsController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['config','except','clients','exceptadd'],
+                        'actions' => ['config','except','clients','exceptadd','exceptdelete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -55,7 +55,7 @@ class SmsController extends Controller
 
     public function actionExcept()
     {
-        $pages=null;
+        $pages=ClientsRecord::getPages();
         return $this->render('except',['pages'=>$pages]);
     }
 
@@ -77,7 +77,28 @@ class SmsController extends Controller
     public function actionExceptadd()
     {
         $clientid=yii::$app->request->post("idclient");
+        if ($clientid==null)
+        {
+            $data=yii::$app->request->post("ClientsRecord");
+            $clientid=$data['id'];
+        }
         $client=ClientsRecord::findOne(['id'=>$clientid]);
+        if ($client==null){
+            $this->redirect('except');
+            return null;
+        }
+        if ($client->setExcept(yii::$app->request->post("ClientsRecord")))
+        {
+            yii::$app->session->setFlash('success','Клиент успешно добавлен в список исключений');
+            $this->redirect('except');
+        }
         return $this->renderPartial('except.add.php',['client'=>$client]);
+    }
+
+    public function actionExceptdelete($id)
+    {
+        if (ClientsRecord::deleteFromExcept($id))
+            yii::$app->session->setFlash('success','Клиент удален из списка исключений');
+        $this->redirect('except');
     }
 }

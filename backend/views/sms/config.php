@@ -17,7 +17,7 @@ foreach($pages as $page)
     $class='';
 } ?>
 </ul>
-<div class="tab-content">
+<div class="tab-content tab-bordered">
 <?
     $class=' in active';
     foreach($pages as $page)

@@ -9,6 +9,7 @@ $params = array_merge(
 return [
     'id' => 'app-backend',
     'name'=>'La Litty',
+    'language' => 'ru-RU',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
@@ -16,6 +17,7 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
+            'baseUrl' => '/admin',
         ],
         'user' => [
             'identityClass' => 'common\models\User',
@@ -47,9 +49,9 @@ return [
                 '<action>'=>'site/<action>',
             ],
         ],
-        'request' => [
-            'baseUrl' => '/admin'
-        ],
+        /*'request' => [
+
+        ],*/
         'i18n' => [
             'translations' => [
                 '*' => [
