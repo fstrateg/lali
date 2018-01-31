@@ -1,5 +1,5 @@
 <?php
-use app\models\ClientsRecord;
+use common\models\ClientsRecord;
 use yii\grid\GridView;
 use yii\jui\AutoComplete;
 use yii\helpers\Url;

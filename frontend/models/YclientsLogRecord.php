@@ -1,6 +1,7 @@
 <?php
 namespace frontend\models;
 
+use common\models\ClientsRecord;
 use common\models\RecordsRecord;
 use \yii\db\ActiveRecord;
 use \common\models\ServicesRecord;
@@ -28,7 +29,7 @@ class YclientsLogRecord extends ActiveRecord
                 if ($company_id == YclientsLogRecord::$cfg['company']) {
                     $table = null;
                     if ($resource == 'client') {
-
+                        $table = ClientsRecord::initRec($resource_id, $data);
                     } elseif ($resource == 'record') {
                         $table = RecordsRecord::initRec($resource_id, $data);
                     } elseif ($resource == 'service') {

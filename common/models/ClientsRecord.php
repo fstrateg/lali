@@ -1,9 +1,10 @@
 <?php
-namespace app\models;
+namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
 use yii\data\ActiveDataProvider;
+use app\models\CityRecord;
 
 class ClientsRecord extends ActiveRecord
 {
@@ -67,5 +68,25 @@ class ClientsRecord extends ActiveRecord
             $rez[]=['id'=>$i->city,'name'=>CityRecord::findOne($i->city)->name];
         }
         return $rez;
+    }
+
+    public static function initRec($resource_id,$data)
+    {
+        $rez=self::findOne(['id'=>$resource_id]);
+        $rez=$rez!=null?$rez:new ClientsRecord();
+        $rez->id=$resource_id;
+        $rw=self::getRec($data);
+        foreach($rw as $k=>$v)
+            $rez->setAttribute($k,$v);
+        return $rez;
+    }
+
+    private static function getRec($data)
+    {
+        $rec=[
+            'name'=>$data['name'],
+            'phone'=>$data['phone']
+        ];
+        return $rec;
     }
 }
