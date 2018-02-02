@@ -1,5 +1,7 @@
 <?php
 namespace common\models;
+use app\components\Telegram;
+use common\components\SMS;
 
 class RecordsRecord extends \yii\db\ActiveRecord
 {
@@ -32,5 +34,22 @@ class RecordsRecord extends \yii\db\ActiveRecord
             'client_phone'=>$data['client']['phone'],
         ];
         return $rec;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (parent::afterSave($insert, $changedAttributes))
+        {
+            if ($insert)
+            {
+                $sms=new SMS();
+                $sms->setNumber(0);
+                $sms->setRecord($this);
+                $t=\common\components\Telegram::instance();
+                $t->sendMessage('Alex',$sms->getMessageText());
+            }
+            return true;
+        }
+        return false;
     }
 }

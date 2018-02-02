@@ -13,6 +13,13 @@ use yii\filters\AccessControl;
  */
 class JobsController extends Controller
 {
+    public function beforeAction($action)
+    {
+        if (in_array($action->id, ['yclients'])) {
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
     /**
      * @inheritdoc
      */
@@ -46,4 +53,8 @@ class JobsController extends Controller
         YclientsLogRecord::doParse();
     }
 
+    public function actionTest()
+    {
+        \common\components\Telegram::instance()->sendMessage('Alex','Тест прошел успешно!');
+    }
 }

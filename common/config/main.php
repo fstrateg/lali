@@ -9,5 +9,11 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'telegram' =>
+            [
+                'class'=>'common\components\Telegram',
+                'apiUrl'=>'https://api.telegram.org/',
+                'token'=>'405775967:AAFNlCKgAhRUo_BH8nLV8IlegnjpNNBX1xk',
+            ],
     ],
 ];
