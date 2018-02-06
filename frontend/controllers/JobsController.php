@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use frontend\models\YclientsLogRecord;
+use frontend\models\YclientsImport;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -45,6 +46,7 @@ class JobsController extends Controller
         $jsonPostData = file_get_contents("php://input");
         $log->data=$jsonPostData;
         $log->insert();
+        $this->actionDoyclients();
         return 'OK';
     }
 
@@ -56,5 +58,13 @@ class JobsController extends Controller
     public function actionTest()
     {
         \common\components\Telegram::instance()->sendMessage('Alex','Тест прошел успешно!');
+    }
+
+    public function actionLoadclients()
+    {
+
+        /*$m=new YclientsImport();
+        $m->import();*/
+        return 'Закрыто чтобы случайно не потереть';
     }
 }

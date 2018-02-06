@@ -8,7 +8,7 @@ use \common\models\ServicesRecord;
 
 class YclientsLogRecord extends ActiveRecord
 {
-    public static $cfg=['ip'=>'88.99.145.254','company'=>31224];
+    public static $cfg=['company'=>31224];
     public static function tableName()
     {
         return 'yclientslog';
@@ -19,8 +19,8 @@ class YclientsLogRecord extends ActiveRecord
         $rws=YclientsLogRecord::find()->where(['done'=>0])->all();
         foreach($rws as $rw)
         {
-            if ($rw->ip==YclientsLogRecord::$cfg['ip']) {
-                $global = json_decode($rw->data, true);
+            if ($rw->data) {
+                $global = json_decode(stripslashes($rw->data), true);
                 $company_id = $global['company_id'];
                 $resource = $global['resource']; // record, service, client
                 $resource_id = $global['resource_id'];

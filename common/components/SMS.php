@@ -1,7 +1,7 @@
 <?php
 namespace common\components;
 
-use app\models\SMSSettings;
+use common\models\SMSSettings;
 use common\models\ClientsRecord;
 use common\models\RecordsRecord;
 use Faker\Provider\DateTime;
@@ -10,6 +10,7 @@ use yii\base\BaseObject;
 class SMS extends BaseObject
 {
     private $message;
+    private $msg_noname;
     private $record;
     public $Dontsend;
     public $client_phone;
@@ -23,9 +24,10 @@ class SMS extends BaseObject
 
     public function setNumber($day)
     {
-        $s=SMSSettings::findOne(['day'=>$day]);
+        $s=SMSSettings::findOne(['days'=>$day]);
         if (!$s->sms_on) $this->Dontsend=true;
         $this->message=$s->sms_text;
+        $this->msg_noname=$s->sms_text_noname;
     }
 
 
@@ -45,7 +47,7 @@ class SMS extends BaseObject
     private function _prepare()
     {
         $appointed=$this->record->appointed;
-        $appointed = new DateTime($appointed);
+        $appointed = \DateTime::createFromFormat('Y-m-d H:i:s',$appointed);
         $appointed = $appointed->format('d.m.Y H:i');
         $appointed = explode(' ', $appointed);
         $date = $appointed[0];
@@ -53,15 +55,13 @@ class SMS extends BaseObject
         // MASTER
         $staff=$this->record->staff_name;
         // NAME
-        $client=ClientsRecord::findOne($this->record->client_id);
-        if (!$client)
-        {
-            $this->error='Клиент не найден!';
-            return;
-        }
-        $name=$client->name;
-
+        $client=ClientsRecord::findOne(['id'=>$this->record->client_id]);
         $msg=$this->message;
+        $name='';
+        if (!$client)
+           $msg=$this->msg_noname;
+        else $name=$client->shortName();
+
         $msg=str_replace('%DATE%',$date,
                 str_replace('%TIME%',$time,
                     str_replace('%NAME%',$name,

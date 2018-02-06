@@ -93,15 +93,18 @@ class ClientsRecord extends ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        if (parent::afterSave($insert, $changedAttributes))
-        {
-            if ($insert)
+           if ($insert)
             {
                 $t=Telegram::instance();
                 $t->sendMessage('Alex','Добавлен новый клиент:'.$this->name);
             }
             return true;
-        }
-        return false;
+    }
+
+    public function shortName()
+    {
+        $name = str_replace('ё', 'е', $this->name);
+        preg_match("/([a-z]|[а-я])+/ui", $name, $matches);
+        return $matches[0];
     }
 }
