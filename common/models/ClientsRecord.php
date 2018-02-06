@@ -5,6 +5,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\data\ActiveDataProvider;
 use app\models\CityRecord;
+use common\components\Telegram;
 
 class ClientsRecord extends ActiveRecord
 {
@@ -88,5 +89,19 @@ class ClientsRecord extends ActiveRecord
             'phone'=>$data['phone']
         ];
         return $rec;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (parent::afterSave($insert, $changedAttributes))
+        {
+            if ($insert)
+            {
+                $t=Telegram::instance();
+                $t->sendMessage('Alex','Добавлен новый клиент:'.$this->name);
+            }
+            return true;
+        }
+        return false;
     }
 }
