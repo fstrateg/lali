@@ -76,7 +76,8 @@ class SMS extends BaseObject
         if (strpos($msg,'%HH%'))
         {
             $r=$appointed->diff(self::getCurDate());
-            $hh=$r->format('%H:%I');
+            $r=self::roundDateTime($r);
+            $hh=$r->format('H:i');
             $msg=str_replace('%HH%',$hh,$msg);
         }
 
@@ -132,5 +133,17 @@ class SMS extends BaseObject
     public static function getCurDate()
     {
         return new \DateTime('now',new \DateTimeZone('Asia/Bishkek'));
+    }
+
+    /**
+     * @param \DateInterval $time
+     * @param int $min
+     */
+    public static function roundDateTime($time, $min=5)
+    {
+        $s=$min*60;
+        $t=\DateTime::createFromFormat('H:i',$time->format('%H:%I'));
+        $t->setTimestamp($s * round($t->getTimestamp() / $s));
+        return $t;
     }
 }

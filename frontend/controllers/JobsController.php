@@ -56,7 +56,7 @@ class JobsController extends Controller
         YclientsLogRecord::doParse();
     }
 
-    public function actionTest()
+    public function actionTestsms()
     {
         \common\components\Telegram::instance()->sendMessage('Alex','Тест прошел успешно!');
     }
@@ -73,5 +73,17 @@ class JobsController extends Controller
         /*$m=new YclientsImport();
         $m->import();*/
         return 'Закрыто чтобы случайно не потереть';
+    }
+
+    public function actionTest()
+    {
+        $s=5*60;
+        $t=new \DateInterval('PT59M');
+        echo $t->format('%H:%I');
+        $t=\DateTime::createFromFormat('H:i',$t->format('%H:%I'));
+        $t->setTimestamp($s * round($t->getTimestamp() / $s));
+        echo $s *ceil($t->getTimestamp() / $s);
+        echo '<br>';
+        echo $t->format('d.m.Y H:i');
     }
 }
