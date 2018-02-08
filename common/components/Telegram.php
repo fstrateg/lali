@@ -20,15 +20,16 @@ class Telegram extends Component
      * @param $chat_id
      * @param $msg
      */
-    public function sendMessage($userName, $msg)
+    public function sendMessage($userName, $msg, $forinfo='')
     {
         $user=User::findOne(['username'=>$userName]);
         if (!$user&&$user->telegram) return;
 
-        $data = array(
-            'chat_id' => $user->telegram,
-            'text'  => $msg,
-        );
+        $data=[];
+        $data['parse_mode']='html';
+        $data['chat_id']=$user->telegram;
+        $data['text'] = $forinfo?"<b>{$forinfo}</b>\r\n".$msg:$msg;
+
 
         $options = array(
             'http' => array(
@@ -40,7 +41,6 @@ class Telegram extends Component
         $context  = stream_context_create($options);
 
         $result = file_get_contents("{$this->apiUrl}bot{$this->token}/sendMessage", false, $context);
-
         //print_r($result);
         //$query = "{$this->apiUrl}{$this->token}/{$api_method}";
     }

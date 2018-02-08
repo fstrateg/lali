@@ -44,8 +44,8 @@ class RecordsRecord extends \yii\db\ActiveRecord
                 $sms->setRecord($this);
                 $t=Telegram::instance();
                 $msg=$sms->getMessageText();
-                $t->sendMessage('Alex',$sms->getMessageText($msg));
-                $t->sendMessage('nikvoit',$sms->getMessageText($msg));
+                $t->sendMessage('Alex',$sms->getMessageText($msg),$sms->client_phone);
+                $t->sendMessage('nikvoit',$sms->getMessageText($msg),$sms->client_phone);
 
                 //Telegram::instance()->sendMessage('Alex','Добавилась новая запись на клиента: '.$this->client_id);
             }

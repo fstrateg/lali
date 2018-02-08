@@ -58,7 +58,7 @@ class JobsController extends Controller
 
     public function actionTestsms()
     {
-        \common\components\Telegram::instance()->sendMessage('Alex','Тест прошел успешно!');
+        \common\components\Telegram::instance()->sendMessage('Alex','Тест прошел успешно!','test');
     }
 
     public function actionSendreminder()

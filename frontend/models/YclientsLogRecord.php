@@ -38,6 +38,8 @@ class YclientsLogRecord extends ActiveRecord
                             $table = ServicesRecord::initRec($resource_id, $data);
                         }
                         $table->status = $status;
+                        if ($status=='delete')
+                            $table->deleted=1;
                         $table->save();
                     }
                 }catch(\Exception $e)

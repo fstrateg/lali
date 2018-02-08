@@ -122,7 +122,8 @@ class SMS extends BaseObject
             $msg=$sms->getMessageText();
             //echo $msg;
             if (!$sms->Dontsend) {
-                Telegram::instance()->sendMessage('Alex', $msg);
+                Telegram::instance()->sendMessage('Alex', $msg, $sms->client_phone);
+                Telegram::instance()->sendMessage('nikvoit', $msg, $sms->client_phone);
             }
             $r->sms_second=1;
             $r->save();
