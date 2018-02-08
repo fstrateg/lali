@@ -96,7 +96,8 @@ class ClientsRecord extends ActiveRecord
            if ($insert)
             {
                 $t=Telegram::instance();
-                $t->sendMessage('Alex','Добавлен новый клиент:'.$this->name);
+                $t->sendMessage('Alex','Добавлен новый клиент: '.$this->name);
+                $t->sendMessage('nikvoit','Добавлен новый клиент: '.$this->name);
             }
             return true;
     }

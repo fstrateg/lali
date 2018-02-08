@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\components\SMS;
 use frontend\models\YclientsLogRecord;
 use frontend\models\YclientsImport;
 use Yii;
@@ -58,6 +59,12 @@ class JobsController extends Controller
     public function actionTest()
     {
         \common\components\Telegram::instance()->sendMessage('Alex','Тест прошел успешно!');
+    }
+
+    public function actionSendreminder()
+    {
+        // запускаем каждые 5 мин, по идее не должно тормазить
+        SMS::sendReminder();
     }
 
     public function actionLoadclients()

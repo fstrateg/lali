@@ -19,27 +19,32 @@ class YclientsLogRecord extends ActiveRecord
         $rws=YclientsLogRecord::find()->where(['done'=>0])->all();
         foreach($rws as $rw)
         {
+            $rw->done=1;
             if ($rw->data) {
-                $global = json_decode(stripslashes($rw->data), true);
-                $company_id = $global['company_id'];
-                $resource = $global['resource']; // record, service, client
-                $resource_id = $global['resource_id'];
-                $status = $global['status']; // create, update, delete
-                $data = $global['data'];
-                if ($company_id == YclientsLogRecord::$cfg['company']) {
-                    $table = null;
-                    if ($resource == 'client') {
-                        $table = ClientsRecord::initRec($resource_id, $data);
-                    } elseif ($resource == 'record') {
-                        $table = RecordsRecord::initRec($resource_id, $data);
-                    } elseif ($resource == 'service') {
-                        $table = ServicesRecord::initRec($resource_id, $data);
+                try {
+                    $global = json_decode(stripslashes($rw->data), true);
+                    $company_id = $global['company_id'];
+                    $resource = $global['resource']; // record, service, client
+                    $resource_id = $global['resource_id'];
+                    $status = $global['status']; // create, update, delete
+                    $data = $global['data'];
+                    if ($company_id == YclientsLogRecord::$cfg['company']) {
+                        $table = null;
+                        if ($resource == 'client') {
+                            $table = ClientsRecord::initRec($resource_id, $data);
+                        } elseif ($resource == 'record') {
+                            $table = RecordsRecord::initRec($resource_id, $data);
+                        } elseif ($resource == 'service') {
+                            $table = ServicesRecord::initRec($resource_id, $data);
+                        }
+                        $table->status = $status;
+                        $table->save();
                     }
-                    $table->status = $status;
-                    $table->save();
+                }catch(\Exception $e)
+                {
+                    $rw->done=2;
                 }
             }
-            $rw->done=1;
             $rw->save();
         }
     }
