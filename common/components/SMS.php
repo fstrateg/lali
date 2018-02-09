@@ -106,7 +106,7 @@ class SMS extends BaseObject
         $time->add(new \DateInterval($p));
         // Выбираем клиентов кому нужно отправить SMS
         $query=RecordsRecord::find()
-            ->where(['and','sms_second=0',
+            ->where(['and','sms_second=0','deleted=0',
                 ['<=','appointed',$time->format('Y-m-d H:i:s')],
                 ['>','appointed',$c->format('Y-m-d H:i:s')]
             ]);
