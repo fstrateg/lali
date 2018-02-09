@@ -15,6 +15,10 @@ class RecordsRecord extends \yii\db\ActiveRecord
         $rez=self::findOne(['resource_id'=>$resource_id]);
         $rez=$rez!=null?$rez:new RecordsRecord();
         $rez->resource_id=$resource_id;
+        if ($rez->isNewRecord) {
+            $ct = new \DateTime('now', new \DateTimeZone(\yii::$app->timeZone));
+            $rez->created = $ct->format('Y-m-d H:i:s');
+        }
         $rw=self::getRec($data);
         foreach($rw as $k=>$v)
             $rez->setAttribute($k,$v);

@@ -2,6 +2,7 @@
 namespace common\components;
 
 use common\models\SettingsRecord;
+use common\models\Sms_doneRecord;
 use common\models\SMSSettings;
 use common\models\ClientsRecord;
 use common\models\RecordsRecord;
@@ -56,7 +57,7 @@ class SMS extends BaseObject
     private function _prepare()
     {
         $appointed=$this->record->appointed;
-        $appointed = \DateTime::createFromFormat('Y-m-d H:i:s',$appointed,new \DateTimeZone('Asia/Bishkek'));
+        $appointed = \DateTime::createFromFormat('Y-m-d H:i:s',$appointed,new \DateTimeZone(\yii::$app->timeZone));
         $app = $appointed->format('d.m.Y H:i');
         $app = explode(' ', $app);
         $date = $app[0];
@@ -115,20 +116,60 @@ class SMS extends BaseObject
         // Формируем текст сообщения
         foreach($records as $r)
         {
-            $sms=new SMS();
+            $sms = new SMS();
             $sms->setNumber(1);
             $sms->setRecord($r);
-            // Отправляем
-            $msg=$sms->getMessageText();
-            //echo $msg;
-            if (!$sms->Dontsend) {
-                Telegram::instance()->sendMessage('Alex', $msg, $sms->client_phone);
-                Telegram::instance()->sendMessage('nikvoit', $msg, $sms->client_phone);
+            // Смотрим когда была создана заявка
+            if ($sms->checkForSecond($min)) {
+                // Отправляем
+                $msg = $sms->getMessageText();
+                //echo $msg;
+                if (!$sms->Dontsend) {
+                    Telegram::instance()->sendMessage('Alex', $msg, $sms->client_phone);
+                    Telegram::instance()->sendMessage('nikvoit', $msg, $sms->client_phone);
+                }
+                $r->sms_second=1;
             }
-            $r->sms_second=1;
+            else
+                $r->sms_second=3;
             $r->save();
         }
 
+    }
+
+    private function checkForSecond($min)
+    {
+        $ta=\DateTime::createFromFormat('Y-m-d H:i:s',$this->record->getAttribute('appointed'));
+        $tc=\DateTime::createFromFormat('Y-m-d H:i:s',$this->record->getAttribute('created'));
+        $ti=(($tc->getTimestamp()-$ta->getTimestamp())/60)+$min;
+        return $ti<0;  //true SMS напоминание нужно
+    }
+
+    public static function sendSmsNumber($day)
+    {
+        $dat=self::getCurDate();
+        $dat->sub(new \DateInterval("P{$day}D"));
+        $p2=$dat->format('Y-m-d');
+        $p1=$dat->sub(new \DateInterval("P1D"))->format('Y-m-d');
+
+        $sql="select a.id,a.client_id,a.appointed,b.name,a.client_phone,c.`type`
+from records a
+	inner join clients b on a.client_id=b.id and b.exception_{$day}=0
+	left join sms_done c on a.client_id=c.client_id and c.type={$day}
+where a.deleted=0 and c.`type` is null and a.appointed between '$p1' and '$p2'";
+        $clients=\yii::$app->db->createCommand($sql)->queryAll();
+        foreach($clients as $c)
+        {
+            $sms=new SMS();
+            $sms->setNumber($day);
+            $r=RecordsRecord::findOne($c['id']);
+            $sms->setRecord($r);
+            echo $sms->getMessageText();
+            $done=new Sms_doneRecord();
+            $done->setAttribute('type',$day);
+            $done->setAttribute('client_id',$c['client_id']);
+            $done->save();
+        }
     }
 
     public static function getCurDate()

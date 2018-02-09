@@ -86,4 +86,10 @@ class JobsController extends Controller
         echo '<br>';
         echo $t->format('d.m.Y H:i');
     }
+
+    public function actionSendday($day)
+    {
+        if (empty($day)||!in_array($day,['5','21','42'])) return;
+        SMS::sendSmsNumber($day);
+    }
 }
