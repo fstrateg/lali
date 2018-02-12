@@ -18,7 +18,8 @@ foreach($pages as $page)
 } ?>
 </ul>
 <div class="tab-content tab-bordered">
-<?
+<span id="helpBlock" class="help-block">Используйте вырожения %NAME%, %DATE%, %TIME%, %MASTER%, %HH% для подстановки значений в SMS</span>
+    <?
     $class=' in active';
     foreach($pages as $page)
     {
@@ -38,7 +39,6 @@ foreach($pages as $page)
                                     <input type="checkbox" name="r[<?= $id ?>][sms_on]" class="form-check-input" value="1"<?= $s['sms_on']?' checked':'';?>>Включено</label>
                                     <? //$form->field($s,'sms_on')->checkbox(['class'=>'form-check-input','label'=>null,'name'=>"r[$id][sms_on]"]); ?>
                             </div>
-                            <span id="helpBlock" class="help-block">Используйте вырожение %NAME% для подстановки имени в SMS</span>
                             <?= $form->field($s,'sms_text')->textarea(['class'=>'form-control','rows'=>'3','name'=>"r[$id][sms_text]"])->label(false); ?>
                             <!-- textarea class="form-control" rows="3" name="r[?= $id ?][sms_text]">?= $s['sms_text']; ?</textarea-->
                     </div>
