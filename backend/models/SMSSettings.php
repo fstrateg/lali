@@ -4,6 +4,10 @@ namespace app\models;
 use Yii;
 use yii\db\ActiveRecord;
 
+/**
+ * @property sms_text
+ * @property sms_text_noname
+ */
 class SMSSettings extends ActiveRecord
 {
     public static function tableName()
@@ -16,6 +20,7 @@ class SMSSettings extends ActiveRecord
         return [
             [['sms_on'],'integer'],
             [['sms_text'],'string'],
+            [['sms_text_noname'],'string'],
         ];
     }
 
@@ -42,9 +47,11 @@ class SMSSettings extends ActiveRecord
             $rw->load($data);
             $err=$err||!$rw->save();
         }
-        if ($err)
+        if ($err===true){
             \Yii::$app->getSession()->setFlash('error', 'Проблемма с сохранением, что-то не так!');
-        else
+        }
+        else{
             \Yii::$app->getSession()->setFlash('success', 'Данные успешно внесены в базу!');
+        }
     }
 }
