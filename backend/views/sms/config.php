@@ -1,5 +1,6 @@
 <?php
 use app\models\SMSSettings;
+use common\models\SettingsRecord;
 use yii\widgets\ActiveForm;
 /* @var $this yii\web\View
  *  @var $pages array
@@ -44,7 +45,7 @@ foreach($pages as $page)
                             </div>
 <?
 if(((int)$id)==5)
-{ $val=59;
+{ $val=SettingsRecord::findValue('sms','second');
 ?>
     <div class="checkbox col-xs-12 col-sm-5">
         Время до визита: <input type="number" style="width:60px" name="r[<?=$id?>][sms_time]" value="<?= $val ?>"/>мин

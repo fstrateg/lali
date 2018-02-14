@@ -47,6 +47,7 @@ class SMSSettings extends ActiveRecord
             $rw->load($data);
             $err=$err||!$rw->save();
         }
+        \common\models\SettingsRecord::setValue('sms','second',$data['5']['sms_time']);
         if ($err===true){
             \Yii::$app->getSession()->setFlash('error', 'Проблемма с сохранением, что-то не так!');
         }
