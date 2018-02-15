@@ -164,7 +164,7 @@ where a.deleted=0 and c.`type` is null and a.appointed between '$p1' and '$p2'";
             $sms->setNumber($day);
             $r=RecordsRecord::findOne($c['id']);
             $sms->setRecord($r);
-            echo $sms->getMessageText();
+            Telegram::instance()->sendMessageAll($sms->getMessageText(),$sms->client_phone);
             $done=new Sms_doneRecord();
             $done->setAttribute('type',$day);
             $done->setAttribute('client_id',$c['client_id']);

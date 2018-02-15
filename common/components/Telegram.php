@@ -24,10 +24,24 @@ class Telegram extends Component
     {
         $user=User::findOne(['username'=>$userName]);
         if (!$user&&$user->telegram) return;
+        $this->sendMessageInChat($user->telegram,$msg,$forinfo);
+    }
 
+    public function sendMessageAll($msg,$forinfo='')
+    {
+        $users=User::find()->where('not telegram is null')->all();
+        if (!$users) return;
+        foreach($users as $u)
+        {
+            $this->sendMessageInChat($u->telegram,$msg,$forinfo);
+        }
+    }
+
+    public function sendMessageInChat($chat_id,$msg,$forinfo='')
+    {
         $data=[];
         $data['parse_mode']='html';
-        $data['chat_id']=$user->telegram;
+        $data['chat_id']=$chat_id;
         $data['text'] = $forinfo?"<b>{$forinfo}</b>\r\n".$msg:$msg;
 
 
