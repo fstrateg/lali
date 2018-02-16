@@ -3,6 +3,11 @@ namespace common\models;
 use common\components\Telegram;
 use common\components\SMS;
 
+/**
+ * Class RecordsRecord
+ * @package common\models
+ * @property $attendance
+ */
 class RecordsRecord extends \yii\db\ActiveRecord
 {
     public static function tableName()
@@ -35,6 +40,7 @@ class RecordsRecord extends \yii\db\ActiveRecord
             'services_id'=>implode(',',$srv),
             'client_id'=>$data['client']['id'],
             'client_phone'=>$data['client']['phone'],
+            'attendance'=>$data['attendance'],
         ];
         return $rec;
     }

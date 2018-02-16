@@ -125,8 +125,7 @@ class SMS extends BaseObject
                 $msg = $sms->getMessageText();
                 //echo $msg;
                 if (!$sms->Dontsend) {
-                    Telegram::instance()->sendMessage('Alex', $msg, $sms->client_phone);
-                    Telegram::instance()->sendMessage('nikvoit', $msg, $sms->client_phone);
+                    Telegram::instance()->sendMessageAll($msg, $sms->client_phone);
                 }
                 $r->sms_second=1;
             }
@@ -156,7 +155,7 @@ class SMS extends BaseObject
 from records a
 	inner join clients b on a.client_id=b.id and b.exception_{$day}=0
 	left join sms_done c on a.client_id=c.client_id and c.type={$day}
-where a.deleted=0 and c.`type` is null and a.appointed between '$p1' and '$p2'";
+where a.deleted=0 and a.attendance=1 and c.`type` is null and a.appointed between '$p1' and '$p2'";
         $clients=\yii::$app->db->createCommand($sql)->queryAll();
         foreach($clients as $c)
         {
