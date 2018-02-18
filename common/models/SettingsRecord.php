@@ -27,4 +27,13 @@ class SettingsRecord extends ActiveRecord
         $r->val=$value;
         $r->save();
     }
+
+    public static function getValuesGroup($group)
+    {
+        $rws=self::findAll(['group'=>$group]);
+        $rz=array();
+        foreach($rws as $rw)
+            $rz[$rw->param]=$rw->val;
+        return $rw;
+    }
 }

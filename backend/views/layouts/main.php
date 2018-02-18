@@ -46,6 +46,8 @@ AppAsset::register($this);
                             ['label'=>'Города','url'=>['/sprav/city']],
                             ['label'=>'СМС рассылка','url'=>['/sms/config']],
                             ['label'=>'СМС исключения','url'=>['/sms/except']],
+                            '<li class="divider"></li>',
+                            ['label'=>'Конфигурация','url'=>['/sprav/config']]
                         ]
                         ];
         $menuItems[] = '<li>'

@@ -24,4 +24,7 @@ return [
             'company'=>'31224',
         ]
     ],
+    'modules' => [
+        'gii' => 'yii\gii\Module',
+    ],
 ];

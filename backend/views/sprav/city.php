@@ -3,7 +3,7 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 /* @var $this yii\web\View
- * @var $citys app\models\City
+ * @var $citys backend\models\CityRecord
  */
 
 $this->title = 'La-Litty';
