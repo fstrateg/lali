@@ -8,6 +8,8 @@ use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\helpers\Html;
 use yii\data\ActiveDataProvider;
+use backend\models\SettingsRecord;
+use yii\web\NotFoundHttpException;
 
 /**
  * Site controller
@@ -28,7 +30,7 @@ class SpravController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['city'],
+                        'actions' => ['city','config'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -100,5 +102,52 @@ class SpravController extends Controller
         $id=yii::$app->request->get('id',-1);
         CityRecord::findOne((int)$id)->delete();
         return $this->redirect(Url::to(['city','m'=>'index']));
+    }
+
+    public function actionConfig($m='index')
+    {
+        switch($m)
+        {
+            case 'update':
+                $id=Yii::$app->request->get('id');
+                $rez=$this->configUpdate($id);
+                break;
+            default:
+                $rez=$this->configIndex();
+        }
+        return $rez;
+    }
+
+    private function configIndex()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => SettingsRecord::find(),
+        ]);
+
+        return $this->render('config', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    private function configUpdate($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect('config');
+        } else {
+            return $this->renderPartial('configForm', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    protected function findModel($id)
+    {
+        if (($model = SettingsRecord::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 }
