@@ -3,7 +3,7 @@ namespace frontend\controllers;
 
 use common\components\SMS;
 use frontend\models\YclientsLogRecord;
-use frontend\models\YclientsImport;
+use frontend\models\JobsModel;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -38,6 +38,9 @@ class JobsController extends Controller
         ];
     }
 
+    /**
+     * Прием данных с хука
+     */
     public function actionYclients()
     {
         $log=new YclientsLogRecord();
@@ -51,22 +54,34 @@ class JobsController extends Controller
         return 'OK';
     }
 
+    /**
+     * Парсинг данных
+     */
     public function actionDoyclients()
     {
         YclientsLogRecord::doParse();
     }
 
+    /**
+    * Отправка тестовой СМС в телеграм
+    */
     public function actionTestsms()
     {
         \common\components\Telegram::instance()->sendMessage('Alex','Тест прошел успешно!','test');
     }
 
+    /**
+     * СМС напоминание о необходимости прийти на сеанс
+     */
     public function actionSendreminder()
     {
         // запускаем каждые 5 мин, по идее не должно тормазить
         SMS::sendReminder();
     }
 
+    /**
+    * Импорт справочника клиентов
+    */
     public function actionLoadclients()
     {
 
@@ -75,6 +90,9 @@ class JobsController extends Controller
         return 'Закрыто чтобы случайно не потереть';
     }
 
+    /**
+    * Тестовый метод
+    */
     public function actionTest()
     {
         $s=5*60;
@@ -87,9 +105,17 @@ class JobsController extends Controller
         echo $t->format('d.m.Y H:i');
     }
 
+    /**
+    * Напоминание через N дней
+    */
     public function actionSendday($day)
     {
         if (empty($day)||!in_array($day,['5','21','42'])) return;
         SMS::sendSmsNumber($day);
+    }
+
+    public function actionGetlastvisit()
+    {
+        JobsModel::GetLastVisit();
     }
 }
