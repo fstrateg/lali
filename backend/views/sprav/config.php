@@ -16,9 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
 
-    <?php Pjax::begin(); ?>
-    <a href='/admin/sprav/config?m=update&id=1'>test</a>
-    <?php Pjax::end(); ?>
+    <div id='editform'></div>
     <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'columns' => [
@@ -41,10 +39,29 @@ $this->params['breadcrumbs'][] = $this->title;
     ],
 ]); ?>
 </div>
-    <?= $this->registerJs("
-    $('.edit').on('click', function(event){
+
+    <?
+    $js=<<<JS
+$('.edit').on('click', function(event){
     event.preventDefault();
     var idkey=$(this).attr('idkey');
     alert(idkey);
     });
-    ");?>
+JS;
+$js2=<<<JS
+$('.edit').on('click', function(event){
+ event.preventDefault();
+    var idkey=$(this).attr('idkey');
+    $.ajax({
+        url: '/admin/sprav/config?m=update&id='+idkey,
+        type: 'GET',
+        success: function(res)
+        {
+            $('#editform').html(res);
+            $('#modal').modal('show');
+        }
+    });
+    });
+JS;
+
+    $this->registerJs($js2);?>
