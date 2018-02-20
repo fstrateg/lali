@@ -51,11 +51,13 @@ class Date
 
     /**
      * @param string $days
+     * @return $this
      */
     public function subDays($days)
     {
         $di=new \DateInterval('P'.$days.'D');
         $this->date->sub($di);
+        return $this;
     }
 
     /**
