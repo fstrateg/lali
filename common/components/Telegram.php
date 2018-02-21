@@ -2,17 +2,18 @@
 namespace common\components;
 
 use common\models\User;
+use common\models\SettingsRecord;
 use yii\base\Component;
 
 class Telegram extends Component
 {
     public $class = '';
     public $token = '';
-    public $apiUrl = '';
+    public $url = '';
 
     function __construct(array $config=[])
     {
-        $config=\Yii::$app->components['telegram'];
+        $config=SettingsRecord::getValuesGroup('telegram');
         parent::__construct($config);
     }
 
@@ -54,7 +55,7 @@ class Telegram extends Component
         );
         $context  = stream_context_create($options);
 
-        $result = file_get_contents("{$this->apiUrl}bot{$this->token}/sendMessage", false, $context);
+        $result = file_get_contents("{$this->url}bot{$this->token}/sendMessage", false, $context);
         //print_r($result);
         //$query = "{$this->apiUrl}{$this->token}/{$api_method}";
     }

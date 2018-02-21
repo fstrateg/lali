@@ -34,6 +34,6 @@ class SettingsRecord extends ActiveRecord
         $rz=array();
         foreach($rws as $rw)
             $rz[$rw->param]=$rw->val;
-        return $rw;
+        return $rz;
     }
 }

@@ -44,8 +44,8 @@ class SettingsRecord extends \yii\db\ActiveRecord
             'id' => 'ID',
             'group' => 'Group',
             'param' => 'Param',
-            'val' => 'Val',
-            'name' => 'Name',
+            'val' => 'Значение',
+            'name' => 'Параметр',
         ];
     }
 }

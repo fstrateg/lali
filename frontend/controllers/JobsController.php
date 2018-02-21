@@ -95,14 +95,7 @@ class JobsController extends Controller
     */
     public function actionTest()
     {
-        $s=5*60;
-        $t=new \DateInterval('PT59M');
-        echo $t->format('%H:%I');
-        $t=\DateTime::createFromFormat('H:i',$t->format('%H:%I'));
-        $t->setTimestamp($s * round($t->getTimestamp() / $s));
-        echo $s *ceil($t->getTimestamp() / $s);
-        echo '<br>';
-        echo $t->format('d.m.Y H:i');
+        \common\components\Telegram::instance()->sendMessage("Alex",'test');
     }
 
     /**
