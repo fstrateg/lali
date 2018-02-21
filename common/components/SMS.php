@@ -1,12 +1,12 @@
 <?php
 namespace common\components;
 
+use common\models\ServicesRecord;
 use common\models\SettingsRecord;
 use common\models\Sms_doneRecord;
 use common\models\SMSSettings;
 use common\models\ClientsRecord;
 use common\models\RecordsRecord;
-use Faker\Provider\DateTime;
 use yii\base\BaseObject;
 
 class SMS extends BaseObject
@@ -146,29 +146,60 @@ class SMS extends BaseObject
 
     public static function sendSmsNumber($day)
     {
-        $dat=self::getCurDate();
-        $dat->sub(new \DateInterval("P{$day}D"));
-        $p2=$dat->format('Y-m-d');
-        $p1=$dat->sub(new \DateInterval("P1D"))->format('Y-m-d');
+        $dat=new Date();
+        //$dat=self::getCurDate();
+        $dat->subDays($day+1);
+        //$dat->sub(new \DateInterval("P{$day}D"));
+        $p1=$dat->toMySql();
+        $dat=new Date();
+        $dat->subDays($day);
+        $p2=$dat->toMySql();
 
-        $sql="select a.id,a.client_id,a.appointed,b.name,a.client_phone,c.`type`
-from records a
-	inner join clients b on a.client_id=b.id and b.exception_{$day}=0
-	left join sms_done c on a.client_id=c.client_id and c.type={$day}
-where a.deleted=0 and a.attendance=1 and c.`type` is null and a.appointed between '$p1' and '$p2'";
+        $sql="select a.*
+        from  clients a left join sms_done b on (a.id=b.client_id and a.last_record=b.record_id and b.type={$day})
+        where a.deleted=0 and a.exception_{$day}<>1 and a.last_visit between '$p1' and '$p2' and b.type is null";
         $clients=\yii::$app->db->createCommand($sql)->queryAll();
         foreach($clients as $c)
         {
-            $sms=new SMS();
-            $sms->setNumber($day);
-            $r=RecordsRecord::findOne($c['id']);
-            $sms->setRecord($r);
-            Telegram::instance()->sendMessageAll($sms->getMessageText(),$sms->client_phone);
-            $done=new Sms_doneRecord();
-            $done->setAttribute('type',$day);
-            $done->setAttribute('client_id',$c['client_id']);
+            $needsms=true;
+            $rec=RecordsRecord::findOne(['resource_id'=>$c['last_record']]);
+            if ($day==5)
+            {
+                /* проверка на скраббинг */
+                $cm=ServicesRecord::find()->where(['and',"deleted<>1","id in ({$rec['services_id']})"])->sum('scrubbing');
+                if ($cm==0) $needsms=false;
+            }
+            if ($day==21||$day==42)
+            {
+                /* Клиент уже записался */
+                $cnt=RecordsRecord::find()->where([
+                    'and',
+                    'client_id='.$c['id'],
+                    "appointed>'{$c['last_visit']}'"
+                ])->count();
+                if ($cnt>0)
+                {
+                    $needsms=false;
+                }
+                else{
+                    /* Проверка на напоминание */
+                    $cm=ServicesRecord::find()->where(['and',"deleted<>1","id in ({$rec['services_id']})"])->sum('remind');
+                    if ($cm==0) $needsms=false;
+                }
+            }
+            if ($needsms) {
+                $sms = new SMS();
+                $sms->setNumber($day);
+                $sms->setRecord($rec);
+                Telegram::instance()->sendMessageAll($sms->getMessageText(), $sms->client_phone);
+            }
+            $done = new Sms_doneRecord();
+            $done->setAttribute('type', $day);
+            $done->setAttribute('client_id', $c['id']);
+            $done->setAttribute('record_id', $c['last_record']);
             $done->save();
         }
+        echo 'Обработано: '.count($clients).' клиентов';
     }
 
     public static function getCurDate()
@@ -176,9 +207,9 @@ where a.deleted=0 and a.attendance=1 and c.`type` is null and a.appointed betwee
         return new \DateTime('now',new \DateTimeZone('Asia/Bishkek'));
     }
 
-    /**
-     * @param \DateInterval $time
-     * @param int $min
+    /*
+     * @param $time  \DateInterval
+     * @param $min int
      */
     public static function roundDateTime($time, $min=5)
     {
