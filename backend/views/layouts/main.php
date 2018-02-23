@@ -46,6 +46,7 @@ AppAsset::register($this);
                             ['label'=>'Города','url'=>['/sprav/city']],
                             ['label'=>'СМС рассылка','url'=>['/sms/config']],
                             ['label'=>'СМС исключения','url'=>['/sms/except']],
+                            ['label'=>'Услуги','url'=>['/sprav/servis']],
                             '<li class="divider"></li>',
                             ['label'=>'Конфигурация','url'=>['/sprav/config']]
                         ]
