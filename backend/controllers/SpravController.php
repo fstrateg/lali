@@ -2,6 +2,7 @@
 namespace backend\controllers;
 
 use app\models\CityRecord;
+use common\models\ServicesRecord;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Controller;
@@ -30,7 +31,7 @@ class SpravController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['city','config'],
+                        'actions' => ['city','config','servis'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -148,6 +149,46 @@ class SpravController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    public function actionServis($m='index')
+    {
+        $rez='';
+        switch($m)
+        {
+            case 'index':
+                $rez=$this->servisIndex();
+                break;
+            case 'update':
+                $id=Yii::$app->request->get('id');
+                $rez=$this->servisUpdate($id);
+                break;
+        }
+        return $rez;
+    }
+
+    private function servisIndex()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => ServicesRecord::find()->where('deleted<>1'),
+        ]);
+        return $this->render('servis', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    private function servisUpdate($id)
+    {
+        $model=ServicesRecord::findOne($id);
+        $post=Yii::$app->request->post();
+        $model->load($post);
+        if ($model->load($post) && $model->save()) {
+            return $this->redirect('servis');
+        } else {
+            return $this->renderPartial('servisForm', [
+                'model' => $model,
+            ]);
         }
     }
 }
