@@ -9,8 +9,14 @@ use common\models\ClientsRecord;
 use common\models\RecordsRecord;
 use yii\base\BaseObject;
 
+/**
+ * Class SMS
+ * @package common\components
+ * @property $transaction_id;
+ */
 class SMS extends BaseObject
 {
+    private $transaction_id;
     private $message;
     private $msg_noname;
     /**
@@ -51,6 +57,7 @@ class SMS extends BaseObject
         }
         $this->record=$record;
         $this->client_phone=$record->client_phone;
+        $this->transaction_id='n'.$record->resource_id;
         $this->client=ClientsRecord::findOne(['id'=>$this->record->client_id]);
     }
 
@@ -147,9 +154,7 @@ class SMS extends BaseObject
     public static function sendSmsNumber($day)
     {
         $dat=new Date();
-        //$dat=self::getCurDate();
         $dat->subDays($day+1);
-        //$dat->sub(new \DateInterval("P{$day}D"));
         $p1=$dat->toMySql();
         $dat=new Date();
         $dat->subDays($day);
@@ -217,5 +222,13 @@ class SMS extends BaseObject
         $t=\DateTime::createFromFormat('H:i',$time->format('%H:%I'));
         $t->setTimestamp($s * round($t->getTimestamp() / $s));
         return $t;
+    }
+
+    public function send()
+    {
+        $t=Telegram::instance();
+        $t->sendMessageAll($this->getMessageText(),$this->client_phone);
+        $sms=new SMSNikita();
+        $sms->sendSMS($this->client_phone,$this->getMessageText(),$this->transaction_id);
     }
 }
