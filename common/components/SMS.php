@@ -129,10 +129,11 @@ class SMS extends BaseObject
             // Смотрим когда была создана заявка
             if ($sms->checkForSecond($min)) {
                 // Отправляем
-                $msg = $sms->getMessageText();
+                //$msg = $sms->getMessageText();
                 //echo $msg;
                 if (!$sms->Dontsend) {
-                    Telegram::instance()->sendMessageAll($msg, $sms->client_phone);
+                    $sms->send();
+                    //Telegram::instance()->sendMessageAll($msg, $sms->client_phone);
                 }
                 $r->sms_second=1;
             }
