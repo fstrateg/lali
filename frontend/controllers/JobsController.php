@@ -97,7 +97,7 @@ class JobsController extends Controller
     {
         \common\components\Telegram::instance()->sendMessage("Alex",'test');
         $sms=new \common\components\SMSNikita();
-        $sms->sendSMS('+996555904504','test','ntest2');
+        echo 'test:'.$sms->sendSMS('+996555904504','test','d_201803011611');
     }
 
     /**

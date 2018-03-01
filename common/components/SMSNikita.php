@@ -81,12 +81,17 @@ class SMSNikita extends BaseObject
             $result = $this->post_content($xml);
             $responseXML = $result['content'];
             $response = new \SimpleXMLElement($responseXML);
+            if ($response->status<>0)
+            {
+                throw new \Exception('Ошибка от Никиты! Статус: '.$response->status);
+            }
             return +$response->status;
         }
         catch(\Exception $e)
         {
             echo 'Caught exception: ',  $e->getMessage(), "\n";
             var_dump($e->getTrace());
+            Telegram::instance()->sendMessageAll("SMS не отправлено: {$e->getMessage()}\r\n $message",$phoneNumber);
         }
         return 12;
     }
