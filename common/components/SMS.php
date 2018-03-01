@@ -41,6 +41,7 @@ class SMS extends BaseObject
     {
         $s=SMSSettings::findOne(['days'=>$day]);
         if (!$s->sms_on) $this->Dontsend=true;
+        $this->transaction_id='c'.$day.'_';
         $this->message=$s->sms_text;
         $this->msg_noname=$s->sms_text_noname;
     }
@@ -57,7 +58,7 @@ class SMS extends BaseObject
         }
         $this->record=$record;
         $this->client_phone=$record->client_phone;
-        $this->transaction_id='n'.$record->resource_id;
+        $this->transaction_id.=$record->resource_id;
         $this->client=ClientsRecord::findOne(['id'=>$this->record->client_id]);
     }
 
@@ -229,7 +230,7 @@ class SMS extends BaseObject
     public function send()
     {
         $t=Telegram::instance();
-        $t->sendMessageAll($this->getMessageText(),$this->client_phone);
+        $t->sendMessageAll($this->getMessageText(),$this->client_phone." ({$this->transaction_id})");
         $sms=new SMSNikita();
         $sms->sendSMS($this->client_phone,$this->getMessageText(),$this->transaction_id);
     }
