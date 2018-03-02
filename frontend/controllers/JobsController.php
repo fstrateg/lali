@@ -106,6 +106,7 @@ class JobsController extends Controller
     public function actionSendday($day)
     {
         if (empty($day)||!in_array($day,['5','21','42'])) return;
+        ini_set('max_execution_time', 600);
         SMS::sendSmsNumber($day);
     }
 

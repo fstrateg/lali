@@ -164,7 +164,8 @@ class SMS extends BaseObject
 
         $sql="select a.*
         from  clients a left join sms_done b on (a.id=b.client_id and a.last_record=b.record_id and b.type={$day})
-        where a.deleted=0 and a.exception_{$day}<>1 and a.last_visit between '$p1' and '$p2' and b.type is null";
+        where a.deleted=0 and a.exception_{$day}<>1 and a.last_visit between '$p1' and '$p2' and b.type is null
+        limit 20";
         $clients=\yii::$app->db->createCommand($sql)->queryAll();
         foreach($clients as $c)
         {
