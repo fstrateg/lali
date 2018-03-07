@@ -46,7 +46,7 @@ class Date
      */
     public function set($date,$format = 'Y-m-d H:i:s')
     {
-        $this->date->createFromFormat($format,$date,self::timeZone());
+        $this->date=$this->date->createFromFormat($format,$date,self::timeZone());
     }
 
     /**

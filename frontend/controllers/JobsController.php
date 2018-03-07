@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\components\Date;
 use common\components\SMS;
 use frontend\models\YclientsLogRecord;
 use frontend\models\JobsModel;
@@ -95,9 +96,11 @@ class JobsController extends Controller
     */
     public function actionTest()
     {
-        \common\components\Telegram::instance()->sendMessage("Alex",'test');
-        $sms=new \common\components\SMSNikita();
-        echo 'test:'.$sms->sendSMS('+996555904504','test','d_201803011611');
+       $dat1=Date::fromMysql('2016-02-07 15:00:00');
+        $dat2=Date::now();
+        print_r($dat1->get());
+        print_r($dat2);
+
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 namespace common\models;
+use common\components\Date;
 use common\components\Telegram;
 use common\components\SMS;
 use common\components\SMSNikita;
@@ -50,6 +51,8 @@ class RecordsRecord extends \yii\db\ActiveRecord
     {
             if ($insert)
             {
+                if (Date::fromMysql($this->appointed)->get() < Date::now()) return true;
+
                 $sms=new SMS();
                 $sms->setNumber(0);
                 $sms->setRecord($this);
