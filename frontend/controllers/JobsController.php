@@ -3,6 +3,7 @@ namespace frontend\controllers;
 
 use common\components\Date;
 use common\components\SMS;
+use frontend\models\YclientsImport;
 use frontend\models\YclientsLogRecord;
 use frontend\models\JobsModel;
 use Yii;
@@ -96,10 +97,8 @@ class JobsController extends Controller
     */
     public function actionTest()
     {
-       $dat1=Date::fromMysql('2016-02-07 15:00:00');
-        $dat2=Date::now();
-        print_r($dat1->get());
-        print_r($dat2);
+        $cls=new YclientsImport();
+        $cls->getKlient(13303215);
 
     }
 

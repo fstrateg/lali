@@ -60,6 +60,12 @@ class SMS extends BaseObject
         $this->client_phone=$record->client_phone;
         $this->transaction_id.=$record->resource_id;
         $this->client=ClientsRecord::findOne(['id'=>$this->record->client_id]);
+        if (!$this->client) // Клиент не найден попробуем импортировать
+        {
+            $i=new \frontend\models\YclientsImport();
+            if ($i->getKlient($this->record->client_id))
+                $this->client=ClientsRecord::findOne(['id'=>$this->record->client_id]);
+        }
     }
 
     private function _prepare()
