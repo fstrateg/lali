@@ -44,6 +44,7 @@ class YclientsLogRecord extends ActiveRecord
                     }
                 }catch(\Exception $e)
                 {
+                    \common\components\Telegram::instance()->sendMessage('Alex',$e->getTraceAsString(),$e->getMessage());
                     $rw->done=2;
                 }
             }
