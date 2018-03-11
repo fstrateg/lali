@@ -52,7 +52,8 @@ class JobsController extends Controller
         $jsonPostData = file_get_contents("php://input");
         $log->data=$jsonPostData;
         $log->insert();
-        $this->actionDoyclients();
+        YclientsLogRecord::doParse($log);
+        //$this->actionDoyclients();
         return 'OK';
     }
 
@@ -61,7 +62,7 @@ class JobsController extends Controller
      */
     public function actionDoyclients()
     {
-        YclientsLogRecord::doParse();
+        //YclientsLogRecord::doParse();
     }
 
     /**
@@ -97,8 +98,15 @@ class JobsController extends Controller
     */
     public function actionTest()
     {
-        $cls=new YclientsImport();
-        $cls->getKlient(13303215);
+        $log=new YclientsLogRecord();
+        $curdate=new \DateTime('now',new \DateTimeZone('Asia/Bishkek'));
+        $log->dat=$curdate->format('Y-m-d H:i:s');
+        $log->ip= $_SERVER["REMOTE_ADDR"];
+        $jsonPostData = 'test';
+        $log->data=$jsonPostData;
+        $log->insert();
+        $log->done=3;
+        $log->update();
 
     }
 

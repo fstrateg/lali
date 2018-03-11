@@ -14,11 +14,11 @@ class YclientsLogRecord extends ActiveRecord
         return 'yclientslog';
     }
 
-    public static function doParse()
+    public static function doParse($rw)
     {
-        $rws=YclientsLogRecord::find()->where(['done'=>0])->all();
-        foreach($rws as $rw)
-        {
+        //$rws=YclientsLogRecord::find()->where(['done'=>0])->all();
+        //foreach($rws as $rw)
+        //{
             $rw->done=1;
             if ($rw->data) {
                 try {
@@ -49,6 +49,6 @@ class YclientsLogRecord extends ActiveRecord
                 }
             }
             $rw->save();
-        }
+        //}
     }
 }
