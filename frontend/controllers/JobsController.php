@@ -62,6 +62,11 @@ class JobsController extends Controller
      */
     public function actionDoyclients()
     {
+        $rws=YclientsLogRecord::find()->where(['done'=>0])->all();
+        foreach($rws as $rw)
+        {
+            YclientsLogRecord::doParse($rw);
+        }
         //YclientsLogRecord::doParse();
     }
 
