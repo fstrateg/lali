@@ -39,11 +39,11 @@ class RecordsRecord extends \yii\db\ActiveRecord
         $rec=[
             'staff_name'=>$data['staff']['name'],
             'appointed'=>$data['date'],
-            'services_id'=>implode(',',$srv),
-            'client_id'=>$data['client']['id'],
             'client_phone'=>$data['client']['phone'],
+            'services_id'=>implode(',',$srv),
             'attendance'=>$data['attendance'],
         ];
+        $rec['client_id']=(isset($data['client']['id']))?$data['client']['id']:'-1';
         return $rec;
     }
 
@@ -52,7 +52,13 @@ class RecordsRecord extends \yii\db\ActiveRecord
             if ($insert)
             {
                 if (Date::fromMysql($this->appointed)->get() < Date::now()) return true;
-
+                if (empty($this->getAttribute('client_phone')))
+                {
+                    Telegram::instance()
+                        ->sendMessageAll("Мастер: {$this->getAttribute('staff_name')}\r\nЗапись:{$this->getAttribute('appointed')}",
+                            "Нет номера телефона!");
+                    return true;
+                }
                 $sms=new SMS();
                 $sms->setNumber(0);
                 $sms->setRecord($this);
