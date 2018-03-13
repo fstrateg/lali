@@ -55,7 +55,7 @@ class RecordsRecord extends \yii\db\ActiveRecord
                 if (empty($this->getAttribute('client_phone')))
                 {
                     Telegram::instance()
-                        ->sendMessageAll("Мастер: {$this->getAttribute('staff_name')}\r\nЗапись:{$this->getAttribute('appointed')}",
+                        ->sendMessageAll("Мастер: {$this->getAttribute('staff_name')}\r\nЗапись: {$this->getAttribute('appointed')}",
                             "Нет номера телефона!");
                     return true;
                 }
