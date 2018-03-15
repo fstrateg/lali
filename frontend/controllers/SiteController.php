@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\Access;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -65,6 +66,7 @@ class SiteController extends Controller
         ];
     }
 
+
     /**
      * Displays homepage.
      *
@@ -72,6 +74,10 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        if (Access::isOper()||Access::isAdmin())
+            $this->redirect('lc/index');
+
+        //exit();
         return $this->render('index');
     }
 
