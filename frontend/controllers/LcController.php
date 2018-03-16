@@ -2,6 +2,8 @@
 namespace frontend\controllers;
 
 use common\models\Access;
+use common\models\RecordsRecord;
+use frontend\models\LcWatsApp;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\ForbiddenHttpException;
