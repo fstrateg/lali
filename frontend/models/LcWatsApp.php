@@ -21,6 +21,13 @@ WHERE appointed between \'2018-02-01\' and \'2018-04-01\' AND a.attendance=1 and
 WHERE INSTR(a.services_id,b.id)>0 AND b.laser=\'Y\'
 )
     ');
-        return $cmd->queryAll();
+        $list=$cmd->queryAll();
+        foreach($list as $k=>$rw)
+        {
+            $name = str_replace('ё', 'е', $rw['name']);
+            preg_match("/([a-z]|[а-я])+/ui", $name, $matches);
+            $list[$k]['name']=$matches[0];
+        }
+        return $list;
     }
 }
