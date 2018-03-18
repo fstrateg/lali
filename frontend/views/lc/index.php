@@ -5,6 +5,15 @@ $this->title = 'La Letty';
 
 $list0=LcWatsApp::getRecords();
 $list=array_chunk($list0,4);
+$i=0;
+?>
+<script>
+fn1=function(id)
+{
+alert(id);
+}
+</script>
+<?
 foreach($list as $row)
 {?>
     <div class="row">
@@ -18,13 +27,52 @@ foreach($list as $row)
                    <div><p><?= $item['appointed'] ?></p></div>
                    <div><p><?= $item['staff_name'] ?></p></div>
                    <ul>
-                       <li>
-                           <?= $item['title'] ?>
-                       </li>
+                       <? if ($item['title'])
+                            echo '<li>'.$item['title'].'</li>';
+                       else
+                       {
+                           foreach(LcWatsApp::getServices($item['services_id']) as $ss)
+                           {
+                               echo '<li>'.$ss['title'].'</li>';
+                           }
+                       }
+                       ?>
                    </ul>
+                   <div class="row">
+                       <div class="span-3">
+                       <a class="mr-10 pull-right btn btn-warning" data="<?= $i++; ?>">
+                           <span class="glyphicon whatsapp"></span>
+                           WhatsApp
+                       </a>
+                       </div>
+                   </div>
                </div>
            </div>
        </div>
 <?
 }?></div>
-<?}?>
+<?}
+$js=<<< JS
+    $(document).ready(function() {
+        $('a.mr-10').on('click',
+            function(e){
+                var list=getlist();
+                var dt=$(e.target).attr('data');
+                if (dt==null)
+                    dt=$(e.target).parent().attr('data');
+                alert(list[dt].name);
+            }
+         );
+    });
+JS;
+$list='function getlist(){ return [';
+$r='';
+foreach($list0 as $item)
+{
+    $list.="$r{name:'".$item["name"]."',phone:'".$item['client_phone']."'}";
+    $r=',';
+}
+$list.='];}';
+$this->registerJs($list);
+$this->registerJs($js);
+?>

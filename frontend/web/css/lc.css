@@ -62,3 +62,12 @@
 .cbox-content ul li{
     list-style: none;
 }
+.whatsapp{
+    display: inline-block;
+    background: url('/images/whatsapp.png');
+    width: 16px;
+    height: 16px;
+}
+.mr-10{
+    margin-right: 10px;
+}

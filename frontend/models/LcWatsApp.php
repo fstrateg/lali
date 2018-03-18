@@ -20,6 +20,7 @@ WHERE appointed between \'2018-02-01\' and \'2018-04-01\' AND a.attendance=1 and
 ) a,services b
 WHERE INSTR(a.services_id,b.id)>0 AND b.laser=\'Y\'
 )
+order by a.appointed
     ');
         $list=$cmd->queryAll();
         foreach($list as $k=>$rw)
@@ -30,4 +31,13 @@ WHERE INSTR(a.services_id,b.id)>0 AND b.laser=\'Y\'
         }
         return $list;
     }
+
+    public static function getServices($services_id)
+    {
+        $cmd= yii::$app->db->createCommand("
+select title from services a
+where a.id in ($services_id)");
+        return $cmd->queryAll();
+    }
+
 }
