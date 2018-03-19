@@ -1,12 +1,14 @@
 <?php
 namespace backend\controllers;
 
+use common\models\Access;
 use common\models\ClientsRecord;
 use app\models\CityRecord;
 use app\models\SMSSettings;
 use Yii;
 use yii\web\Controller;
 use yii\filters\AccessControl;
+use yii\web\ForbiddenHttpException;
 
 
 /**
@@ -43,6 +45,13 @@ class SmsController extends Controller
                 'class' => 'yii\web\ErrorAction',
             ],
         ];
+    }
+
+    public function beforeAction($action)
+    {
+        if (!Access::isAdmin())
+            throw new ForbiddenHttpException('Доступ к этому разделу запрещен!');
+        return parent::beforeAction($action);
     }
 
     public function actionConfig()

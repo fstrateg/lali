@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use common\models\Access;
 use app\models\CityRecord;
 use common\models\ServicesRecord;
 use Yii;
@@ -11,6 +12,7 @@ use yii\helpers\Html;
 use yii\data\ActiveDataProvider;
 use backend\models\SettingsRecord;
 use yii\web\NotFoundHttpException;
+use yii\web\ForbiddenHttpException;
 
 /**
  * Site controller
@@ -38,6 +40,13 @@ class SpravController extends Controller
                 ],
             ],
         ];
+    }
+
+    public function beforeAction($action)
+    {
+        if (!Access::isAdmin())
+            throw new ForbiddenHttpException('Доступ к этому разделу запрещен!');
+        return parent::beforeAction($action);
     }
 
 

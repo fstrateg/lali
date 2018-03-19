@@ -1,12 +1,22 @@
 <?php
 namespace frontend\models;
 
+use common\components\Date;
+use common\models\SettingsRecord;
 use yii;
 
 class LcWatsApp
 {
     public static function getRecords()
     {
+        $day=SettingsRecord::findValue('laser','daywhatsap');
+        $dat=new Date();
+        $dat->subDays($day+1);
+        $p1=$dat->toMySqlRound();
+        $dat=new Date();
+        $dat->subDays($day);
+        $p2=$dat->toMySqlRound();
+
        $cmd= yii::$app->db->createCommand('
 SELECT a.resource_id,a.staff_name,a.appointed,a.services_id,a.client_phone,b.name,c.title
 FROM records a left join clients b on b.id=a.client_id
@@ -16,12 +26,13 @@ SELECT DISTINCT a.id
 FROM (
 SELECT a.*
 FROM records a
-WHERE appointed between \'2018-02-01\' and \'2018-04-01\' AND a.attendance=1 and a.deleted=0
+WHERE appointed between \''.$p1.'\' and \''.$p2.'\' AND a.attendance=1 and a.deleted=0
 ) a,services b
 WHERE INSTR(a.services_id,b.id)>0 AND b.laser=\'Y\'
 )
 order by a.appointed
     ');
+        //echo $cmd->sql;
         $list=$cmd->queryAll();
         foreach($list as $k=>$rw)
         {

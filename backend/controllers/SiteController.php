@@ -1,11 +1,13 @@
 <?php
 namespace backend\controllers;
 
+use common\models\Access;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use common\models\LoginForm;
+use yii\web\ForbiddenHttpException;
 
 /**
  * Site controller
@@ -53,6 +55,12 @@ class SiteController extends Controller
         ];
     }
 
+    public function beforeAction($action)
+    {
+        if (!Access::isAdmin())
+            throw new ForbiddenHttpException('Доступ к этому разделу запрещен!');
+        return parent::beforeAction($action);
+    }
     /**
      * Displays homepage.
      *

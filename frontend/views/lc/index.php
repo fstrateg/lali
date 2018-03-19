@@ -52,6 +52,11 @@ foreach($list as $row)
 <?
 }?></div>
 <?}
+?>
+<script>
+    window.watsappmsg='<?= \common\models\SettingsRecord::findValue('laser','watsapp') ?>';
+</script>
+<?
 $js=<<< JS
     $(document).ready(function() {
         $('a.mr-10').on('click',
@@ -60,7 +65,10 @@ $js=<<< JS
                 var dt=$(e.target).attr('data');
                 if (dt==null)
                     dt=$(e.target).parent().attr('data');
-                alert(list[dt].name);
+                var msg=window.watsappmsg.replace('%NAME%',list[dt].name);
+                var url="https://api.whatsapp.com/send?phone="+list[dt].phone+"&text="+msg;
+                window.open(url, '_blank');
+                //alert(msg);
             }
          );
     });
