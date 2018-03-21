@@ -1,5 +1,6 @@
 <?php
 namespace common\models;
+use common\components\Telegram;
 use Yii;
 /**
  * Class ServicesRecord
@@ -9,6 +10,8 @@ use Yii;
  * @property $scrubbing
  * @property $remind
  * @property $deleted
+ * @property $laser
+ * @property $moderated
  */
 class ServicesRecord extends \yii\db\ActiveRecord
 {
@@ -22,6 +25,7 @@ class ServicesRecord extends \yii\db\ActiveRecord
         return [
             [['scrubbing'],'integer'],
             [['remind'],'integer'],
+            [['laser'],'string'],
         ];
     }
 
@@ -32,6 +36,7 @@ class ServicesRecord extends \yii\db\ActiveRecord
             'title'=>Yii::t('app','Название Услуги'),
             'scrubbing'=>Yii::t('app','СМС скрабироваться'),
             'remind'=>Yii::t('app','Напомнить о себе (21,42)'),
+            'laser'=>Yii::t('app','Лазерная эпиляция'),
 
         ];
     }
@@ -43,5 +48,14 @@ class ServicesRecord extends \yii\db\ActiveRecord
         $rez->id=$resource_id;
         $rez->title=$data['title'];
         return $rez;
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert)
+        {
+            Telegram::instance()->sendMessage("Alex",$this->title,"Добавлен новый сервис");
+        }
+        return true;
     }
 }

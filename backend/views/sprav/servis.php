@@ -7,18 +7,29 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $dataForModerate yii\data\ActiveDataProvider */
+/* @var $params array */
 
 $this->title = 'Услуги';
 $this->params['breadcrumbs'][] = $this->title;
+$flt=$params['flt'];
+if ($flt=='md')
+    $data=$dataForModerate;
+else
+    $data=$dataProvider;
 ?>
     <div class="settings-record-index">
 
         <h1><?= Html::encode($this->title) ?></h1>
 
         <div id='editform'></div>
-
+        <? //print_r($params['test']) ?>
+        <ul class="nav nav-pills">
+            <li<?= empty($flt)?' class="active"':''?>><a href="<?= Url::to('servis') ?>">Все (<?= $dataProvider->getTotalCount() ?>)</a></li>
+            <li<?= empty($flt)?'':' class="active"'?>><a href="<?= Url::to('servis?flt=md') ?>">На модерацию (<?= $dataForModerate->getTotalCount() ?>)</a></li>
+        </ul>
         <?= GridView::widget([
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $data,
             'columns' => [
                 'title',
                 [
@@ -33,6 +44,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'value' => function ($model, $index, $widget) {
                         return Html::checkbox('remind[]',$model->remind,['onclick'=>'return false;']);
+                    }
+                ],
+                [
+                    'attribute'=>'laser',
+                    'format' => 'raw',
+                    'value' => function ($model, $index, $widget) {
+                        return Html::checkbox('laser[]',$model->laser=='Y',['onclick'=>'return false;']);
                     }
                 ],
                 ['class' => 'yii\grid\ActionColumn',

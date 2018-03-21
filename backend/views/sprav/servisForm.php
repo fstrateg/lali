@@ -15,6 +15,8 @@ yii\bootstrap\Modal::begin([
 $form=ActiveForm::begin();
 echo $form->field($model,'scrubbing')->checkbox();
 echo $form->field($model,'remind')->checkbox();
+echo $form->field($model,'laser')->radioList(['Y'=>'Да','N'=>'Нет']);
+echo $form->field($model,'moderated')->hiddenInput()->label(false);
 ?>
 <div class="form-group">
     <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>

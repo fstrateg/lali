@@ -179,12 +179,31 @@ class SpravController extends Controller
 
     private function servisIndex()
     {
+        $request=yii::$app->request;
+        $flt=$request->get('flt');
+        $session=yii::$app->session;
+        $session->set('servisurl',$this->buildargs($request->get()));
+
         $dataProvider = new ActiveDataProvider([
             'query' => ServicesRecord::find()->where('deleted<>1'),
         ]);
+        $dataForModerate = new ActiveDataProvider(['query'=> ServicesRecord::find()->where('deleted<>1 and moderated=\'N\'')]);
         return $this->render('servis', [
             'dataProvider' => $dataProvider,
+            'dataForModerate'=>$dataForModerate,
+            'params'=>['flt'=>$flt],
         ]);
+    }
+
+    private function buildargs($arr)
+    {
+        $rez='';
+        foreach($arr as $k=>$v)
+        {
+            $rez.=empty($rez)?'':'&';
+            $rez.=$k.'='.$v;
+        }
+        return $rez;
     }
 
     private function servisUpdate($id)
@@ -192,8 +211,13 @@ class SpravController extends Controller
         $model=ServicesRecord::findOne($id);
         $post=Yii::$app->request->post();
         $model->load($post);
-        if ($model->load($post) && $model->save()) {
-            return $this->redirect('servis');
+        if ($model->load($post))
+        {
+            $model->setAttribute('moderated','Y');
+            $model->save();
+            $add=yii::$app->session->get('servisurl','');
+            $url=empty($add)?'servis':'servis?'.$add;
+            return $this->redirect($url);
         } else {
             return $this->renderPartial('servisForm', [
                 'model' => $model,
