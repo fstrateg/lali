@@ -1,5 +1,5 @@
 <?php
-use app\models\ClientsRecord;
+use common\models\ClientsRecord;
 use yii\helpers\Html;
 /* @var $this yii\web\View
  *  @var $client ClientsRecord
