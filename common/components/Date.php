@@ -40,6 +40,11 @@ class Date
         return $this->date->format('Y-m-d');
     }
 
+    public function format($format='d.m.Y')
+    {
+        return $this->date->format($format);
+    }
+
     /**
      * @param string $date;
      * @param string $format;

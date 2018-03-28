@@ -11,7 +11,8 @@ class LcWatsApp
     {
         $day=SettingsRecord::findValue('laser','daywhatsap');
         $dat=new Date();
-        $dat->subDays($day+1);
+        //$dat->subDays($day+1);
+        $dat->subDays($day+60);
         $p1=$dat->toMySqlRound();
         $dat=new Date();
         $dat->subDays($day);

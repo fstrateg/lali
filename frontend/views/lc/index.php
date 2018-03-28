@@ -1,19 +1,62 @@
 <?php
 use frontend\models\LcWatsApp;
+use common\models\SettingsRecord;
+use common\components\Date;
 /* @var $this yii\web\View */
 $this->title = 'La Letty';
 
 $list0=LcWatsApp::getRecords();
-$list=array_chunk($list0,4);
-$i=0;
+//
+$i=1;
+$days=SettingsRecord::findValue('laser','daywhatsap');
+$data=new Date();
+$data->subDays($days);
 ?>
-<script>
-fn1=function(id)
-{
-alert(id);
-}
-</script>
+<p>Лазерная эпиляция. Клиенты посетившие студию <?=$days ?> дней назад. <?= $data->format(); ?></p>
+    <div class="table-responsive">
+<table class="table table-hover table-bordered">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Клиент</th>
+        <th>Номер тел.</th>
+        <th>Услуги</th>
+        <th>Мастер</th>
+        <th>Мед. обход</th>
+        <th>Статус мед. обхода</th>
+    </tr>
+    </thead>
+    <?
+    foreach ($list0 as $item) {
+    ?>
+<tr>
+    <td><?= $i ?></td>
+    <td><?= $item['name'] ?></td>
+    <td><?= $item['client_phone'] ?></td>
+    <td><ul>
+        <? foreach(LcWatsApp::getServices($item['services_id']) as $ss)
+        {
+        echo '<li>'.$ss['title'].'</li>';
+        }
+        ?>
+        </ul>
+    </td>
+    <td><?= $item['staff_name'] ?></td>
+    <td><a class="mr-10 btn btn-warning" data="<?= ($i-1); ?>">
+            <span class="glyphicon whatsapp"></span>
+            WhatsApp
+        </a></td>
+    <td></td>
+
+</tr>
+    <?
+        $i++;
+    }
+    ?>
+</table></div>
+
 <?
+$list=array_chunk($list0,4);
 foreach($list as $row)
 {?>
     <div class="row">
