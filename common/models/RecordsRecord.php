@@ -9,6 +9,8 @@ use common\components\SMSNikita;
  * Class RecordsRecord
  * @package common\models
  * @property $attendance
+ * @property $created
+ * @property $resource_id
  */
 class RecordsRecord extends \yii\db\ActiveRecord
 {
@@ -37,6 +39,7 @@ class RecordsRecord extends \yii\db\ActiveRecord
         $srv=[];
         foreach($data['services'] as $item) $srv[]=$item['id'];
         $rec=[
+            'staff_id'=>$data['staff']['id'],
             'staff_name'=>$data['staff']['name'],
             'appointed'=>$data['date'],
             'client_phone'=>$data['client']['phone'],
@@ -52,7 +55,8 @@ class RecordsRecord extends \yii\db\ActiveRecord
             if ($insert)
             {
                 if (Date::fromMysql($this->appointed)->get() < Date::now()) return true;
-                if (empty($this->getAttribute('client_phone')))
+                $phone=$this->getAttribute('client_phone');
+                if (empty($phone))
                 {
                     Telegram::instance()
                         ->sendMessageAll("Мастер: {$this->getAttribute('staff_name')}\r\nЗапись: {$this->getAttribute('appointed')}",

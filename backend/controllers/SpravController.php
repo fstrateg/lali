@@ -33,7 +33,7 @@ class SpravController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['city','config','servis'],
+                        'actions' => ['city','config','servis','staffrefresh'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -223,5 +223,10 @@ class SpravController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+    public function actionStaffrefresh()
+    {
+        \common\models\StaffRecord::RefreshAll();
     }
 }

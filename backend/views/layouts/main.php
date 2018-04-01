@@ -41,6 +41,11 @@ AppAsset::register($this);
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
+        $menuItems[] = ['label'=>'Приложения',
+            'items'=>[
+                ['label'=>'Контроль качества','url'=>['/app/quality']]
+            ]
+        ];
         $menuItems[] = ['label' => 'Настройки',
                         'items'=>[
                             ['label'=>'Города','url'=>['/sprav/city']],
@@ -51,6 +56,7 @@ AppAsset::register($this);
                             ['label'=>'Конфигурация','url'=>['/sprav/config']]
                         ]
                         ];
+
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')
             . Html::submitButton(
