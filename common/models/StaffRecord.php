@@ -1,5 +1,6 @@
 <?php
 namespace common\models;
+use common\components\Date;
 use Yii;
 /**
 * Class ServicesRecord
@@ -19,7 +20,8 @@ class StaffRecord extends \yii\db\ActiveRecord
     {
         return [
         [['id'],'integer'],
-        [['staff'],'string'],
+        [['name'],'string'],
+        [['created'],'string'],
         ];
     }
 
@@ -42,6 +44,25 @@ class StaffRecord extends \yii\db\ActiveRecord
         $response = curl_exec($ch);
         curl_close($ch);
         $response=json_decode($response,true);
-        print_r($response);
+        foreach($response as $staff)
+        {
+            $rw=StaffRecord::findOne($staff['id']);
+            if ($rw==null) //---- new ----
+            {
+                $rw=new StaffRecord();
+                $rw->id=$staff['id'];
+                $rw->created=(new Date())->toMySql();
+                $rw->name=$staff['name'];
+                $rw->save();
+            }
+            else
+            {
+                if ($rw!=$staff['name'])
+                {
+                    $rw->name=$staff['name'];
+                    $rw->save();
+                }
+            }
+        }
     }
 }

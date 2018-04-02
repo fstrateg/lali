@@ -1,32 +1,77 @@
 <?php
+use common\models\StaffRecord;
 /**
  * @var $this yii\web\View
  */
+
+$this->title="Контроль качества";
+function outListStaff($name)
+{
+    $rs=StaffRecord::find()->orderBy('name')->where(['deleted'=>0])->all();
+    echo '<ul class="list">';
+    foreach($rs as $s) {
+        $ck="<input type='checkbox' name='{$name}[{$s['id']}]' value='1'> {$s['name']}";
+        $hd="<input type='hidden' name='{$name}[{$s['id']}]' value='0'>";
+        echo "<li class='$name'>$hd $ck</li>";
+    }
+    echo '</ul>';
+}
 ?>
-<p><a class="btn btn-primary" href='#'>Обновить штат</a></p>
+<p><a id="staffrefresh" class="btn btn-primary" href='#'>Обновить штат</a></p>
 <div class="panel panel-default">
     <div class="panel-heading">Лазерная эпиляция</div>
     <div class="panel-body">
         <div class="form-group">
-        <input type="number" name="ldays" value="21" size="5"/> Количество дней назад
+        <input id="ldays" class="days" type="number" name="ldays" value="21" size="5"/> <label for="ldays">Количество дней назад</label>
         </div>
         <div class="form-group">
-        Все клиенты указанных мастеров
+            <input id="lall" type="checkbox" name="lall"> <label for="lall">Все клиенты указанных мастеров</label>
         </div>
+        <? outListStaff('laser') ?>
     </div>
 </div>
 <div class="panel panel-default">
     <div class="panel-heading">Шугаринг/Воск эпиляция</div>
     <div class="panel-body">
         <div class="form-group">
-        <input type="number" name="ldays" value="1" size="5"/> Количество дней назад
+        <input id="vdays" class="days" type="number" name="vdays" value="1" size="5"/> <label for="vdays">Количество дней назад</label>
         </div>
         <div class="form-group">
-            Все клиенты указанных мастеров
+            <input id="vall" type="checkbox" name="vall" /> <label for="vall">Все клиенты указанных мастеров</label>
         </div>
+        <? outListStaff('vosk') ?>
     </div>
 </div>
 <p>
     <a class="btn btn-success" href='#'>Сохранить</a>
-    <a class="btn btn-warning" href='#'>Отмена</a>
+    <a class="btn btn-warning" href='#' onclick="window.location.reload()">Отмена</a>
 </p>
+<?php
+$url=\yii\helpers\Url::to('/admin/sprav/staffrefresh');
+$js = <<< JS
+    $(document).ready(function(){
+        $('#staffrefresh').on('click',function(){
+            $.ajax("$url")
+            .done(function(){
+                window.location.reload();
+            });
+        });
+        $('#lall').on('click',function(e){
+            $('li.laser input').attr('checked',this.checked);
+        });
+        $('#vall').on('click',function(e){
+            $('li.vosk input').attr('checked',this.checked);
+        });
+    });
+JS;
+$this->registerJs($js);
+
+$css = <<< CSS
+ul.list{
+    list-style-type: none;
+}
+input.days{
+    width: 40px;
+}
+CSS;
+$this->registerCss($css);
