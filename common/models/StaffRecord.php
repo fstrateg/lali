@@ -57,7 +57,7 @@ class StaffRecord extends \yii\db\ActiveRecord
             }
             else
             {
-                if ($rw!=$staff['name'])
+                if ($rw->name!=$staff['name'])
                 {
                     $rw->name=$staff['name'];
                     $rw->save();

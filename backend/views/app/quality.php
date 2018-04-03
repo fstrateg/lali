@@ -1,10 +1,15 @@
 <?php
 use common\models\StaffRecord;
+use common\models\SettingsRecord;
+use yii\widgets\ActiveForm;
 /**
  * @var $this yii\web\View
  */
-
 $this->title="Контроль качества";
+
+$ldays=SettingsRecord::findValue('quality','laser');
+$vdays=SettingsRecord::findValue('quality','wax');
+
 function outListStaff($name)
 {
     $rs=StaffRecord::find()->orderBy('name')->where(['deleted'=>0])->all();
@@ -16,13 +21,15 @@ function outListStaff($name)
     }
     echo '</ul>';
 }
+$url=\yii\helpers\Url::to('/admin/app/qualitysave');
+$form = ActiveForm::begin(['action'=>$url]);
 ?>
 <p><a id="staffrefresh" class="btn btn-primary" href='#'>Обновить штат</a></p>
 <div class="panel panel-default">
     <div class="panel-heading">Лазерная эпиляция</div>
     <div class="panel-body">
         <div class="form-group">
-        <input id="ldays" class="days" type="number" name="ldays" value="21" size="5"/> <label for="ldays">Количество дней назад</label>
+        <input id="ldays" class="days" type="number" name="ldays" value="<?= $ldays ?>" size="5"/> <label for="ldays">Количество дней назад</label>
         </div>
         <div class="form-group">
             <input id="lall" type="checkbox" name="lall"> <label for="lall">Все клиенты указанных мастеров</label>
@@ -34,7 +41,7 @@ function outListStaff($name)
     <div class="panel-heading">Шугаринг/Воск эпиляция</div>
     <div class="panel-body">
         <div class="form-group">
-        <input id="vdays" class="days" type="number" name="vdays" value="1" size="5"/> <label for="vdays">Количество дней назад</label>
+        <input id="vdays" class="days" type="number" name="vdays" value="<?= $vdays?>" size="5"/> <label for="vdays">Количество дней назад</label>
         </div>
         <div class="form-group">
             <input id="vall" type="checkbox" name="vall" /> <label for="vall">Все клиенты указанных мастеров</label>
@@ -43,10 +50,12 @@ function outListStaff($name)
     </div>
 </div>
 <p>
-    <a class="btn btn-success" href='#'>Сохранить</a>
+    <input type="submit" class="btn btn-success" value="Сохранить">
     <a class="btn btn-warning" href='#' onclick="window.location.reload()">Отмена</a>
 </p>
 <?php
+ActiveForm::end();
+
 $url=\yii\helpers\Url::to('/admin/sprav/staffrefresh');
 $js = <<< JS
     $(document).ready(function(){

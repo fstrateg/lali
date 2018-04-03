@@ -19,7 +19,7 @@ class AppController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['quality'],
+                        'actions' => ['quality','qualitysave'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -50,5 +50,11 @@ class AppController extends Controller
     public function actionQuality()
     {
         return $this->render('quality');
+    }
+
+    public function actionQualitysave()
+    {
+        \app\models\Quality::qualitySave(yii::$app->request);
+        return $this->redirect('quality');
     }
 }
