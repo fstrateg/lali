@@ -10,12 +10,15 @@ $this->title="Контроль качества";
 $ldays=SettingsRecord::findValue('quality','laser');
 $vdays=SettingsRecord::findValue('quality','wax');
 
-function outListStaff($name)
+function outListStaff($name,$prop_id)
 {
     $rs=StaffRecord::find()->orderBy('name')->where(['deleted'=>0])->all();
+    $rr=\common\models\StaffPropRecord::getPropForStaff($prop_id);
+    //print_r($rr);
     echo '<ul class="list">';
     foreach($rs as $s) {
-        $ck="<input type='checkbox' name='{$name}[{$s['id']}]' value='1'> {$s['name']}";
+        $check=in_array($s['id'],$rr)?'checked':'';
+        $ck="<input type='checkbox' name='{$name}[{$s['id']}]' value='1' $check> {$s['name']}";
         $hd="<input type='hidden' name='{$name}[{$s['id']}]' value='0'>";
         echo "<li class='$name'>$hd $ck</li>";
     }
@@ -34,7 +37,7 @@ $form = ActiveForm::begin(['action'=>$url]);
         <div class="form-group">
             <input id="lall" type="checkbox" name="lall"> <label for="lall">Все клиенты указанных мастеров</label>
         </div>
-        <? outListStaff('laser') ?>
+        <? outListStaff('laser',1) ?>
     </div>
 </div>
 <div class="panel panel-default">
@@ -46,7 +49,7 @@ $form = ActiveForm::begin(['action'=>$url]);
         <div class="form-group">
             <input id="vall" type="checkbox" name="vall" /> <label for="vall">Все клиенты указанных мастеров</label>
         </div>
-        <? outListStaff('vosk') ?>
+        <? outListStaff('vosk',2) ?>
     </div>
 </div>
 <p>

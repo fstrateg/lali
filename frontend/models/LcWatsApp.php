@@ -7,7 +7,7 @@ use yii;
 
 class LcWatsApp
 {
-    public static function getRecords()
+    public static function getRecords($prop_id)
     {
         $day=SettingsRecord::findValue('laser','daywhatsap');
         $dat=new Date();
