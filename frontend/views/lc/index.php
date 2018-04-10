@@ -2,6 +2,7 @@
 use frontend\models\LcWatsApp;
 use common\models\SettingsRecord;
 use common\components\Date;
+use yii\helpers\Html;
 /* @var $this yii\web\View */
 $this->title = 'La Letty';
 
@@ -13,6 +14,7 @@ $j=1;
 $days=SettingsRecord::findValue('quality','laser');
 $data=new Date();
 $data->subDays($days);
+$stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
 ?>
 <p>Лазерная эпиляция. Клиенты посетившие студию <?=$days ?> дней назад. <?= $data->format(); ?></p>
     <div class="table-responsive">
@@ -48,7 +50,7 @@ $data->subDays($days);
             <span class="glyphicon whatsapp"></span>
             WhatsApp
         </a></td>
-    <td></td>
+    <td><?= HTML::dropDownList('list',$item['stat'],$stat, ['class'=>'statlist form-control','data'=>$item['resource_id']]); ?></td>
 
 </tr>
     <?
@@ -96,7 +98,7 @@ $data->subDays($days);
                             <span class="glyphicon whatsapp"></span>
                             WhatsApp
                         </a></td>
-                    <td></td>
+                    <td><?= HTML::dropDownList('list','vl',$stat); ?></td>
 
                 </tr>
                 <?
@@ -122,6 +124,18 @@ $js=<<< JS
                 var url="https://api.whatsapp.com/send?phone="+list[dt].phone+"&text="+msg;
                 window.open(url, '_blank');
                 //alert(msg);
+            }
+         );
+
+         $('select.statlist').on('change',
+            function(e){
+                var id=$(this).attr('data');
+                var status=$(this).val();
+                $.ajax('/lc/qualitysave?id='+id+'&status='+status)
+                        .done(function(){alert('OK');})
+                        .fail(function(xhr, ajaxOptions, thrownError){
+                        alert(xhr.responseText);
+                        });
             }
          );
     });

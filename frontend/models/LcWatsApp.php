@@ -19,9 +19,10 @@ class LcWatsApp
         $p2=$dat->toMySqlRound();
 
        $cmd= yii::$app->db->createCommand('
-SELECT a.resource_id,a.staff_name,a.appointed,a.services_id,a.client_phone,b.name,c.title
+SELECT a.resource_id,a.staff_name,a.appointed,a.services_id,a.client_phone,b.name,c.title,ifnull(q.status,0) stat
 FROM records a left join clients b on b.id=a.client_id
 	left join services c on trim(c.id)=a.services_id
+    left join quality q on a.resource_id=q.record_id
 WHERE a.id IN (
 SELECT DISTINCT a.id
 FROM (

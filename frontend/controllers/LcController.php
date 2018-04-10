@@ -4,6 +4,7 @@ namespace frontend\controllers;
 use common\models\Access;
 use common\models\RecordsRecord;
 use frontend\models\LcWatsApp;
+use frontend\models\QualityRecord;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\ForbiddenHttpException;
@@ -25,7 +26,7 @@ class LcController extends Controller
                 'only' => ['logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index','qualitysave'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -45,5 +46,11 @@ class LcController extends Controller
     public function actionIndex()
     {
         return $this->render('index');
+    }
+
+    public function actionQualitysave($id,$status)
+    {
+        QualityRecord::SaveVal($id,$status);
+        return 'OK';
     }
 }
