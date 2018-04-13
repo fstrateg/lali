@@ -20,9 +20,9 @@ class QualityRecord extends ActiveRecord
         return '{{%quality}}';
     }
 
-    public static function SaveVal($id,$stat)
+    public static function SaveVal($typ, $id,$stat)
     {
-        $obj=QualityRecord::findOne(['record_id'=>$id]);
+        $obj=QualityRecord::findOne(['record_id'=>$id,'typ'=>$typ]);
         if ($obj!=null)
         {
             $obj->setAttribute('status',$stat);
@@ -32,6 +32,7 @@ class QualityRecord extends ActiveRecord
             $obj=new QualityRecord();
             $obj->setAttribute('record_id',$id);
             $obj->setAttribute('status',$stat);
+            $obj->setAttribute('typ',$typ);
         }
         $obj->setAttribute('dat',(new Date())->toMySql());
         $obj->save();

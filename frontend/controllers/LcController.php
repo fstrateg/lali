@@ -5,6 +5,7 @@ use common\models\Access;
 use common\models\RecordsRecord;
 use frontend\models\LcWatsApp;
 use frontend\models\QualityRecord;
+use yii;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\ForbiddenHttpException;
@@ -45,12 +46,15 @@ class LcController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index');
+        $dat=yii::$app->request->get('dat');
+        $model=new LcWatsApp();
+        $model->init($dat);
+        return $this->render('index',['model'=>$model]);
     }
 
-    public function actionQualitysave($id,$status)
+    public function actionQualitysave($typ,$id,$status)
     {
-        QualityRecord::SaveVal($id,$status);
+        QualityRecord::SaveVal($typ,$id,$status);
         return 'OK';
     }
 }

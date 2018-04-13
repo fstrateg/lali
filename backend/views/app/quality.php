@@ -7,8 +7,14 @@ use yii\widgets\ActiveForm;
  */
 $this->title="Контроль качества";
 
-$ldays=SettingsRecord::findValue('quality','laser');
-$vdays=SettingsRecord::findValue('quality','wax');
+$grp=SettingsRecord::getValuesGroup('quality');
+
+/*$ldays=SettingsRecord::findValue('quality','laser');
+$vdays=SettingsRecord::findValue('quality','wax');*/
+$ldays=$grp['laser'];
+$vdays=$grp['wax'];
+$onnew=($grp['onnew']=='1')?'checked':'';
+
 
 function outListStaff($name,$prop_id)
 {
@@ -26,6 +32,7 @@ function outListStaff($name,$prop_id)
 }
 $url=\yii\helpers\Url::to('/admin/app/qualitysave');
 $form = ActiveForm::begin(['action'=>$url]);
+
 ?>
 <p><a id="staffrefresh" class="btn btn-primary" href='#'>Обновить штат</a></p>
 <div class="panel panel-default">
@@ -44,7 +51,11 @@ $form = ActiveForm::begin(['action'=>$url]);
     <div class="panel-heading">Шугаринг/Воск эпиляция</div>
     <div class="panel-body">
         <div class="form-group">
-        <input id="vdays" class="days" type="number" name="vdays" value="<?= $vdays?>" size="5"/> <label for="vdays">Количество дней назад</label>
+            <input id="vdays" class="days" type="number" name="vdays" value="<?= $vdays?>" size="5"/> <label for="vdays">Количество дней назад</label>
+
+        </div>
+        <div class="form-group">
+            <input type="hidden" name="onnew" value="0"><input id="onnew" type="checkbox" name="onnew" value="1" <?= $onnew ?>/> <label for="onnew">Только новые клиенты</label>
         </div>
         <div class="form-group">
             <input id="vall" type="checkbox" name="vall" /> <label for="vall">Все клиенты указанных мастеров</label>

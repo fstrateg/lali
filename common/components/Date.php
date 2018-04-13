@@ -12,12 +12,17 @@ use yii;
 
 class Date
 {
-    var $date;
+    public $date;
 
     function __construct()
     {
 
         $this->date=self::now();
+    }
+
+    function __clone()
+    {
+        $this->date = clone $this->date;
     }
 
     public static function now()
@@ -64,6 +69,18 @@ class Date
         $this->date->sub($di);
         return $this;
     }
+
+    /**
+     * @param string $days
+     * @return $this
+     */
+    public function addDays($days)
+    {
+        $di=new \DateInterval('P'.$days.'D');
+        $this->date->add($di);
+        return $this;
+    }
+
 
     /**
      * @param $vl string

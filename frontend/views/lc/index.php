@@ -3,20 +3,39 @@ use frontend\models\LcWatsApp;
 use common\models\SettingsRecord;
 use common\components\Date;
 use yii\helpers\Html;
-/* @var $this yii\web\View */
+/**
+ * @var $this yii\web\View;
+ * @var $calcdat common\components\Date;
+ * @var $model LcWatsApp;
+ */
 $this->title = 'La Letty';
 
-$list1=LcWatsApp::getRecords(1);
-$list2=LcWatsApp::getRecords(2);
-//
+$list1=$model->findLaserRecords();
+$list2=$model->findWaxRecords();
+
 $i=1;
 $j=1;
-$days=SettingsRecord::findValue('quality','laser');
-$data=new Date();
-$data->subDays($days);
 $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
+
+
 ?>
-<p>Лазерная эпиляция. Клиенты посетившие студию <?=$days ?> дней назад. <?= $data->format(); ?></p>
+<p>
+<div class="btn-toolbar" role="toolbar" aria-label="...">
+    <div class="btn-group mr-2" role="group" aria-label="First group">
+        <a class="btn btn-default" href="/lc/index">Сегодня</a>
+    </div>
+    <div class="btn-group mr-2" role="group" aria-label="First group">
+        <a class="btn btn-default" href="/lc/index?dat=<?= $model->getParamPrior() ?>">&lt;</a>
+        <a class="btn btn-default" href="/lc/index?dat=<?= $model->getParamNext() ?>">&gt;</a>
+    </div>
+    <div class="btn mr-2">
+        <?= $model->getCaclDate(); ?>
+     </div>
+    </div>
+
+</p>
+<hr>
+<p>Лазерная эпиляция. Клиенты посетившие студию <?=$model->days_laser; ?> дней назад. <?= $model->getDateLaser() ?></p>
     <div class="table-responsive">
 <table class="table table-hover table-bordered">
     <thead>
@@ -46,11 +65,11 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
         </ul>
     </td>
     <td><?= $item['staff_name'] ?></td>
-    <td><a class="mr-10 btn btn-warning" data="<?= ($i-1); ?>">
+    <td><a class="mr-10 btn btn-warning" data-typ="1" data-id="<?= ($i-1); ?>">
             <span class="glyphicon whatsapp"></span>
             WhatsApp
         </a></td>
-    <td><?= HTML::dropDownList('list',$item['stat'],$stat, ['class'=>'statlist form-control','data'=>$item['resource_id']]); ?></td>
+    <td><?= HTML::dropDownList('list',$item['stat'],$stat, ['class'=>'statlist form-control','data-id'=>$item['resource_id'], 'data-typ'=>'1']); ?></td>
 
 </tr>
     <?
@@ -58,13 +77,8 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
     }
     ?>
 </table></div>
-
-<?
-$days=SettingsRecord::findValue('quality','wax');
-$data=new Date();
-$data->subDays($days);
-?>
-    <p>Восковая/шугаринг эпиляция. Клиенты посетившие студию <?=$days ?> дней назад. <?= $data->format(); ?></p>
+<hr>
+    <p>Восковая/шугаринг эпиляция. Клиенты посетившие студию <?=$model->days_wax ?> дней назад. <?= $model->getDateWax(); ?></p>
     <div class="table-responsive">
         <table class="table table-hover table-bordered">
             <thead>
@@ -94,11 +108,11 @@ $data->subDays($days);
                         </ul>
                     </td>
                     <td><?= $item['staff_name'] ?></td>
-                    <td><a class="mr-10 btn btn-warning" data="<?= ($i-1); ?>">
+                    <td><a class="mr-10 btn btn-warning" data-typ="2" data-id="<?= ($i-1); ?>">
                             <span class="glyphicon whatsapp"></span>
                             WhatsApp
                         </a></td>
-                    <td><?= HTML::dropDownList('list','vl',$stat); ?></td>
+                    <td><?= HTML::dropDownList('list',$item['stat'],$stat,['class'=>'statlist form-control','data-id'=>$item['resource_id'],'data-typ'=>2]); ?></td>
 
                 </tr>
                 <?
@@ -109,7 +123,8 @@ $data->subDays($days);
     </div>
 
 <script>
-    window.watsappmsg='<?= \common\models\SettingsRecord::findValue('laser','watsapp') ?>';
+    window.watsappmsg=['<?= \common\models\SettingsRecord::findValue('quality','lasermsg') ?>',
+    '<?= \common\models\SettingsRecord::findValue('quality','waxmsg') ?>'];
 </script>
 <?
 $js=<<< JS
@@ -117,10 +132,22 @@ $js=<<< JS
         $('a.mr-10').on('click',
             function(e){
                 var list=getlist();
-                var dt=$(e.target).attr('data');
+                var dt=$(e.target).attr('data-id');
+                var typ="1";
                 if (dt==null)
-                    dt=$(e.target).parent().attr('data');
-                var msg=window.watsappmsg.replace('%NAME%',list[dt].name);
+                {
+                    dt=$(e.target).parent().attr('data-id');
+                    typ=$(e.target).parent().attr('data-typ');
+                }
+                else
+                {
+                    typ=$(e.target).attr('data-typ');
+                }
+
+                var msg=window.watsappmsg[0];
+                if (typ=="2")
+                    msg=window.watsappmsg[1];
+                msg=msg.replace('%NAME%',list[dt].name)
                 var url="https://api.whatsapp.com/send?phone="+list[dt].phone+"&text="+msg;
                 window.open(url, '_blank');
                 //alert(msg);
@@ -129,10 +156,10 @@ $js=<<< JS
 
          $('select.statlist').on('change',
             function(e){
-                var id=$(this).attr('data');
+                var id=$(this).attr('data-id');
+                var type=$(this).attr('data-typ');
                 var status=$(this).val();
-                $.ajax('/lc/qualitysave?id='+id+'&status='+status)
-                        .done(function(){alert('OK');})
+                $.ajax('/lc/qualitysave?typ='+type+'&id='+id+'&status='+status)
                         .fail(function(xhr, ajaxOptions, thrownError){
                         alert(xhr.responseText);
                         });
