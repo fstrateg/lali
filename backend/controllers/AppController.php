@@ -19,7 +19,7 @@ class AppController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['quality','qualitysave'],
+                        'actions' => ['quality','qualitysave','qualitymsg'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -45,6 +45,18 @@ class AppController extends Controller
         if (!Access::isAdmin())
             throw new ForbiddenHttpException('Доступ к этому разделу запрещен!');
         return parent::beforeAction($action);
+    }
+
+    public function actionQualitymsg()
+    {
+        $post=Yii::$app->request->post();
+        if($post)
+        {
+            \common\models\SettingsRecord::setValue('quality','lasermsg',$post['lasermsg']);
+            \common\models\SettingsRecord::setValue('quality','waxmsg',$post['waxmsg']);
+            Yii::$app->getSession()->setFlash('ok','Сохранено');
+        }
+        return $this->render('qualitymsg');
     }
 
     public function actionQuality()
