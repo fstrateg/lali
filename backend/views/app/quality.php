@@ -34,7 +34,11 @@ $url=\yii\helpers\Url::to('/admin/app/qualitysave');
 $form = ActiveForm::begin(['action'=>$url]);
 
 ?>
-<p><a id="staffrefresh" class="btn btn-primary" href='#'>Обновить штат</a></p>
+<div class="form-group">
+    <a id="staffrefresh" class="btn btn-primary" href='#'>Обновить штат</a>
+    <a class="btn btn-default pull-right" href='<?= \yii\helpers\Url::to('qualitymsg')?>'>Сообщения</a>
+</div>
+
 <div class="panel panel-default">
     <div class="panel-heading">Лазерная эпиляция</div>
     <div class="panel-body">
@@ -52,7 +56,6 @@ $form = ActiveForm::begin(['action'=>$url]);
     <div class="panel-body">
         <div class="form-group">
             <input id="vdays" class="days" type="number" name="vdays" value="<?= $vdays?>" size="5"/> <label for="vdays">Количество дней назад</label>
-
         </div>
         <div class="form-group">
             <input type="hidden" name="onnew" value="0"><input id="onnew" type="checkbox" name="onnew" value="1" <?= $onnew ?>/> <label for="onnew">Только новые клиенты</label>

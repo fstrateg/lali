@@ -36,6 +36,15 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
 </p>
 <hr>
 <p>Лазерная эпиляция. Клиенты посетившие студию <?=$model->days_laser; ?> дней назад. <?= $model->getDateLaser() ?></p>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="pull-right">
+            Установить всем:
+            <?= HTML::dropDownList('list','0',$stat,['class'=>'form-control','style'=>'width:auto;display:inline-block']); ?>
+            <a id="laser-all" href="#" class="btn btn-default">Сохранить</a>
+        </div>
+    </div>
+</div>
     <div class="table-responsive">
 <table class="table table-hover table-bordered">
     <thead>
@@ -79,6 +88,15 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
 </table></div>
 <hr>
     <p>Восковая/шугаринг эпиляция. Клиенты посетившие студию <?=$model->days_wax ?> дней назад. <?= $model->getDateWax(); ?></p>
+    <div class="row">
+    <div class="col-lg-12">
+        <div class="pull-right">
+            Установить всем:
+            <?= HTML::dropDownList('list','0',$stat,['class'=>'form-control','style'=>'width:auto;display:inline-block']); ?>
+            <a id="wax-all" href="#" class="btn btn-default">Сохранить</a>
+        </div>
+    </div>
+</div>
     <div class="table-responsive">
         <table class="table table-hover table-bordered">
             <thead>
@@ -123,8 +141,9 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
     </div>
 
 <script>
-    window.watsappmsg=['<?= \common\models\SettingsRecord::findValue('quality','lasermsg') ?>',
-    '<?= \common\models\SettingsRecord::findValue('quality','waxmsg') ?>'];
+    window.watsappmsg=['<?= $model->getLaserMsg() ?>',
+    '<?= $model->getWaxMsg() ?>'];
+
 </script>
 <?
 $js=<<< JS
@@ -165,6 +184,28 @@ $js=<<< JS
                         });
             }
          );
+
+         $('#wax-all').on('click',function(){
+            var ss=$(this).parent().find('select').val();
+            if (ss==0) return;
+            var rs=$('select.statlist');
+            $.each(rs,function(ind,vl){
+                if ($(vl).attr('data-typ')=='2'&&$(vl).val()==0)
+                    $(vl).val(ss);
+            });
+         });
+
+         $('#laser-all').on('click',function(){
+            var ss=$(this).parent().find('select').val();
+            if (ss==0) return;
+            var rs=$('select.statlist');
+            $.each(rs,function(ind,vl){
+                if ($(vl).attr('data-typ')=='1'&&$(vl).val()==0)
+                {
+                    $(vl).val(ss);
+                }
+            });
+         });
     });
 JS;
 $list='function getlist(){ return [';

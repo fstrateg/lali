@@ -24,6 +24,8 @@ class LcWatsApp
      */
     var $dat_wax;
 
+    var $cfg;
+
     public $days_laser;
     public $days_wax;
 
@@ -31,18 +33,28 @@ class LcWatsApp
     {
         $this->dat=new Date();
         if ($sdat) $this->dat->set($sdat,'Ymd');
-
-        $day=SettingsRecord::findValue('quality','laser');
+        $this->cfg=SettingsRecord::getValuesGroup('quality');
+        $day=$this->cfg['laser']; //SettingsRecord::findValue('quality',);
         $this->days_laser=$day;
         $dd=clone $this->dat;
         $dd->subDays($day);
         $this->dat_laser=$dd;
 
         $dd=clone $this->dat;
-        $day=SettingsRecord::findValue('quality','wax');
+        $day=$this->cfg['wax'];
         $this->days_wax=$day;
         $dd->subDays($day);
         $this->dat_wax=$dd;
+    }
+
+    public function getLaserMsg()
+    {
+        return $this->cfg['lasermsg'];
+    }
+
+    public function getWaxMsg()
+    {
+        return $this->cfg['waxmsg'];
     }
 
     public function getCaclDate()
@@ -159,6 +171,7 @@ order by a.appointed
             preg_match("/([a-z]|[а-я])+/ui", $name, $matches);
             $list[$k]['name']=$matches[0];
         }
+        if ($this->cfg['onnew']) $list=$this->filter_vax_onlynew($list,$p1);
         return $list;
     }
 
@@ -167,17 +180,17 @@ order by a.appointed
         $ids=[];
         foreach ($list as $item) $ids[]=$item['client_id'];
         $usl=implode(',',$ids);
-        if ($usl) $usl=" where client_id in ($usl) and date(appointed)<\'".$dat."\' AND a.attendance=1 and a.deleted=0";
+        if ($usl) $usl=" where client_id in ($usl) and date(appointed)<='".$dat."' AND attendance=1 and deleted=0";
         $cmd= yii::$app->db->createCommand('
 Select client_id,count(1) cnt
 from records'
-            .$usl,' group by client_id');
+            .$usl.' group by client_id');
         $table=$cmd->queryAll();
         $table=yii\helpers\ArrayHelper::index($table,'client_id');
-        foreach ($list as $item)
+        foreach ($list as $k=>$item)
         {
-
+            if (((int)$table[$item['client_id']]['cnt'])>1) unset($list[$k]);
         }
-
+        return $list;
     }
 }
