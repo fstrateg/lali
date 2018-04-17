@@ -147,6 +147,24 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
 </script>
 <?
 $js=<<< JS
+    function setVL(typ,btn)
+    {
+        var id;
+        var ss=$(btn).parent().find('select').val();
+        if (ss==0) return;
+        var rs=$('select.statlist');
+            $.each(rs,function(ind,vl){
+                if ($(vl).attr('data-typ')==typ&&$(vl).val()==0)
+                {
+                    id=$(vl).attr('data-id');
+                    $.ajax('/lc/qualitysave?typ='+typ+'&id='+id+'&status='+ss)
+                        .fail(function(xhr, ajaxOptions, thrownError){
+                        alert(xhr.responseText);
+                        });
+                    $(vl).val(ss);
+                }
+            });
+    }
     $(document).ready(function() {
         $('a.mr-10').on('click',
             function(e){
@@ -186,25 +204,11 @@ $js=<<< JS
          );
 
          $('#wax-all').on('click',function(){
-            var ss=$(this).parent().find('select').val();
-            if (ss==0) return;
-            var rs=$('select.statlist');
-            $.each(rs,function(ind,vl){
-                if ($(vl).attr('data-typ')=='2'&&$(vl).val()==0)
-                    $(vl).val(ss);
-            });
+           setVL(2,this);
          });
 
          $('#laser-all').on('click',function(){
-            var ss=$(this).parent().find('select').val();
-            if (ss==0) return;
-            var rs=$('select.statlist');
-            $.each(rs,function(ind,vl){
-                if ($(vl).attr('data-typ')=='1'&&$(vl).val()==0)
-                {
-                    $(vl).val(ss);
-                }
-            });
+            setVL(1,this);
          });
     });
 JS;
