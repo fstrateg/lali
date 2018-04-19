@@ -169,7 +169,12 @@ order by a.appointed
         {
             $name = str_replace('ё', 'е', $rw['name']);
             preg_match("/([a-z]|[а-я])+/ui", $name, $matches);
-            $list[$k]['name']=$matches[0];
+            if (preg_match("/([a-z]|[а-я])+/ui", $name, $matches))
+                $list[$k]['name']=$matches[0];
+            else
+            {
+                unset($list[$k]);
+            }
         }
         if ($this->cfg['onnew']) $list=$this->filter_vax_onlynew($list,$p1);
         return $list;
