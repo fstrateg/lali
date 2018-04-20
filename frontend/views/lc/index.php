@@ -216,12 +216,12 @@ $list='function getlist(){ return [';
 $r='';
 foreach($list1 as $item)
 {
-    $list.="$r{name:'".$item["name"]."',phone:'".$item['client_phone']."'}";
+    $list.="$r{name:'".$item["name"]."',phone:'".str_replace('+','',$item['client_phone'])."'}";
     $r=',';
 }
 foreach($list2 as $item)
 {
-    $list.="$r{name:'".$item["name"]."',phone:'".$item['client_phone']."'}";
+    $list.="$r{name:'".$item["name"]."',phone:'".str_replace('+','',$item['client_phone'])."'}";
     $r=',';
 }
 $list.='];}';
