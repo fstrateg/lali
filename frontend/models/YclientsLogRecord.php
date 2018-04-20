@@ -19,7 +19,7 @@ class YclientsLogRecord extends ActiveRecord
         //$rws=YclientsLogRecord::find()->where(['done'=>0])->all();
         //foreach($rws as $rw)
         //{
-            $rw->done=1;
+        $op=['create'=>'AP','update'=>'ED','delete'=>'DE'];
             if ($rw->data) {
                 try {
                     $global = json_decode(stripslashes($rw->data), true);
@@ -28,6 +28,10 @@ class YclientsLogRecord extends ActiveRecord
                     $resource_id = $global['resource_id'];
                     $status = $global['status']; // create, update, delete
                     $data = $global['data'];
+
+                    $rw->resource=$resource;
+                    $rw->resource_id=$resource_id;
+                    $rw->oper=$op[$status];
                     if ($company_id == YclientsLogRecord::$cfg['company']) {
                         $table = null;
                         if ($resource == 'client') {
@@ -38,15 +42,21 @@ class YclientsLogRecord extends ActiveRecord
                             $table = ServicesRecord::initRec($resource_id, $data);
                         }
                         $table->status = $status;
+                        $table->num=$rw->id;
                         if ($status=='delete')
                             $table->deleted=1;
                         $table->save();
                     }
+                    $rw->done=1;
                 }catch(\Exception $e)
                 {
                     \common\components\Telegram::instance()->sendMessage('Alex',$e->getTraceAsString(),$e->getMessage());
                     $rw->done=2;
                 }
+            }
+            else
+            {
+                $rw->done=3;
             }
             $rw->save();
         //}
