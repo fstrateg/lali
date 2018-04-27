@@ -26,6 +26,7 @@ class SMS extends BaseObject
     public $Dontsend=false;
     public $client_phone;
     public $HasError=false;
+    private $lat=false;
     /**
      * @var ClientsRecord
      */
@@ -41,6 +42,7 @@ class SMS extends BaseObject
     {
         $s=SMSSettings::findOne(['days'=>$day]);
         if (!$s->sms_on) $this->Dontsend=true;
+        if ($s->lat=='Y') $this->lat=true;
         $this->transaction_id='c'.$day.'_';
         $this->message=$s->sms_text;
         $this->msg_noname=$s->sms_text_noname;
@@ -71,6 +73,10 @@ class SMS extends BaseObject
             $i->getKlient($this->record->client_id);
             $this->client=ClientsRecord::findOne(['id'=>$this->record->client_id]);
         }
+        if ($this->client!=null)
+            $this->Dontsend=($this->client->exception_1==1);
+        else
+            $this->Dontsend=true;
     }
 
     private function _prepare()
@@ -106,6 +112,7 @@ class SMS extends BaseObject
                     str_replace('%MASTER%',$staff, $msg)
                 )
         );
+        if ($this->lat) $msg=SMS::translate($msg);
 
         return $msg;
     }
@@ -141,13 +148,13 @@ class SMS extends BaseObject
             // Смотрим когда была создана заявка
             if ($sms->checkForSecond($min)) {
                 // Отправляем
-                //$msg = $sms->getMessageText();
-                //echo $msg;
                 if (!$sms->Dontsend) {
                     $sms->send();
+                    $r->sms_second=1;
                     //Telegram::instance()->sendMessageAll($msg, $sms->client_phone);
                 }
-                $r->sms_second=1;
+                else
+                    $r->sms_second=3;
             }
             else
                 $r->sms_second=3;
@@ -242,8 +249,17 @@ class SMS extends BaseObject
     public function send()
     {
         $t=Telegram::instance();
-        $t->sendMessageAll($this->getMessageText(),$this->client_phone." ({$this->transaction_id})");
+        $msg=$this->getMessageText();
         $sms=new SMSNikita();
-        $sms->sendSMS($this->client_phone,$this->getMessageText(),$this->transaction_id);
+        $sms->sendSMS($this->client_phone,$msg,$this->transaction_id);
+        //if ($this->lat) $msg=SMS::translate($msg);
+        $t->sendMessageAll($msg,$this->client_phone." ({$this->transaction_id})");
+    }
+
+    public static function translate($text)
+    {
+        $rus = array('А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я');
+        $lat = array('A', 'B', 'V', 'G', 'D', 'E', 'E', 'Gh', 'Z', 'I', 'Y', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F', 'H', 'C', 'Ch', 'Sh', 'Sch', 'Y', 'Y', 'Y', 'E', 'Yu', 'Ya', 'a', 'b', 'v', 'g', 'd', 'e', 'e', 'gh', 'z', 'i', 'y', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'f', 'h', 'c', 'ch', 'sh', 'sch', 'y', 'y', 'y', 'e', 'yu', 'ya');
+        return str_replace($rus, $lat, $text);
     }
 }

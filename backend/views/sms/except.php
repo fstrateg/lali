@@ -69,17 +69,19 @@ $clients=new ClientsRecord();
                         //'value' => function($data) { return $data->name; },
                     ],
                     [
-                        'label' => 'Примечание',
-                        'attribute'=>'note',
+                        'label' => 'Телефон',
+                        'attribute'=>'phone',
                     ],
                     [
                         'label' => 'Статус',
                         'value' => function ($data) {
                             $r=array();
+                            if ($data->exception_0) $r[]='зап';
+                            if ($data->exception_1) $r[]='напом';
                             if ($data->exception_5) $r[]='5';
                             if ($data->exception_21) $r[]='21';
                             if ($data->exception_42) $r[]='42';
-                            return implode(',',$r); },
+                            return implode(', ',$r); },
                     ],
                     ['class' => 'yii\grid\ActionColumn',
                         'template' => '{delete}',

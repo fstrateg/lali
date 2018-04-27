@@ -8,6 +8,8 @@ $form=\yii\bootstrap\ActiveForm::begin();
 echo $form->field($client,'id')->hiddenInput()->label(false);
 echo $form->field($client,'name')->textInput(['readonly'=>true])->label();
 echo $form->field($client,'phone')->textInput(['readonly'=>true])->label();
+echo $form->field($client,'exception_0')->checkbox()->label();
+echo $form->field($client,'exception_1')->checkbox()->label();
 echo $form->field($client,'exception_5')->checkbox()->label();
 echo $form->field($client,'exception_21')->checkbox()->label();
 echo $form->field($client,'exception_42')->checkbox()->label();

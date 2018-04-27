@@ -1,8 +1,10 @@
 <?php
 namespace frontend\controllers;
 
+use backend\models\SettingsRecord;
 use common\components\Date;
 use common\components\SMS;
+use common\models\SMSSettings;
 use frontend\models\YclientsImport;
 use frontend\models\YclientsLogRecord;
 use frontend\models\JobsModel;
@@ -103,15 +105,10 @@ class JobsController extends Controller
     */
     public function actionTest()
     {
-        $log=new YclientsLogRecord();
-        $curdate=new \DateTime('now',new \DateTimeZone('Asia/Bishkek'));
-        $log->dat=$curdate->format('Y-m-d H:i:s');
-        $log->ip= $_SERVER["REMOTE_ADDR"];
-        $jsonPostData = 'test';
-        $log->data=$jsonPostData;
-        $log->insert();
-        $log->done=3;
-        $log->update();
+       $sms=SMSSettings::findOne(['days'=>1]);
+        echo $sms->sms_text;
+        echo '<br>';
+        echo SMS::translate($sms->sms_text);
 
     }
 

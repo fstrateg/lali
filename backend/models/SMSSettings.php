@@ -19,6 +19,7 @@ class SMSSettings extends ActiveRecord
     {
         return [
             [['sms_on'],'integer'],
+            [['lat'],'string'],
             [['sms_text'],'string'],
             [['sms_text_noname'],'string'],
         ];

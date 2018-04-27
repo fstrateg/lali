@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use common\components\SMS;
 use common\models\Access;
 use common\models\ClientsRecord;
 use app\models\CityRecord;
@@ -26,7 +27,7 @@ class SmsController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['config','except','clients','exceptadd','exceptdelete'],
+                        'actions' => ['config','except','clients','exceptadd','exceptdelete','translate'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -52,6 +53,11 @@ class SmsController extends Controller
         if (!Access::isAdmin())
             throw new ForbiddenHttpException('Доступ к этому разделу запрещен!');
         return parent::beforeAction($action);
+    }
+
+    public function actionTranslate($text)
+    {
+        return SMS::translate($text);
     }
 
     public function actionConfig()

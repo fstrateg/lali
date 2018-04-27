@@ -17,7 +17,7 @@ class ClientsRecord extends ActiveRecord
     public static function getDataProvider()
     {
          $dataProvider = new ActiveDataProvider([
-            'query' => ClientsRecord::find()->where(['or',['exception_5'=>1],['exception_21'=>1],['exception_42'=>1]]),
+            'query' => ClientsRecord::find()->where(['or',['exception_0'=>1],['exception_1'=>1],['exception_5'=>1],['exception_21'=>1],['exception_42'=>1]]),
             'sort' => [ // сортировка по умолчанию
                 'defaultOrder' => ['name' => SORT_ASC],
             ],
@@ -34,6 +34,8 @@ class ClientsRecord extends ActiveRecord
             [
                 'name'=>Yii::t('app','Имя клиента'),
                 'phone'=>Yii::t('app','Номер телефона'),
+                'exception_0'=>Yii::t('app','СМС при записи'),
+                'exception_1'=>Yii::t('app','СМС за N часов до проц.'),
                 'exception_5'=>Yii::t('app','СМС через 5 дней'),
                 'exception_21'=>Yii::t('app','СМС через 21 день'),
                 'exception_42'=>Yii::t('app','СМС через 42 дня'),
@@ -45,6 +47,8 @@ class ClientsRecord extends ActiveRecord
     {
         if (!$post) return false;
         $client=ClientsRecord::findOne(['id'=>$post['id']]);
+        $client->exception_0=$post['exception_0'];
+        $client->exception_1=$post['exception_1'];
         $client->exception_5=$post['exception_5'];
         $client->exception_21=$post['exception_21'];
         $client->exception_42=$post['exception_42'];
@@ -54,6 +58,8 @@ class ClientsRecord extends ActiveRecord
     public static function deleteFromExcept($uid)
     {
         $client=ClientsRecord::findOne(['uid'=>$uid]);
+        $client->exception_0=0;
+        $client->exception_1=0;
         $client->exception_5=0;
         $client->exception_21=0;
         $client->exception_42=0;

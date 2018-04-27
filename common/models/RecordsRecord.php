@@ -66,7 +66,8 @@ class RecordsRecord extends \yii\db\ActiveRecord
                 $sms=new SMS();
                 $sms->setNumber(0);
                 $sms->setRecord($this);
-                $sms->send();
+                if (!$sms->Dontsend) $sms->send();
+
                 /*$t=Telegram::instance();
                 $t->sendMessageAll($sms->getMessageText(),$sms->client_phone);*/
                 /*$msg=$sms->getMessageText();

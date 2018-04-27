@@ -7,6 +7,19 @@ use yii\widgets\ActiveForm;
  */
 
 $this->title = 'Настройка СМС рассылок';
+\yii\jui\Dialog::begin([
+    'clientOptions' => [
+        'modal' => true,
+        'autoOpen' => false,
+        'width'=>'50%',
+    ],
+    'options'=>[
+        'id'=>'transl',
+        'style'=>'hide',
+    ]
+]);
+echo '<div id="DialogText"></div>';
+\yii\jui\Dialog::end();
 ?>
 <ul class="nav nav-tabs">
 <?
@@ -54,9 +67,18 @@ if(((int)$id)==5)
 }
 ?>
                         </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-4 checkbox">
+                                <label class="form-check-label">
+                                    <input type="hidden" name="r[<?= $id ?>][lat]" value="N">
+                                    <input type="checkbox" name="r[<?= $id ?>][lat]" class="form-check-input" value="Y"<?= $s['lat']=='Y'?' checked':'';?>>Отправлять латиницей
+                                </label>
+                                <button class="transl" type="button" title="На латинице" data-id="<?= $id?>"><i class="glyphicon glyphicon-list-alt" title="Посмотреть перевод на латинице"></i></button>
+                            </div>
+                        </div>
                         <?= $form->field($s,'sms_text')->textarea(['class'=>'form-control','rows'=>'2','name'=>"r[$id][sms_text]"])->label(false); ?>
                             <label class="small">Если имя клиента не известно, используем текст:</label>
-                            <?= $form->field($s,'sms_text_noname')->textarea(['class'=>'form-control','rows'=>'2','name'=>"r[$id][sms_text_noname]"])->label(false); ?>
+                        <?= $form->field($s,'sms_text_noname')->textarea(['class'=>'form-control','rows'=>'2','name'=>"r[$id][sms_text_noname]"])->label(false); ?>
                             <!-- textarea class="form-control" rows="3" name="r[?= $id ?][sms_text]">?= $s['sms_text']; ?</textarea-->
                     </div>
                 </div>
@@ -69,3 +91,26 @@ if(((int)$id)==5)
     $class='';
     } ?>
 </div>
+<?php
+$js=<<< JS
+    $(document).ready(
+        function(){
+            $('button.transl').on('click',function(){
+                var id=$(this).attr('data-id');
+                var text=$('textarea[name="r['+id+'][sms_text]"').text();
+                $.ajax('/admin/sms/translate',{
+                data: {text: text}
+                })
+                    .done(function(data){
+                        $('#DialogText').text(data);
+                        $( "#transl" ).dialog( "open" );
+                    })
+                    .fail(function(xhr, ajaxOptions, thrownError){
+                        alert(xhr.responseText);
+                        });;
+
+            });
+        }
+    );
+JS;
+$this->registerJs($js);
