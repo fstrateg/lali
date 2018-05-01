@@ -35,9 +35,11 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
 
 </p>
 <hr>
-<p>Лазерная эпиляция. Клиенты посетившие студию <?=$model->days_laser; ?> дней назад. <?= $model->getDateLaser() ?></p>
-<div class="row">
-    <div class="col-lg-12">
+<div class="row mb-20">
+    <div class="col-md-7" style="line-height: 34px">
+        Лазерная эпиляция. Клиенты посетившие студию <?=$model->days_laser; ?> дней назад. <?= $model->getDateLaser() ?>
+    </div>
+    <div class="col-md-5">
         <div class="pull-right">
             Установить всем:
             <?= HTML::dropDownList('list','0',$stat,['class'=>'form-control','style'=>'width:auto;display:inline-block']); ?>
@@ -87,9 +89,11 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
     ?>
 </table></div>
 <hr>
-    <p>Восковая/шугаринг эпиляция. Клиенты посетившие студию <?=$model->days_wax ?> дней назад. <?= $model->getDateWax(); ?></p>
-    <div class="row">
-    <div class="col-lg-12">
+    <div class="row mb-20">
+        <div class="col-md-7" style="line-height: 34px">
+            Воск/шугаринг эпиляция. Клиенты посетившие студию <?=$model->days_wax ?> дней назад. <?= $model->getDateWax(); ?>
+            </div>
+    <div class="col-md-5">
         <div class="pull-right">
             Установить всем:
             <?= HTML::dropDownList('list','0',$stat,['class'=>'form-control','style'=>'width:auto;display:inline-block']); ?>
