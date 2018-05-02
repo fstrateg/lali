@@ -66,7 +66,7 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
 <tr>
     <td><?= $i ?></td>
     <td><?= $item['name'] ?></td>
-    <td><a class="mr-10 btn btn-warning" data-typ="1" data-id="<?= ($i-1); ?>">
+    <td><a class="mr-10 btn btn-primary" data-typ="1" data-id="<?= ($i-1); ?>">
             <span class="glyphicon whatsapp"></span>
             WhatsApp
         </a></td>
@@ -121,7 +121,7 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
                 <tr>
                     <td><?= $j++ ?></td>
                     <td><?= $item['name'] ?></td>
-                    <td><a class="mr-10 btn btn-warning" data-typ="2" data-id="<?= ($i-1); ?>">
+                    <td><a class="mr-10 btn btn-primary" data-typ="2" data-id="<?= ($i-1); ?>">
                             <span class="glyphicon whatsapp"></span>
                             WhatsApp
                         </a></td>
@@ -174,16 +174,18 @@ $js=<<< JS
         $('a.mr-10').on('click',
             function(e){
                 var list=getlist();
-                var dt=$(e.target).attr('data-id');
+                var bt=$(e.target);
+                var dt=bt.attr('data-id');
                 var typ="1";
                 if (dt==null)
                 {
-                    dt=$(e.target).parent().attr('data-id');
-                    typ=$(e.target).parent().attr('data-typ');
+                    bt=$(e.target).parent();
+                    dt=bt.attr('data-id');
+                    typ=bt.attr('data-typ');
                 }
                 else
                 {
-                    typ=$(e.target).attr('data-typ');
+                    typ=bt.attr('data-typ');
                 }
 
                 var msg=window.watsappmsg[0];
@@ -192,6 +194,7 @@ $js=<<< JS
                 msg=msg.replace('%NAME%',list[dt].name)
                 var url="https://api.whatsapp.com/send?phone="+list[dt].phone+"&text="+msg;
                 window.open(url, '_blank');
+                bt.removeClass('btn-primary').addClass('btn-seren');
                 //alert(msg);
             }
          );

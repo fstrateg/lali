@@ -139,3 +139,29 @@ a.desc:after {
 .navbar-inverse .navbar-toggle {
     border-color: #2F4F88;
 }
+
+.btn-primary {
+    color: #A64139;
+    background-color: #f7cac9;
+    border-color: #BF9693;
+}
+
+.btn-primary:active:hover, .btn-primary.active:hover, .open > .dropdown-toggle.btn-primary:hover, .btn-primary:active:focus, .btn-primary.active:focus, .open > .dropdown-toggle.btn-primary:focus,.btn-primary:hover, .btn-primary:active.focus, .btn-primary.active.focus,
+.open > .dropdown-toggle.btn-primary.focus,.btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary{
+    color: #f7cac9;
+    background-color: #A64139;
+    border-color: #BF9693;
+}
+
+.btn-seren {
+    color: #2F4F88;
+    background-color: #92A8D1;
+    border-color: #79869D;
+}
+
+.btn-seren:active:hover, .btn-seren.active:hover, .open > .dropdown-toggle.btn-seren:hover, .btn-seren:active:focus, .btn-seren.active:focus, .open > .dropdown-toggle.btn-seren:focus,.btn-seren:hover, .btn-seren:active.focus, .btn-seren.active.focus,
+.open > .dropdown-toggle.btn-seren.focus,.btn-seren:active, .btn-seren.active, .open > .dropdown-toggle.btn-seren{
+    color: #92A8D1;
+    background-color: #2F4F88;
+    border-color: #79869D;
+}
