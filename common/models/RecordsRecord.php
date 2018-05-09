@@ -42,6 +42,7 @@ class RecordsRecord extends \yii\db\ActiveRecord
             'staff_id'=>$data['staff']['id'],
             'staff_name'=>$data['staff']['name'],
             'appointed'=>$data['date'],
+            'sms_before'=>$data['sms_before'],
             'client_phone'=>$data['client']['phone'],
             'services_id'=>implode(',',$srv),
             'attendance'=>$data['attendance'],
