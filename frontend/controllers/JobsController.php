@@ -105,10 +105,9 @@ class JobsController extends Controller
     */
     public function actionTest()
     {
-       $sms=SMSSettings::findOne(['days'=>1]);
-        echo $sms->sms_text;
-        echo '<br>';
-        echo SMS::translate($sms->sms_text);
+        $sms=new SMS();
+        $sms->setRecord($id);
+        echo $sms->getMessageText();
 
     }
 
