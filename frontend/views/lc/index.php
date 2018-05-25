@@ -54,10 +54,11 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
         <th>#</th>
         <th>Клиент</th>
          <th>Мед. обход</th>
+         <th>Статус мед. обхода</th>
         <th>Номер тел.</th>
         <th>Услуги</th>
         <th>Мастер</th>
-        <th>Статус мед. обхода</th>
+
     </tr>
     </thead>
     <?
@@ -70,6 +71,7 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
             <span class="glyphicon whatsapp"></span>
             WhatsApp
         </a></td>
+    <td><?= HTML::dropDownList('list',$item['stat'],$stat, ['class'=>'statlist form-control','data-id'=>$item['resource_id'], 'data-typ'=>'1']); ?></td>
     <td><?= $item['client_phone'] ?></td>
     <td><ul>
         <? foreach(LcWatsApp::getServices($item['services_id']) as $ss)
@@ -80,7 +82,6 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
         </ul>
     </td>
     <td><?= $item['staff_name'] ?></td>
-    <td><?= HTML::dropDownList('list',$item['stat'],$stat, ['class'=>'statlist form-control','data-id'=>$item['resource_id'], 'data-typ'=>'1']); ?></td>
 
 </tr>
     <?
@@ -108,11 +109,12 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
                 <th>#</th>
                 <th>Клиент</th>
                 <th>Мед. обход</th>
+                <th>Статус мед. обхода</th>
                 <th>Номер тел.</th>
                 <th>Услуги</th>
                 <th>Мастер</th>
 
-                <th>Статус мед. обхода</th>
+
             </tr>
             </thead>
             <?
@@ -125,6 +127,7 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
                             <span class="glyphicon whatsapp"></span>
                             WhatsApp
                         </a></td>
+                    <td><?= HTML::dropDownList('list',$item['stat'],$stat,['class'=>'statlist form-control','data-id'=>$item['resource_id'],'data-typ'=>2]); ?></td>
                     <td><?= $item['client_phone'] ?></td>
                     <td><ul>
                             <? foreach(LcWatsApp::getServices($item['services_id']) as $ss)
@@ -135,7 +138,6 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
                         </ul>
                     </td>
                     <td><?= $item['staff_name'] ?></td>
-                    <td><?= HTML::dropDownList('list',$item['stat'],$stat,['class'=>'statlist form-control','data-id'=>$item['resource_id'],'data-typ'=>2]); ?></td>
 
                 </tr>
                 <?
@@ -164,9 +166,11 @@ $js=<<< JS
                     id=$(vl).attr('data-id');
                     $.ajax('/lc/qualitysave?typ='+typ+'&id='+id+'&status='+ss)
                         .fail(function(xhr, ajaxOptions, thrownError){
-                        alert(xhr.responseText);
+                            alert(xhr.responseText);
+                            })
+                        .done(function(data){
+                            $(vl).val(ss);
                         });
-                    $(vl).val(ss);
                 }
             });
     }
