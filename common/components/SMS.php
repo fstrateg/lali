@@ -101,9 +101,13 @@ class SMS extends BaseObject
         }
         if (strpos($msg,'%HH%'))
         {
-            $r=$appointed->diff(self::getCurDate());
-            $r=self::roundDateTime($r);
-            $hh=$r->format('H:i');
+            $c=self::getCurDate();
+            $n=$appointed->diff($c);
+            //$r=self::roundDateTime($r,30);
+            //$n=$r->diff($appointed);
+            $hh=($n->d*24+$n->h)*60+$n->i;
+            $hh=round($hh/60);
+           // $hh=$r->format('H:i');
             $msg=str_replace('%HH%',$hh,$msg);
         }
 
@@ -137,6 +141,9 @@ class SMS extends BaseObject
                 ['<=','appointed',$time->format('Y-m-d H:i:s')],
                 ['>','appointed',$c->format('Y-m-d H:i:s')]
             ]);
+        // <=calcdate
+        // >curdate
+        // $query=RecordsRecord::find()->where()
         $records=$query->all();
         if (count($records)==0) return 'Нет SMS';
         // Формируем текст сообщения

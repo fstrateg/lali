@@ -105,7 +105,9 @@ class JobsController extends Controller
     */
     public function actionTest()
     {
+        $id=4533;
         $sms=new SMS();
+        $sms->setNumber(1);
         $sms->setRecord($id);
         echo $sms->getMessageText();
 
