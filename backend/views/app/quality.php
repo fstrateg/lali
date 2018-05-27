@@ -2,6 +2,7 @@
 use common\models\StaffRecord;
 use common\models\SettingsRecord;
 use yii\widgets\ActiveForm;
+use yii\helpers\Html;
 /**
  * @var $this yii\web\View
  */
@@ -18,15 +19,28 @@ $onnew=($grp['onnew']=='1')?'checked':'';
 
 function outListStaff($name,$prop_id)
 {
+    $items=['1'=>'Все клиенты','0'=>'Новые'];
     $rs=StaffRecord::find()->orderBy('name')->where(['deleted'=>0])->all();
     $rr=\common\models\StaffPropRecord::getPropForStaff($prop_id);
+    $r0=[];
+    foreach($rr as $r) $r0[]=$r['id'];
     //print_r($rr);
     echo '<ul class="list">';
     foreach($rs as $s) {
-        $check=in_array($s['id'],$rr)?'checked':'';
+        $check=in_array($s['id'],$r0)?'checked':'';
         $ck="<input type='checkbox' name='{$name}[{$s['id']}]' value='1' $check> {$s['name']}";
         $hd="<input type='hidden' name='{$name}[{$s['id']}]' value='0'>";
-        echo "<li class='$name'>$hd $ck</li>";
+        if ($prop_id==2)
+        {
+            $vl=isset($rr[$s['id']]['allcli'])?$rr[$s['id']]['allcli']:0;
+            //if($s['id']==273552) {echo $rr[$s['id']]['onnew']; exit();}
+            $onn=Html::dropDownList("allcli[{$s['id']}]",$vl,$items);
+        }
+        else
+        {
+            $onn='';
+        }
+        echo "<li class='$name'>$hd $ck $onn</li>";
     }
     echo '</ul>';
 }
@@ -56,9 +70,6 @@ $form = ActiveForm::begin(['action'=>$url]);
     <div class="panel-body">
         <div class="form-group">
             <input id="vdays" class="days" type="number" name="vdays" value="<?= $vdays?>" size="5"/> <label for="vdays">Количество дней назад</label>
-        </div>
-        <div class="form-group">
-            <input type="hidden" name="onnew" value="0"><input id="onnew" type="checkbox" name="onnew" value="1" <?= $onnew ?>/> <label for="onnew">Только новые клиенты</label>
         </div>
         <div class="form-group">
             <input id="vall" type="checkbox" name="vall" /> <label for="vall">Все клиенты указанных мастеров</label>
@@ -96,6 +107,7 @@ $css = <<< CSS
 ul.list{
     list-style-type: none;
 }
+li.vosk,li.laser{padding-bottom: 10px;}
 input.days{
     width: 40px;
 }

@@ -22,8 +22,16 @@ class StaffPropRecord extends \yii\db\ActiveRecord
     {
         $rws=self::findAll(['prop_id'=>$prop_id]);
         $rez=array();
-        foreach($rws as $rw) $rez[$rw['staff_id']]=$rw['staff_id'];
+        foreach($rws as $rw) $rez[$rw['staff_id']]=['id'=>$rw['staff_id'],'allcli'=>$rw['allcli']];
 
         return $rez;
+    }
+
+    public function UpdateAllCli($id,$cli)
+    {
+        $db=$this->getDb();
+        $cmd=$db->createCommand()->update('staff_prop',['allcli'=>$cli],['staff_id'=>$id]);
+        $cmd->execute();
+        //$db->createCommand("update ".$this->tableName()." set allcli=$cli where id=$id")->execute();
     }
 }

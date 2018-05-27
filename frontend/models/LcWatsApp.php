@@ -146,7 +146,7 @@ order by a.appointed
         //$dat->subDays($day+60);*/
         $p1=$this->dat_wax->toMySqlRound();
         $cmd= yii::$app->db->createCommand('
-SELECT a.resource_id,a.staff_name,a.appointed,a.services_id,a.client_phone,b.name,c.title,ifnull(q.status,0) stat,a.client_id
+SELECT a.resource_id,a.staff_name,a.appointed,a.services_id,a.client_phone,b.name,c.title,ifnull(q.status,0) stat,a.client_id,s.allcli
 FROM records a
     inner join staff_prop s on a.staff_id=s.staff_id and s.prop_id=2
     left join clients b on b.id=a.client_id
@@ -176,7 +176,8 @@ order by a.appointed
                 unset($list[$k]);
             }
         }
-        if ($this->cfg['onnew']) $list=$this->filter_vax_onlynew($list,$p1);
+        //if ($this->cfg['onnew'])
+        $list=$this->filter_vax_onlynew($list,$p1);
         return $list;
     }
 
@@ -194,6 +195,7 @@ from records'
         $table=yii\helpers\ArrayHelper::index($table,'client_id');
         foreach ($list as $k=>$item)
         {
+            if ($item['allcli']) continue;
             if (((int)$table[$item['client_id']]['cnt'])>1) unset($list[$k]);
         }
         return $list;

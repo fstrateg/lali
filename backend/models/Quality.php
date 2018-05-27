@@ -16,11 +16,13 @@ class Quality extends ActiveRecord
     {
         SettingsRecord::setValue('quality','laser',$req->post('ldays'));
         SettingsRecord::setValue('quality','wax',$req->post('vdays'));
-        SettingsRecord::setValue('quality','onnew',$req->post('onnew'));
+       // SettingsRecord::setValue('quality','onnew',$req->post('onnew'));
 
         self::sinchro_staff($req->post('laser'),1);
         self::sinchro_staff($req->post('vosk'),2);
-
+        self::setkli($req->post('allcli'));
+        //print_r($req->post('allcli'));
+        //exit();
 
     }
 
@@ -44,5 +46,14 @@ class Quality extends ActiveRecord
             $keys[$i++]->delete();
         }
 
+    }
+
+    public static function setkli($rws)
+    {
+        $sp=new StaffPropRecord();
+        foreach($rws as $k=>$rw)
+        {
+            $sp->UpdateAllCli($k,$rw);
+        }
     }
 }
