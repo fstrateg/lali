@@ -37,4 +37,21 @@ class QualityRecord extends ActiveRecord
         $obj->setAttribute('dat',(new Date())->toMySql());
         $obj->save();
     }
+
+    public static function SaveVals($typ, $ids, $vl)
+    {
+        $t=null;
+        try {
+            $t = Yii::$app->db->beginTransaction();
+            foreach ($ids as $id) {
+                self::SaveVal($typ, $id, $vl);
+            }
+            $t->commit();
+        }catch(\Exception $err)
+        {
+            $t->rollBack();
+            return false;
+        }
+        return true;
+    }
 }

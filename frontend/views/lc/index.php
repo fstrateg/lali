@@ -53,8 +53,8 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
     <tr>
         <th>#</th>
         <th>Клиент</th>
-         <th>Мед. обход</th>
-         <th>Статус мед. обхода</th>
+        <th>Мед. обход</th>
+        <th>Статус мед. обхода</th>
         <th>Номер тел.</th>
         <th>Услуги</th>
         <th>Мастер</th>
@@ -113,8 +113,6 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
                 <th>Номер тел.</th>
                 <th>Услуги</th>
                 <th>Мастер</th>
-
-
             </tr>
             </thead>
             <?
@@ -154,6 +152,33 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
 </script>
 <?
 $js=<<< JS
+    function setVL2(typ,btn)
+    {
+        var i=0;
+        var vl=[];
+        var ss=$(btn).parent().find('select').val();
+        if (ss==0) return;
+        var rs=$('select.statlist');
+        $.each(rs,function(ind,vv){
+            if ($(vv).attr('data-typ')==typ&&$(vv).val()==0)
+            {
+                id=$(vv).attr('data-id');
+                vl.push(id);
+            }
+
+        });
+        $.ajax({
+            url:'/lc/qualitysave1',
+            type: 'POST',
+            data: {ids:JSON.stringify(vl),vl:ss,typ:typ}
+        })
+                        .fail(function(xhr, ajaxOptions, thrownError){
+                            alert(xhr.responseText);
+                            })
+                        .done(function(data){
+                            alert(data);
+                        });
+    }
     function setVL(typ,btn)
     {
         var id;
@@ -216,11 +241,11 @@ $js=<<< JS
          );
 
          $('#wax-all').on('click',function(){
-           setVL(2,this);
+           setVL2(2,this);
          });
 
          $('#laser-all').on('click',function(){
-            setVL(1,this);
+            setVL2(1,this);
          });
     });
 JS;
