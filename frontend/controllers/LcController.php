@@ -27,7 +27,7 @@ class LcController extends Controller
                 'only' => ['logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['index','qualitysave','qualitysave1'],
+                        'actions' => ['index','qualitysave','qualitysaves'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -58,14 +58,15 @@ class LcController extends Controller
         return 'OK';
     }
 
-    public function actionQualitysave1()
+    public function actionQualitysaves()
     {
         $req=Yii::$app->request;
         $ids=$req->post('ids');
         $ids=json_decode($ids);
         $vl=$req->post('vl');
         $typ=$req->post('typ');
-        if (QualityRecord::SaveVals($typ,$ids,$vl)) return 'OK';
+        if (QualityRecord::SaveVals($typ,$ids,$vl))
+            return 'OK';
         return 'FALSE';
     }
 }
