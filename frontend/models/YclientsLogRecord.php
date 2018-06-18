@@ -45,6 +45,8 @@ class YclientsLogRecord extends ActiveRecord
                         $table->num=$rw->id;
                         if ($status=='delete')
                             $table->deleted=1;
+                        else
+                            $table->deleted=0;
                         $table->save();
                     }
                     $rw->done=1;
