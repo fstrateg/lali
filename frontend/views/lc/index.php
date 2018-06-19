@@ -71,7 +71,7 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
 <tr>
     <td><?= $i ?></td>
     <td><?= $item['name'] ?></td>
-    <td><a class="mr-10 btn btn-primary" data-typ="1" data-id="<?= ($i-1); ?>">
+    <td><a class="mr-10 btn btn-primary" data-typ="1" data-id="<?= ($i-1); ?>" data-rid="<?= $item['resource_id'] ?>">
             <span class="glyphicon whatsapp"></span>
             WhatsApp
         </a></td>
@@ -129,7 +129,7 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
                 <tr>
                     <td><?= $j++ ?></td>
                     <td><?= $item['name'] ?></td>
-                    <td><a class="mr-10 btn btn-primary" data-typ="2" data-id="<?= ($i-1); ?>">
+                    <td><a class="mr-10 btn btn-primary" data-typ="2" data-id="<?= ($i-1) ?>" data-rid="<?= $item['resource_id'] ?>">
                             <span class="glyphicon whatsapp"></span>
                             WhatsApp
                         </a></td>
@@ -205,10 +205,12 @@ $js=<<< JS
                 var bt=$(e.target);
                 var dt=bt.attr('data-id');
                 var typ="1";
+                var id=bt.attr('data-rid');
                 if (dt==null)
                 {
                     bt=$(e.target).parent();
                     dt=bt.attr('data-id');
+                    id=bt.attr('data-rid');
                     typ=bt.attr('data-typ');
                 }
                 else
@@ -220,10 +222,22 @@ $js=<<< JS
                 if (typ=="2")
                     msg=window.watsappmsg[1];
                 msg=msg.replace('%NAME%',list[dt].name)
-                var url="https://api.whatsapp.com/send?phone="+list[dt].phone+"&text="+msg;
-                window.open(url, '_blank');
-                bt.removeClass('btn-primary').addClass('btn-seren');
-                //alert(msg);
+                $.ajax({
+                    url:'/lc/wclick',
+                    type: 'POST',
+                    data: {id:id,typ:typ}
+                        })
+                        .fail(function(xhr, ajaxOptions, thrownError){
+                            alert(xhr.responseText);
+                            })
+                        .done(function(data){
+                            if (data=='OK')
+                            {
+                                var url="https://api.whatsapp.com/send?phone="+list[dt].phone+"&text="+msg;
+                                window.open(url, '_blank');
+                                bt.removeClass('btn-primary').addClass('btn-seren');
+                            }
+                        });
             }
          );
 
