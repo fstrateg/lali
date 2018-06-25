@@ -74,6 +74,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        if (Access::isMaster())
+            $this->redirect('st/index');
         if (Access::isOper()||Access::isAdmin())
             $this->redirect('lc/index');
 

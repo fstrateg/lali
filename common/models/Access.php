@@ -10,8 +10,7 @@ class Access extends BaseObject
 
     public static function isOper()
     {
-        if (self::isGuest()) return false;
-        return self::getRole()=='oper'?true:false;
+        return self::testRole('oper');
     }
 
     public static function isGuest()
@@ -21,8 +20,18 @@ class Access extends BaseObject
 
     public static function isAdmin()
     {
+        return self::testRole('admin');
+    }
+
+    public static function isMaster()
+    {
+        return self::testRole('master');
+    }
+
+    private static function testRole($role)
+    {
         if (self::isGuest()) return false;
-        return self::getRole()=='admin'?true:false;
+        return self::getRole()==$role?true:false;
     }
 
     private static function getRole()
