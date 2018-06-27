@@ -3,6 +3,7 @@ namespace frontend\models;
 
 use common\models\StaffRecord;
 use common\models\StaffUserRecord;
+use common\models\RecordsRecord;
 use yii;
 
 class WorkStudio
@@ -34,5 +35,26 @@ class WorkStudio
     public function init($dat)
     {
 
+    }
+
+    public function getRecordsForStaff()
+    {
+        $db=yii::$app->db;
+        return $db->createCommand("Select a.appointed,a.client_id,b.name client,a.services_id
+        from records a,clients b where a.staff_id={$this->staffid}
+        and a.appointed like '2018-04-24%'
+        and a.deleted=0
+        and b.id=a.client_id
+        and b.deleted=0
+        order by a.appointed")
+            ->queryAll();
+    }
+
+    public static function getServices($services_id)
+    {
+        $cmd= yii::$app->db->createCommand("
+select title from services a
+where a.id in ($services_id)");
+        return $cmd->queryAll();
     }
 }

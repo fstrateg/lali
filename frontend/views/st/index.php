@@ -10,3 +10,29 @@ $this->title = 'La Letty';
 echo $model->staffname;
 ?>
 <p>Страница в разработке!</p>
+    <? //print_r($model->getRecordsForStaff()) ?>
+<div class="table-responsive">
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Время</th>
+            <th>Клиент</th>
+            <th>Услуги</th>
+        </tr>
+        </thead>
+        <?
+        $i=0;
+        foreach($model->getRecordsForStaff() as $items)
+        {
+            ?>
+            <tr>
+                <td><?= ++$i ?></td>
+                <td><?= $items['appointed'] ?></td>
+                <td><?= $items['client']?></td>
+                <td><?= $items['services_id'] ?></td>
+            </tr>
+            <?
+        }
+?>
+        </table>
