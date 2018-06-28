@@ -30,7 +30,11 @@ echo $model->staffname;
                 <td><?= ++$i ?></td>
                 <td><?= $items['appointed'] ?></td>
                 <td><?= $items['client']?></td>
-                <td><?= $items['services_id'] ?></td>
+                <td><ul><? foreach($model->getServices($items['services_id']) as $s)
+                    {
+                        echo '<li>'.$s['title'].'</li>';
+                    }
+                     ?></ul></td>
             </tr>
             <?
         }

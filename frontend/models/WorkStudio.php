@@ -42,7 +42,7 @@ class WorkStudio
         $db=yii::$app->db;
         return $db->createCommand("Select a.appointed,a.client_id,b.name client,a.services_id
         from records a,clients b where a.staff_id={$this->staffid}
-        and a.appointed like '2018-04-24%'
+        and a.appointed like '2018-03-06%'
         and a.deleted=0
         and b.id=a.client_id
         and b.deleted=0
