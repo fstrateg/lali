@@ -40,7 +40,7 @@ class WorkStudio
     public function getRecordsForStaff()
     {
         $db=yii::$app->db;
-        return $db->createCommand("Select a.appointed,a.client_id,b.name client,a.services_id
+        return $db->createCommand("Select a.resource_id id,a.appointed,a.client_id,b.name client,a.services_id
         from records a,clients b where a.staff_id={$this->staffid}
         and a.appointed like '2018-03-06%'
         and a.deleted=0
