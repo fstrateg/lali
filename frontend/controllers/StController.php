@@ -3,6 +3,7 @@ namespace frontend\controllers;
 
 use common\models\Access;
 use frontend\models\WorkStudio;
+use frontend\models\WorkStudioDetails;
 use yii;
 use yii\web\Controller;
 use yii\filters\AccessControl;
@@ -25,7 +26,7 @@ class StController extends Controller
                 'only' => ['logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index','note'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -48,5 +49,13 @@ class StController extends Controller
         $model=new WorkStudio();
         $model->init($dat);
         return $this->render('index',['model'=>$model]);
+    }
+
+    public function actionNote()
+    {
+        $id=yii::$app->request->post('id',-1);
+        $model=new WorkStudioDetails();
+        $model->initRecord($id);
+        return $this->renderAjax('note',['model'=>$model]);
     }
 }

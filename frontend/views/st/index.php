@@ -8,6 +8,7 @@ use yii\helpers\Html;
  */
 $this->title = 'La Letty';
 echo $model->staffname;
+//print_r($model->getRecordsForStaff())
 ?>
 <p>Страница в разработке!</p>
     <? //print_r($model->getRecordsForStaff()) ?>
@@ -43,8 +44,9 @@ echo $model->staffname;
     <div id="frmedit" class="wrap" style="width:0; background: #CCC">
     <div class="container">
         <div id="panel">
-            same text
+
         </div>
+        <button class="btn">Сохранить</button> <button id="escape" class="btn">Отменить</button>
     </div>
     </div>
     <?
@@ -52,9 +54,23 @@ $js=<<< JS
     $(document).ready(function() {
         $('tr td').on('click',
             function(e){
-            document.getElementById("frmedit").style.width = "100%";
-            document.getElementById("frmedit").style.background = "#FFF";
-            $('#panel').text($(this).parent().attr('data-id'));
+                var id=$(this).parent().attr('data-id');
+                $.ajax({
+                url:'/st/note',
+                type: 'POST',
+                data: {id: id}
+                })
+                .done(function(data){
+                    $('#panel').html(data);
+                    $("#frmedit").css('width','100%');
+                    $("#frmedit").css('background','#fff');
+                    //alert(id);
+                });
+            });
+        $('#escape').on('click',
+            function(){
+                document.getElementById("frmedit").style.width = "0%";
+                $("#frmedit").css('background','#ccc');
             });
     });
 JS;
@@ -68,7 +84,7 @@ width: 0;
 min-height: 100%;
 z-index: 1;
 overflow-x: hidden;
-transition: 1.0s;
+transition: 0.8s;
 box-shadow: 0 0 10px #888;
 }
 CSS;
