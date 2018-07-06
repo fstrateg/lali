@@ -19,7 +19,6 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
 
 
 ?>
-<p>
 <div class="btn-toolbar" role="toolbar" aria-label="...">
     <div class="btn-group mr-2" role="group" aria-label="First group">
         <a class="btn btn-default" href="/lc/index">Сегодня</a>
@@ -32,13 +31,8 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
         <?= $model->getCaclDate(); ?>
      </div>
     </div>
-
-</p>
-<div id="msgok1" class="alert-success alert fade in hidden">
-<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-Данные успешно внесены в базу!
-</div>
 <hr>
+<section>
 <div class="row mb-20">
     <div class="col-md-7" style="line-height: 34px">
         Лазерная эпиляция. Клиенты посетившие студию <?=$model->days_laser; ?> дней назад. <?= $model->getDateLaser() ?>
@@ -47,7 +41,7 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
         <div class="pull-right">
             Установить всем:
             <?= HTML::dropDownList('list','0',$stat,['class'=>'form-control','style'=>'width:auto;display:inline-block']); ?>
-            <a id="laser-all" href="#" class="btn btn-default">Сохранить</a>
+            <a id="laser-all" href="#" class="btn btn-default" title="Заполнить"><span class="glyphicon glyphicon-ok"></span></a>
         </div>
     </div>
 </div>
@@ -92,11 +86,16 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
         $i++;
     }
     ?>
-</table></div>
-<div id="msgok2" class="alert-success alert fade in hidden">
-<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+</table>
+</div>
+<div id="msgok1" class="alert-success alert fade in hidden">
+<button type="button" class="close" aria-hidden="true">×</button>
 Данные успешно внесены в базу!
 </div>
+    <a id="laser-save" href="javascript:void(0)" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить статусы</a>
+</section>
+
+<section>
 <hr>
     <div class="row mb-20">
         <div class="col-md-7" style="line-height: 34px">
@@ -106,7 +105,7 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
         <div class="pull-right">
             Установить всем:
             <?= HTML::dropDownList('list','0',$stat,['class'=>'form-control','style'=>'width:auto;display:inline-block']); ?>
-            <a id="wax-all" href="#" class="btn btn-default">Сохранить</a>
+            <a id="wax-all" href="#" class="btn btn-default" title="Заполнить"><span class="glyphicon glyphicon-ok"></span></a>
         </div>
     </div>
 </div>
@@ -152,7 +151,12 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
             ?>
         </table>
     </div>
-
+    <div id="msgok2" class="alert-success alert fade in hidden">
+        <button type="button" class="close" aria-hidden="true">×</button>
+        Данные успешно внесены в базу!
+    </div>
+    <a id="wax-save" href="javascript:void(0)" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить статусы</a>
+</section>
 <script>
     window.watsappmsg=['<?= $model->getLaserMsg() ?>',
     '<?= $model->getWaxMsg() ?>'];
@@ -169,13 +173,16 @@ $js=<<< JS
         var rs=$('select.statlist');
         $.each(rs,function(ind,vv){
             if ($(vv).attr('data-typ')==typ&&$(vv).val()==0)
+                $(vv).val(ss);
+
+            /*if ($(vv).attr('data-typ')==typ&&$(vv).val()==0)
             {
                 id=$(vv).attr('data-id');
                 vl.push(id);
-            }
+            }*/
 
         });
-        $.ajax({
+        /*$.ajax({
             url:'/lc/qualitysaves',
             type: 'POST',
             data: {ids:JSON.stringify(vl),vl:ss,typ:typ}
@@ -186,16 +193,27 @@ $js=<<< JS
                         .done(function(data){
                             if (data=='OK')
                             {
-                                $.each(rs,function(ind,vv){
-                                    if ($(vv).attr('data-typ')==typ&&$(vv).val()==0)
-                                    {
 
-                                        $(vv).val(ss);
-                                    }
-                                });
                                 $('#msgok'+typ).removeClass('hidden');
                             }
-                        });
+                        });*/
+    }
+
+    function savevl(typ)
+    {
+        var id,v;
+        var vl=[];
+        var rs=$('select.statlist');
+        $.each(rs,function(ind,vv){
+            if ($(vv).attr('data-typ')==typ&&$(vv).val()!=0)
+            {
+                id=$(vv).attr('data-id');
+                v=$(vv).val();
+                vl.push({id:id,vl:v});
+            }
+        });
+        alert(JSON.stringify(vl));
+        $('#msgok'+typ).removeClass('hidden');
     }
 
     $(document).ready(function() {
@@ -241,7 +259,7 @@ $js=<<< JS
             }
          );
 
-         $('select.statlist').on('change',
+         /*$('select.statlist').on('change',
             function(e){
                 var id=$(this).attr('data-id');
                 var type=$(this).attr('data-typ');
@@ -251,7 +269,14 @@ $js=<<< JS
                         alert(xhr.responseText);
                         });
             }
-         );
+         );*/
+         $('#wax-save').on('click',function(){
+           savevl(2);
+         });
+
+         $('#laser-save').on('click',function(){
+           savevl(1);
+         });
 
          $('#wax-all').on('click',function(){
            setVL(2,this);
@@ -259,6 +284,10 @@ $js=<<< JS
 
          $('#laser-all').on('click',function(){
             setVL(1,this);
+         });
+
+         $('button.close').on('click',function(){
+            $(this).parent().addClass('hidden');
          });
     });
 JS;
