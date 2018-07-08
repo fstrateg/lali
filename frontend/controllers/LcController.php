@@ -28,7 +28,7 @@ class LcController extends Controller
                 'only' => ['logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['index','qualitysave','qualitysaves'],
+                        'actions' => ['index','qualitysave','qualitysaves','savedata'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -73,6 +73,18 @@ class LcController extends Controller
         return 'FALSE';
     }
 
+    public function actionSavedata()
+    {
+        $req=Yii::$app->request;
+        $ids=$req->post('data');
+        $ids=json_decode($ids);
+        $typ=$req->post('typ');
+        Sys_logRecord::saveJob('КК_save_mass',['typ'=>$typ,'data'=>$ids]);
+        if (QualityRecord::SaveVals($typ,$ids))
+            return 'OK';
+        //return 'OK';
+        return 'FALSE';
+    }
     public function actionWclick()
     {
         $req=Yii::$app->request;

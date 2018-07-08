@@ -26,7 +26,7 @@ class StController extends Controller
                 'only' => ['logout', 'signup'],
                 'rules' => [
                     [
-                        'actions' => ['index','note'],
+                        'actions' => ['index','note','savenote'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -57,5 +57,14 @@ class StController extends Controller
         $model=new WorkStudioDetails();
         $model->initRecord($id);
         return $this->renderAjax('note',['model'=>$model]);
+    }
+
+    public function actionSavenote()
+    {
+        $data=yii::$app->request->post('data');
+        $data=json_decode($data);
+        $model=new WorkStudioDetails();
+        if ($data) if ($model->saveData($data)) return 'OK';
+        return 'false';
     }
 }

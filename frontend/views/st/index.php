@@ -26,10 +26,12 @@ echo $model->staffname;
         $i=0;
         foreach($model->getRecordsForStaff() as $items)
         {
+            $dat=new Date();
+            $dat->set($items['appointed']);
             ?>
             <tr data-id="<?= $items['id']?>">
                 <td><?= ++$i ?></td>
-                <td><?= $items['appointed'] ?></td>
+                <td><?= $dat->format('d.m.Y H:i') ?></td>
                 <td><?= $items['client']?></td>
                 <td><ul><? foreach($model->getServices($items['services_id']) as $s)
                     {
@@ -46,7 +48,7 @@ echo $model->staffname;
         <div id="panel">
 
         </div>
-        <button class="btn">Сохранить</button> <button id="escape" class="btn">Отменить</button>
+        <button id="savenote" class="btn">Сохранить</button> <button id="escape" class="btn">Отменить</button>
     </div>
     </div>
     <?
@@ -72,6 +74,10 @@ $js=<<< JS
                 document.getElementById("frmedit").style.width = "0%";
                 $("#frmedit").css('background','#ccc');
             });
+        $('#savenote').on('click',function(){
+             savenote();
+             $('#escape').click();
+        });
     });
 JS;
 $css= <<< CSS

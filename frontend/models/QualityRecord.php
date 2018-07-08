@@ -38,13 +38,13 @@ class QualityRecord extends ActiveRecord
         $obj->save();
     }
 
-    public static function SaveVals($typ, $ids, $vl)
+    public static function SaveVals($typ, $data)
     {
         $t=null;
         try {
             $t = Yii::$app->db->beginTransaction();
-            foreach ($ids as $id) {
-                self::SaveVal($typ, $id, $vl);
+            foreach ($data as $item) {
+                self::SaveVal($typ, $item->id, $item->vl);
             }
             $t->commit();
         }catch(\Exception $err)

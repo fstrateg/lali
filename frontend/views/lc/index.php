@@ -174,29 +174,7 @@ $js=<<< JS
         $.each(rs,function(ind,vv){
             if ($(vv).attr('data-typ')==typ&&$(vv).val()==0)
                 $(vv).val(ss);
-
-            /*if ($(vv).attr('data-typ')==typ&&$(vv).val()==0)
-            {
-                id=$(vv).attr('data-id');
-                vl.push(id);
-            }*/
-
         });
-        /*$.ajax({
-            url:'/lc/qualitysaves',
-            type: 'POST',
-            data: {ids:JSON.stringify(vl),vl:ss,typ:typ}
-        })
-                        .fail(function(xhr, ajaxOptions, thrownError){
-                            alert(xhr.responseText);
-                            })
-                        .done(function(data){
-                            if (data=='OK')
-                            {
-
-                                $('#msgok'+typ).removeClass('hidden');
-                            }
-                        });*/
     }
 
     function savevl(typ)
@@ -212,8 +190,22 @@ $js=<<< JS
                 vl.push({id:id,vl:v});
             }
         });
-        alert(JSON.stringify(vl));
-        $('#msgok'+typ).removeClass('hidden');
+        $.ajax({
+                    url:'/lc/savedata',
+                    type: 'POST',
+                    data: {data:JSON.stringify(vl),typ:typ}
+                        })
+               .fail(function(xhr, ajaxOptions, thrownError)
+               {
+                   alert(xhr.responseText);
+               })
+               .done(function(data)
+               {
+                  if (data=='OK')
+                  {
+                     $('#msgok'+typ).removeClass('hidden');
+                  }
+               });
     }
 
     $(document).ready(function() {
@@ -259,17 +251,6 @@ $js=<<< JS
             }
          );
 
-         /*$('select.statlist').on('change',
-            function(e){
-                var id=$(this).attr('data-id');
-                var type=$(this).attr('data-typ');
-                var status=$(this).val();
-                $.ajax('/lc/qualitysave?typ='+type+'&id='+id+'&status='+status)
-                        .fail(function(xhr, ajaxOptions, thrownError){
-                        alert(xhr.responseText);
-                        });
-            }
-         );*/
          $('#wax-save').on('click',function(){
            savevl(2);
          });
