@@ -180,44 +180,28 @@ class SMS extends BaseObject
 
     public static function sendSmsNumber($day)
     {
-        $dat=new Date();
-        $dat->subDays($day+1);
-        $p1=$dat->toMySql();
-        $dat=new Date();
-        $dat->subDays($day);
-        $p2=$dat->toMySql();
-
-        $sql="select a.*
-        from  clients a left join sms_done b on (a.id=b.client_id and a.last_record=b.record_id and b.type={$day})
-        where a.deleted=0 and a.exception_{$day}<>1 and a.last_visit between '$p1' and '$p2' and b.type is null
-        limit 20";
-        $clients=\yii::$app->db->createCommand($sql)->queryAll();
-        foreach($clients as $c)
-        {
-            $needsms=true;
-            $rec=RecordsRecord::findOne(['resource_id'=>$c['last_record']]);
-            if ($day==5)
-            {
+        $clients=$day==5?self::getClientsForScrub():self::getClientsForReminder($day);
+        foreach ($clients as $c) {
+            $needsms = true;
+            $rec = RecordsRecord::findOne(['resource_id' => $c['last_record']]);
+            if ($day == 5) {
                 /* проверка на скраббинг */
-                $cm=ServicesRecord::find()->where(['and',"deleted<>1","id in ({$rec['services_id']})"])->sum('scrubbing');
-                if ($cm==0) $needsms=false;
+                $cm = ServicesRecord::find()->where(['and', "deleted<>1", "id in ({$rec['services_id']})"])->sum('scrubbing');
+                if ($cm == 0) $needsms = false;
             }
-            if ($day==21||$day==42)
-            {
+            if ($day == 21 || $day == 42) {
                 /* Клиент уже записался */
-                $cnt=RecordsRecord::find()->where([
+                $cnt = RecordsRecord::find()->where([
                     'and',
-                    'client_id='.$c['id'],
+                    'client_id=' . $c['id'],
                     "appointed>'{$c['last_visit']}'"
                 ])->count();
-                if ($cnt>0)
-                {
-                    $needsms=false;
-                }
-                else{
+                if ($cnt > 0) {
+                    $needsms = false;
+                } else {
                     /* Проверка на напоминание */
-                    $cm=ServicesRecord::find()->where(['and',"deleted<>1","id in ({$rec['services_id']})"])->sum('remind');
-                    if ($cm==0) $needsms=false;
+                    $cm = ServicesRecord::find()->where(['and', "deleted<>1", "id in ({$rec['services_id']})"])->sum('remind');
+                    if ($cm == 0) $needsms = false;
                 }
             }
             if ($needsms) {
@@ -233,7 +217,44 @@ class SMS extends BaseObject
             $done->setAttribute('record_id', $c['last_record']);
             $done->save();
         }
-        echo 'Обработано: '.count($clients).' клиентов';
+        echo 'Обработано: ' . count($clients) . ' клиентов';
+    }
+
+    private static function getClientsForReminder($day)
+    {
+        /*select a.*
+        from  clients a left join sms_done b on (a.id=b.client_id and a.last_record=b.record_id and b.type=42)
+        where a.deleted=0 and a.exception_42<>1
+		  and date_add(a.last_visit,interval 42 day) between  date_sub(curdate(),interval 1 day) and curdate()
+and b.type is null
+        limit 20*/
+        $col=$day==21?'sms_21_sent':'sms_42_sent';
+        $sql = "select a.*
+        from  clients a left join sms_done b on (a.id=b.client_id and a.last_record=b.record_id and b.type={$day})
+        where a.deleted=0 and a.exception_{$day}<>1
+        and date_add(a.last_visit,interval {$col} day) between  date_sub(curdate(),interval 1 day) and curdate()
+        and b.type is null
+        limit 20";
+        $clients = \yii::$app->db->createCommand($sql)->queryAll();
+        return $clients;
+    }
+
+    private static function getClientsForScrub()
+    {
+        $day=5;
+        $dat = new Date();
+        $dat->subDays($day + 1);
+        $p1 = $dat->toMySql();
+        $dat = new Date();
+        $dat->subDays($day);
+        $p2 = $dat->toMySql();
+
+        $sql = "select a.*
+        from  clients a left join sms_done b on (a.id=b.client_id and a.last_record=b.record_id and b.type={$day})
+        where a.deleted=0 and a.exception_5<>1 and a.last_visit between '$p1' and '$p2' and b.type is null
+        limit 20";
+        $clients = \yii::$app->db->createCommand($sql)->queryAll();
+        return $clients;
     }
 
     public static function getCurDate()
