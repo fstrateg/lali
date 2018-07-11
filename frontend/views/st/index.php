@@ -8,10 +8,7 @@ use yii\helpers\Html;
  */
 $this->title = 'La Letty';
 echo $model->staffname;
-//print_r($model->getRecordsForStaff())
 ?>
-<p>Страница в разработке!</p>
-    <? //print_r($model->getRecordsForStaff()) ?>
 <div class="table-responsive">
     <table class="table table-hover table-bordered">
         <thead>

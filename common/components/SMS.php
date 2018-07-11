@@ -209,6 +209,7 @@ class SMS extends BaseObject
                 $sms->setNumber($day);
                 $sms->setRecord($rec);
                 $sms->send();
+                //Telegram::instance()->sendMessage('Alex',$sms->getMessageText(), $sms->client_phone);
                 //Telegram::instance()->sendMessageAll($sms->getMessageText(), $sms->client_phone);
             }
             $done = new Sms_doneRecord();

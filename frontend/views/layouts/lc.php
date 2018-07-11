@@ -9,6 +9,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
+use common\models\Access;
 
 AppAsset::register($this);
 ?>
@@ -36,9 +37,25 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/lc/index']],
-    ];
+    if (Access::isOper()||Access::isAdmin()) {
+        $menuItems = [
+            ['label' => 'Home', 'url' => ['/lc/index']],
+        ];
+    }
+    elseif (Access::isMaster()){
+        $menuItems = [
+            ['label' => 'Home', 'url' => ['/st/index']],
+        ];
+    }
+    if (Access::isAdmin())
+    {
+        $menuItems[] = ['label'=>'Приложения',
+            'items'=>[
+                ['label'=>'Контроль качества','url'=>['/lc/index']],
+                ['label'=>'Индивидуальные SMS','url'=>['/st/index']]
+            ]
+        ];
+    }
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Вход', 'url' => ['/site/login']];
     } else {
