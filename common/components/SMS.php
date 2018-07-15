@@ -134,16 +134,18 @@ class SMS extends BaseObject
         $time=self::getCurDate();
         $c=self::getCurDate();
         $p="PT{$min}M";
-        $time->add(new \DateInterval($p));
+        //$time->add(new \DateInterval($p)); ---
+        $time->sub(new \DateInterval($p));
         // Выбираем клиентов кому нужно отправить SMS
         $query=RecordsRecord::find()
             ->where(['and','sms_second=0','deleted=0',
+                "date_sub(appointed,INTERVAL sms_before HOUR) between '{$time->format('Y-m-d H:i:s')}' and '{$c->format('Y-m-d H:i:s')}'"
+            ]);
+            /*->where(['and','sms_second=0','deleted=0',  ---
                 ['<=','appointed',$time->format('Y-m-d H:i:s')],
                 ['>','appointed',$c->format('Y-m-d H:i:s')]
-            ]);
-        // <=calcdate
-        // >curdate
-        // $query=RecordsRecord::find()->where()
+            ]);*/
+
         $records=$query->all();
         if (count($records)==0) return 'Нет SMS';
         // Формируем текст сообщения
@@ -156,7 +158,8 @@ class SMS extends BaseObject
             if ($sms->checkForSecond($min)) {
                 // Отправляем
                 if (!$sms->Dontsend) {
-                    $sms->send();
+                    //$sms->send();
+                    echo $sms->getMessageText();
                     $r->sms_second=1;
                     //Telegram::instance()->sendMessageAll($msg, $sms->client_phone);
                 }

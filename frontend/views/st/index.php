@@ -9,6 +9,19 @@ use yii\helpers\Html;
 $this->title = 'La Letty';
 echo $model->staffname;
 ?>
+    <div class="btn-toolbar" role="toolbar" aria-label="...">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <a class="btn btn-default" href="/st/index">Сегодня</a>
+        </div>
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <?= $model->getParamPrior() ?>
+            <?= $model->getParamNext() ?>
+        </div>
+        <div class="btn mr-2">
+            <?= $model->getCaclDate(); ?>
+        </div>
+    </div>
+    <hr>
 <div class="table-responsive">
     <table class="table table-hover table-bordered">
         <thead>
