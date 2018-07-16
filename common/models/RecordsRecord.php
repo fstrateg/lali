@@ -53,7 +53,7 @@ class RecordsRecord extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-            if ($insert)
+            if ($insert&&$this->status!='import')
             {
                 if (Date::fromMysql($this->appointed)->get() < Date::now()) return true;
                 $phone=$this->getAttribute('client_phone');
