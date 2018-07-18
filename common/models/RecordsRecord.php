@@ -38,6 +38,7 @@ class RecordsRecord extends \yii\db\ActiveRecord
     {
         $srv=[];
         foreach($data['services'] as $item) $srv[]=$item['id'];
+        $data['sms_before']=empty($data['sms_before'])?1:$data['sms_before'];
         $rec=[
             'staff_id'=>$data['staff']['id'],
             'staff_name'=>$data['staff']['name'],
