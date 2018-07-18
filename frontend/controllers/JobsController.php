@@ -127,4 +127,10 @@ class JobsController extends Controller
     {
         JobsModel::GetLastVisit();
     }
+
+    public function actionGetvisits()
+    {
+       $model=new YclientsImport();
+        $model->getRecords();
+    }
 }
