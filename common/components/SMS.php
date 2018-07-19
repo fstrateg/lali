@@ -108,6 +108,7 @@ class SMS extends BaseObject
             $hh=($n->d*24+$n->h)*60+$n->i;
             $hh=round($hh/60);
            // $hh=$r->format('H:i');
+            $hh=$this->record->sms_before;
             $msg=str_replace('%HH%',$hh,$msg);
         }
 
@@ -158,8 +159,7 @@ class SMS extends BaseObject
             if ($sms->checkForSecond($min)) {
                 // Отправляем
                 if (!$sms->Dontsend) {
-                    //$sms->send();
-                    echo $sms->getMessageText();
+                    $sms->send();
                     $r->sms_second=1;
                     //Telegram::instance()->sendMessageAll($msg, $sms->client_phone);
                 }
