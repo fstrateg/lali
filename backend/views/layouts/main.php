@@ -43,7 +43,8 @@ AppAsset::register($this);
     } else {
         $menuItems[] = ['label'=>'Приложения',
             'items'=>[
-                ['label'=>'Контроль качества','url'=>['/app/quality']]
+                ['label'=>'Контроль качества','url'=>['/app/quality']],
+                ['label'=>'Мастера','url'=>['/app/masters']]
             ]
         ];
         $menuItems[] = ['label' => 'Настройки',
