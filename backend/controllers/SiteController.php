@@ -59,10 +59,12 @@ class SiteController extends Controller
 
     public function beforeAction($action)
     {
-        if (!in_array($action->id,['login', 'error'])) {
+        if (!in_array($action->id,['login', 'error','logout'])) {
             if (!Access::isAdmin())
+            {
                 //$this->redirect('login');
                 throw new ForbiddenHttpException('Доступ к этому разделу запрещен!');
+            }
         }
         return parent::beforeAction($action);
     }
