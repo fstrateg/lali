@@ -2,6 +2,7 @@
 namespace backend\controllers;
 
 use common\models\StaffRecord;
+use common\models\StaffUserRecord;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
@@ -116,6 +117,11 @@ class AppController extends Controller
 
     private function MastersSave()
     {
+        if (!StaffUserRecord::saveForm($_POST['id'],$_POST['userid']))
+        {
+            return $this->MastersUpdate();
+        }
+        Yii::$app->session->setFlash('success', 'Изменения сохранены!');
         $this->redirect(Url::to(['masters']));
     }
 }

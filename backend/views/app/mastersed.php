@@ -10,6 +10,7 @@ use yii\helpers\Url;
 $this->title="Мастер подвязка пользователя";
 $users=Users::getUsersList();
 $susers=\common\models\StaffUserRecord::getUsersForStaff();
+$dd=isset($susers[$model->id])?$susers[$model->id]['user_id']:0;
 ?>
 <form class="form-vertical" method="post">
     <div class="form-group">
@@ -22,7 +23,7 @@ $susers=\common\models\StaffUserRecord::getUsersForStaff();
         </div>
         <div class="row">
             <div class="col-sm-3">
-                <?= Html::dropDownList('userid',$susers[$model->id]['user_id'],$users,['class'=>'form-control']) ?>
+                <?= Html::dropDownList('userid',$dd,$users,['class'=>'form-control']) ?>
             </div>
         </div>
 
