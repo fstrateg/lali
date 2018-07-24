@@ -1,7 +1,10 @@
 <?php
 namespace backend\controllers;
 
+use common\models\StaffRecord;
 use Yii;
+use yii\data\ActiveDataProvider;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\ForbiddenHttpException;
@@ -19,7 +22,7 @@ class AppController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['quality','qualitysave','qualitymsg'],
+                        'actions' => ['quality','qualitysave','qualitymsg','masters'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -68,5 +71,51 @@ class AppController extends Controller
     {
         \app\models\Quality::qualitySave(yii::$app->request);
         return $this->redirect('quality');
+    }
+
+    public function actionMasters($m='index')
+    {
+        $html="";
+        if (isset($_POST['m'])) $m=$_POST['m'];
+        switch($m)
+        {
+            case 'update':
+                $html=$this->MastersUpdate();
+                break;
+            case 'save':
+                $html=$this->MastersSave();
+                break;
+            default:
+                $html=$this->MastersIndex();
+                break;
+        }
+        return $html;
+    }
+
+    private function MastersIndex()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => StaffRecord::find()->where("deleted=0"),
+            'sort' => [ // сортировка по умолчанию
+                'defaultOrder' => ['name' => SORT_DESC],
+            ],
+            'pagination' => [ // постраничная разбивка
+                'pageSize' => 10, // 10 новостей на странице
+            ],
+        ]);
+
+        return $this->render('masters',['data'=>$dataProvider]);
+    }
+
+    private function MastersUpdate()
+    {
+        $id=yii::$app->request->get('id',-1);
+        $model=StaffRecord::findOne($id);
+        return $this->render('mastersed',['model'=>$model]);
+    }
+
+    private function MastersSave()
+    {
+        $this->redirect(Url::to(['masters']));
     }
 }

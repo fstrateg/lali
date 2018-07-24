@@ -108,6 +108,7 @@ class SMS extends BaseObject
             $hh=($n->d*24+$n->h)*60+$n->i;
             $hh=round($hh/60);
            // $hh=$r->format('H:i');
+            $hh=$this->record->sms_before;
             $msg=str_replace('%HH%',$hh,$msg);
         }
 
@@ -134,16 +135,18 @@ class SMS extends BaseObject
         $time=self::getCurDate();
         $c=self::getCurDate();
         $p="PT{$min}M";
-        $time->add(new \DateInterval($p));
+        //$time->add(new \DateInterval($p)); ---
+        $time->sub(new \DateInterval($p));
         // Выбираем клиентов кому нужно отправить SMS
         $query=RecordsRecord::find()
             ->where(['and','sms_second=0','deleted=0',
+                "date_sub(appointed,INTERVAL sms_before HOUR) between '{$time->format('Y-m-d H:i:s')}' and '{$c->format('Y-m-d H:i:s')}'"
+            ]);
+            /*->where(['and','sms_second=0','deleted=0',  ---
                 ['<=','appointed',$time->format('Y-m-d H:i:s')],
                 ['>','appointed',$c->format('Y-m-d H:i:s')]
-            ]);
-        // <=calcdate
-        // >curdate
-        // $query=RecordsRecord::find()->where()
+            ]);*/
+
         $records=$query->all();
         if (count($records)==0) return 'Нет SMS';
         // Формируем текст сообщения

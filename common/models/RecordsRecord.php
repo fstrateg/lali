@@ -38,6 +38,7 @@ class RecordsRecord extends \yii\db\ActiveRecord
     {
         $srv=[];
         foreach($data['services'] as $item) $srv[]=$item['id'];
+        $data['sms_before']=empty($data['sms_before'])?1:$data['sms_before'];
         $rec=[
             'staff_id'=>$data['staff']['id'],
             'staff_name'=>$data['staff']['name'],
@@ -53,7 +54,7 @@ class RecordsRecord extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-            if ($insert)
+            if ($insert&&$this->status!='import')
             {
                 if (Date::fromMysql($this->appointed)->get() < Date::now()) return true;
                 $phone=$this->getAttribute('client_phone');
