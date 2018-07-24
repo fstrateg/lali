@@ -15,6 +15,7 @@ $vdays=SettingsRecord::findValue('quality','wax');*/
 $ldays=$grp['laser'];
 $vdays=$grp['wax'];
 $onnew=($grp['onnew']=='1')?'checked':'';
+$chmaster=($grp['chmaster']=='1')?'checked':'';
 
 
 function outListStaff($name,$prop_id)
@@ -77,10 +78,14 @@ $form = ActiveForm::begin(['action'=>$url]);
         <? outListStaff('vosk',2) ?>
     </div>
 </div>
-<p>
+<div class="form-control">
+    <input type="hidden" name="chmaster" value="0"/>
+    <input id="chmaster" type="checkbox" name="chmaster" <?= $chmaster?> value="1"/> <label for="chmaster">Отображать клиентов сменивших мастера</label>
+</div>
+<div style="padding-top: 20px">
     <input type="submit" class="btn btn-success" value="Сохранить">
     <a class="btn btn-warning" href='#' onclick="window.location.reload()">Отмена</a>
-</p>
+</div>
 <?php
 ActiveForm::end();
 
