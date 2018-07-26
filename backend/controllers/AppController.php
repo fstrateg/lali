@@ -2,8 +2,10 @@
 namespace backend\controllers;
 
 use common\models\StaffRecord;
+use common\models\StaffUserRecord;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\filters\AccessControl;
 use yii\web\ForbiddenHttpException;
@@ -74,12 +76,15 @@ class AppController extends Controller
 
     public function actionMasters($m='index')
     {
+        $html="";
+        if (isset($_POST['m'])) $m=$_POST['m'];
         switch($m)
         {
             case 'update':
                 $html=$this->MastersUpdate();
                 break;
             case 'save':
+                $html=$this->MastersSave();
                 break;
             default:
                 $html=$this->MastersIndex();
@@ -108,5 +113,15 @@ class AppController extends Controller
         $id=yii::$app->request->get('id',-1);
         $model=StaffRecord::findOne($id);
         return $this->render('mastersed',['model'=>$model]);
+    }
+
+    private function MastersSave()
+    {
+        if (!StaffUserRecord::saveForm($_POST['id'],$_POST['userid']))
+        {
+            return $this->MastersUpdate();
+        }
+        Yii::$app->session->setFlash('success', 'Изменения сохранены!');
+        $this->redirect(Url::to(['masters']));
     }
 }

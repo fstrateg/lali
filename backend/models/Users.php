@@ -3,6 +3,7 @@ namespace backend\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * User model
@@ -137,5 +138,14 @@ class Users extends ActiveRecord
             return true;
         }
         return false;
+    }
+
+    public static function getUsersList($cond=null)
+    {
+        $arr=self::find()->all();
+        $list=[];
+        foreach($arr as $item)
+            $list[$item->id]=$item->username;
+        return $list;
     }
 }

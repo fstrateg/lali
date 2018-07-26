@@ -16,6 +16,7 @@ class Quality extends ActiveRecord
     {
         SettingsRecord::setValue('quality','laser',$req->post('ldays'));
         SettingsRecord::setValue('quality','wax',$req->post('vdays'));
+        SettingsRecord::setValue('quality','chmaster',$req->post('chmaster'));
        // SettingsRecord::setValue('quality','onnew',$req->post('onnew'));
 
         self::sinchro_staff($req->post('laser'),1);

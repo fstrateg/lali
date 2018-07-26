@@ -2,11 +2,13 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use \yii\bootstrap\Alert;
 
 /**
  * @var $this yii\web\View
  */
 $this->title="Справочник мастеров";
+echo '<h3>'.$this->title.'</h3>';
 global $susers;
 $susers=\common\models\StaffUserRecord::getUsersForStaff();
 echo GridView::widget([
@@ -30,6 +32,7 @@ echo GridView::widget([
         'label'=>'Пользователь',
         'value'=>function($data){
             global $susers;
+            if (!isset($susers[$data->id])) return null;
             return $susers[$data->id]['username'];
 }
     ],

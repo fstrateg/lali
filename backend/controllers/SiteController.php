@@ -10,6 +10,7 @@ use common\models\LoginForm;
 use yii\data\ActiveDataProvider;
 use yii\web\ForbiddenHttpException;
 use backend\models\Users;
+use yii\helpers\Url;
 /**
  * Site controller
  */
@@ -58,10 +59,18 @@ class SiteController extends Controller
 
     public function beforeAction($action)
     {
-        if (!in_array($action->id,['login', 'error'])) {
+
+        if (!in_array($action->id,['login', 'error','logout'])) {
+            if (Access::isGuest())
+            {
+                $this->redirect(Url::to(['login']));
+                return false;
+            }
             if (!Access::isAdmin())
+            {
                 //$this->redirect('login');
                 throw new ForbiddenHttpException('Доступ к этому разделу запрещен!');
+            }
         }
         return parent::beforeAction($action);
     }
@@ -88,12 +97,13 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        } else {
-            return $this->render('login', [
-                'model' => $model,
-            ]);
+            if (Access::isAdmin()) return $this->goBack();
+            $model->addError('username', 'У вас нет доступа к этому разделу!');
+            Yii::$app->user->logout();
         }
+        return $this->render('login', [
+            'model' => $model,
+        ]);
     }
 
     /**
