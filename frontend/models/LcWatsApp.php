@@ -23,6 +23,10 @@ class LcWatsApp
      * @var $dat_laser Date
      */
     var $dat_wax;
+    /**
+     * @var $chmaster bool
+     */
+    var $chmaster;
 
     var $cfg;
 
@@ -39,6 +43,8 @@ class LcWatsApp
         $dd=clone $this->dat;
         $dd->subDays($day);
         $this->dat_laser=$dd;
+
+        $this->chmaster=!empty($this->cfg['chmaster']);
 
         $dd=clone $this->dat;
         $day=$this->cfg['wax'];
@@ -124,12 +130,7 @@ order by a.appointed
     ');
         //echo $cmd->sql;
         $list=$cmd->queryAll();
-        foreach($list as $k=>$rw)
-        {
-            $name = str_replace('ё', 'е', $rw['name']);
-            preg_match("/([a-z]|[а-я])+/ui", $name, $matches);
-            $list[$k]['name']=$matches[0];
-        }
+        $list=$this->setShortName($list);
         return $list;
     }
 
@@ -165,18 +166,9 @@ order by a.appointed
     ');
         //echo $cmd->sql;
         $list=$cmd->queryAll();
-        foreach($list as $k=>$rw)
-        {
-            $name = str_replace('ё', 'е', $rw['name']);
-            preg_match("/([a-z]|[а-я])+/ui", $name, $matches);
-            if (preg_match("/([a-z]|[а-я])+/ui", $name, $matches))
-                $list[$k]['name']=$matches[0];
-            else
-            {
-                unset($list[$k]);
-            }
-        }
-        //if ($this->cfg['onnew'])
+        //print_r($list);
+        //exit();
+        $list=$this->setShortName($list);
         $list=$this->filter_vax_onlynew($list,$p1);
         return $list;
     }
@@ -197,6 +189,22 @@ from records'
         {
             if ($item['allcli']) continue;
             if (((int)$table[$item['client_id']]['cnt'])>1) unset($list[$k]);
+        }
+        return $list;
+    }
+
+    private function setShortName($list)
+    {
+        foreach($list as $k=>$rw)
+        {
+            $name = str_replace('ё', 'е', $rw['name']);
+            preg_match("/([a-z]|[а-я])+/ui", $name, $matches);
+            if (preg_match("/([a-z]|[а-я])+/ui", $name, $matches))
+                $list[$k]['name']=$matches[0];
+            else
+            {
+                unset($list[$k]);
+            }
         }
         return $list;
     }
