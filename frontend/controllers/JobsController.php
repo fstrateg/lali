@@ -133,4 +133,9 @@ class JobsController extends Controller
        $model=new YclientsImport();
         $model->getRecords();
     }
+
+    public function actionGetnaprav()
+    {
+        JobsModel::getNaprav();
+    }
 }

@@ -41,4 +41,39 @@ WHERE a.client_id=r.id AND a.appointed=r.appointed",['dt'=>$dt->toMySqlRound()])
         }
         echo 'OK';
     }
+
+    public static function getNaprav()
+    {
+       $recs=RecordsRecord::find()->where(['naprav'=>'N'])->limit(50)->all();
+        if ($recs==null)
+        {
+            echo 'Нет записей для апдейта!';
+            return;
+        }
+        foreach($recs as $rw)
+        {
+            $sid=$rw->getAttribute('services_id');
+            $rw->naprav=self::findNaprav($sid);
+            $rw->save();
+        }
+        echo 'Записей '.count($recs);
+    }
+
+    public static function findNaprav($services_id)
+    {
+        if (empty($services_id)) return 'A';
+        $cmd= yii::$app->db->createCommand("
+select title,laser,scrubbing from services a
+where a.id in ($services_id)");
+        $rows=$cmd->queryAll();
+        if ($rows==null) return 'A';
+        $scrub=false;
+        foreach($rows as $rw)
+        {
+            if ($rw['laser']=='Y') return 'L';
+            if ($rw['scrubbing']==1) $scrub=true;
+        }
+        if ($scrub) return 'W';
+        return 'A';
+    }
 }
