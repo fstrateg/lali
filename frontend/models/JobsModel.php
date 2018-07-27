@@ -44,7 +44,7 @@ WHERE a.client_id=r.id AND a.appointed=r.appointed",['dt'=>$dt->toMySqlRound()])
 
     public static function getNaprav()
     {
-       $recs=RecordsRecord::find()->where(['naprav'=>'N'])->limit(50)->all();
+       $recs=RecordsRecord::find()->where(['naprav'=>'N'])->limit(500)->all();
         if ($recs==null)
         {
             echo 'Нет записей для апдейта!';
