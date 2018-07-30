@@ -43,10 +43,13 @@ echo $model->staffname;
                 <td><?= ++$i ?></td>
                 <td><?= $dat->format('d.m.Y H:i') ?></td>
                 <td><?= $items['client']?></td>
-                <td><ul><? foreach($model->getServices($items['services_id']) as $s)
-                    {
-                        echo '<li>'.$s['title'].'</li>';
-                    }
+                <td><ul><?
+                        $srv=$model->getServices($items['services_id']);
+                        if (!empty($srv))
+                            foreach($srv as $s)
+                            {
+                                echo '<li>'.$s['title'].'</li>';
+                            }
                      ?></ul></td>
             </tr>
             <?

@@ -64,6 +64,7 @@ class WorkStudio
 
     public static function getServices($services_id)
     {
+        if (empty($services_id)) return null;
         $cmd = yii::$app->db->createCommand("
 select title from services a
 where a.id in ($services_id)");
