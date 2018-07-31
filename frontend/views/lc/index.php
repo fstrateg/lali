@@ -2,6 +2,7 @@
 use frontend\models\LcWatsApp;
 use common\models\SettingsRecord;
 use common\components\Date;
+use yii\jui\JuiAsset;
 use yii\helpers\Html;
 /**
  * @var $this yii\web\View;
@@ -17,7 +18,7 @@ $i=1;
 $j=1;
 $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
 
-
+JuiAsset::register($this);
 ?>
 <div class="btn-toolbar" role="toolbar" aria-label="...">
     <div class="btn-group mr-2" role="group" aria-label="First group">
@@ -72,9 +73,12 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
     <td><?= HTML::dropDownList('list',$item['stat'],$stat, ['class'=>'statlist form-control','data-id'=>$item['resource_id'], 'data-typ'=>'1']); ?></td>
     <td><?= $item['client_phone'] ?></td>
     <td><ul>
-        <? foreach(LcWatsApp::getServices($item['services_id']) as $ss)
-        {
-        echo '<li>'.$ss['title'].'</li>';
+        <?
+        $s=LcWatsApp::getServices($item['services_id']);
+        if ($s) {
+            foreach ($s as $ss) {
+                echo '<li>' . $ss['title'] . '</li>';
+            }
         }
         ?>
         </ul>
@@ -127,7 +131,15 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
                 ?>
                 <tr>
                     <td><?= $j++ ?></td>
-                    <td><?= $item['name'] ?></td>
+                    <td><?
+                        echo $item['name'];
+                        if ($item['ch'])
+                        {?>
+                            <br/><img src="\images\chmaster.png" width="32px" height="32px" data-toggle="tooltip" title="<?= $item['imgtext'] ?>"/>
+                        <?}
+                        ?>
+
+                    </td>
                     <td><a class="mr-10 btn btn-primary" data-typ="2" data-id="<?= ($i-1) ?>" data-rid="<?= $item['resource_id'] ?>">
                             <span class="glyphicon whatsapp"></span>
                             WhatsApp
@@ -135,14 +147,17 @@ $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
                     <td><?= HTML::dropDownList('list',$item['stat'],$stat,['class'=>'statlist form-control','data-id'=>$item['resource_id'],'data-typ'=>2]); ?></td>
                     <td><?= $item['client_phone'] ?></td>
                     <td><ul>
-                            <? foreach(LcWatsApp::getServices($item['services_id']) as $ss)
-                            {
-                                echo '<li>'.$ss['title'].'</li>';
+                            <? $s=LcWatsApp::getServices($item['services_id']);
+                            if ($s) {
+                                foreach($s as $ss)
+                                {
+                                    echo '<li>'.$ss['title'].'</li>';
+                                }
                             }
                             ?>
                         </ul>
                     </td>
-                    <td><?= $item['staff_name'] ?></td>
+                    <td><?= $item['staff_name'] ?><?= $item['ch']?'*':''; ?></td>
 
                 </tr>
                 <?
@@ -271,7 +286,16 @@ $js=<<< JS
             $(this).parent().addClass('hidden');
          });
     });
+
+    $(function () {
+    //$.widget.bridge('uitooltip', $.ui.tooltip);
+    $('body').tooltip({selector:"[data-toggle='tooltip']",html:true});
+});
+$(function () {
+    $("[data-toggle='popover']").popover();
+});
 JS;
+
 $list='function getlist(){ return [';
 $r='';
 foreach($list1 as $item)

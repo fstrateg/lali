@@ -96,6 +96,7 @@ class LcWatsApp
 
     public static function getServices($services_id)
     {
+        if (!$services_id) return null;
         $cmd= yii::$app->db->createCommand("
 select title from services a
 where a.id in ($services_id)");
@@ -170,7 +171,54 @@ order by a.appointed
         //exit();
         $list=$this->setShortName($list);
         $list=$this->filter_vax_onlynew($list,$p1);
+        $l2=$this->getChMasterRecords($p1,'W');
+        if ($l2)
+        {
+            $l2=$this->setShortName($l2);
+            foreach($l2 as $item)
+            {
+                $item['ch']=1;
+                $item['imgtext']='<b>Изменение по мастеру:</b><br>'.$item['staff_change'].'<br><br><b>Изменения по направлению:</b><br>'.$item['naprav_ch'];
+                $list[]=$item;
+            }
+        }
         return $list;
+    }
+
+    private function getChMasterRecords($dat,$typ)
+    {
+        $sql="
+        Select rez.resource_id,c.name,ifnull(q.status,0) status,r.client_phone,r.services_id,s.title,s2.name staff_name,concat(s1.name,'<br> v <br>',s2.name) staff_change,
+concat(getNapravName(rez.naprav_last),'<br> v <br>',getNapravName(rez.naprav)) naprav_ch
+from
+(
+    Select recs.resource_id,recs.client_id,recs.staff_id,b2.staff_id staff_id_last,recs.naprav,b2.naprav naprav_last
+
+	from (
+        SELECT a.resource_id,a.client_id,a.staff_id,a.appointed,a.naprav,max(b.appointed) dt
+		FROM records a left join records b on (a.client_id=b.client_id and a.appointed>b.appointed and b.deleted=0 and b.attendance=1)
+		WHERE a.id IN (
+        SELECT DISTINCT a.id
+				FROM (
+                    SELECT a.*
+					FROM records a
+					WHERE DATE(appointed)='%s' AND a.attendance=1 AND a.deleted=0 AND naprav='%s'
+					) a,services b
+					WHERE INSTR(a.services_id,b.id)>0 AND b.scrubbing=1
+		)
+		group BY a.resource_id,a.client_id,a.appointed
+	) recs,records b2
+	where recs.client_id=b2.client_id and recs.dt=b2.appointed and b2.staff_id>0 and recs.staff_id<>b2.staff_id
+) rez
+ inner join records r on (r.resource_id=rez.resource_id)
+ inner join clients c on (rez.client_id=c.id)
+ left join quality q on (q.record_id=rez.resource_id and typ=2)
+ left join services s on (r.services_id=s.id)
+ left join staff s1 on (s1.id=rez.staff_id_last)
+ left join staff s2 on (s2.id=rez.staff_id)
+ ";
+        $cmd= yii::$app->db->createCommand(sprintf($sql,$dat,$typ));
+        return $cmd->queryAll();
     }
 
     private function filter_vax_onlynew($list,$dat)
