@@ -65,7 +65,13 @@ JuiAsset::register($this);
     ?>
 <tr>
     <td><?= $i ?></td>
-    <td><?= $item['name'] ?></td>
+    <td><?
+        echo $item['name'];
+        if ($item['ch'])
+        {?>
+            <br/><img src="\images\chmaster.png" width="32px" height="32px" data-toggle="tooltip" title="<?= $item['imgtext'] ?>"/>
+        <?}
+        ?></td>
     <td><a class="mr-10 btn btn-primary" data-typ="1" data-id="<?= ($i-1); ?>" data-rid="<?= $item['resource_id'] ?>">
             <span class="glyphicon whatsapp"></span>
             WhatsApp
@@ -157,7 +163,7 @@ JuiAsset::register($this);
                             ?>
                         </ul>
                     </td>
-                    <td><?= $item['staff_name'] ?><?= $item['ch']?'*':''; ?></td>
+                    <td><?= $item['staff_name'] ?></td>
 
                 </tr>
                 <?

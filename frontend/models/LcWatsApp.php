@@ -3,6 +3,7 @@ namespace frontend\models;
 
 use common\components\Date;
 use common\models\SettingsRecord;
+use yii\helpers\ArrayHelper;
 use yii;
 
 /**
@@ -132,6 +133,7 @@ order by a.appointed
         //echo $cmd->sql;
         $list=$cmd->queryAll();
         $list=$this->setShortName($list);
+        $list=$this->getChMasterRecords($list, $p1, 'L');
         return $list;
     }
 
@@ -171,21 +173,11 @@ order by a.appointed
         //exit();
         $list=$this->setShortName($list);
         $list=$this->filter_vax_onlynew($list,$p1);
-        $l2=$this->getChMasterRecords($p1,'W');
-        if ($l2)
-        {
-            $l2=$this->setShortName($l2);
-            foreach($l2 as $item)
-            {
-                $item['ch']=1;
-                $item['imgtext']='<b>Изменение по мастеру:</b><br>'.$item['staff_change'].'<br><br><b>Изменения по направлению:</b><br>'.$item['naprav_ch'];
-                $list[]=$item;
-            }
-        }
+        $list=$this->getChMasterRecords($list, $p1, 'W');
         return $list;
     }
 
-    private function getChMasterRecords($dat,$typ)
+    private function getChMasterRecords($list, $dat,$typ)
     {
         $sql="
         Select rez.resource_id,c.name,ifnull(q.status,0) status,r.client_phone,r.services_id,s.title,s2.name staff_name,concat(s1.name,'<br> v <br>',s2.name) staff_change,
@@ -203,8 +195,7 @@ from
                     SELECT a.*
 					FROM records a
 					WHERE DATE(appointed)='%s' AND a.attendance=1 AND a.deleted=0 AND naprav='%s'
-					) a,services b
-					WHERE INSTR(a.services_id,b.id)>0 AND b.scrubbing=1
+					) a
 		)
 		group BY a.resource_id,a.client_id,a.appointed
 	) recs,records b2
@@ -218,7 +209,32 @@ from
  left join staff s2 on (s2.id=rez.staff_id)
  ";
         $cmd= yii::$app->db->createCommand(sprintf($sql,$dat,$typ));
-        return $cmd->queryAll();
+        $l2= $cmd->queryAll();
+        if ($l2)
+        {
+            $l2=$this->setShortName($l2);
+            $l2=ArrayHelper::index($l2,'resource_id');
+            $k=[];
+            foreach($l2 as $key=>$item)
+            {
+                $item['ch']=1;
+                $item['imgtext']='<b>Изменение по мастеру:</b><br>'.$item['staff_change'].'<br><br><b>Изменения по направлению:</b><br>'.$item['naprav_ch'];
+                $l2[$key]=$item;
+                $k[]=$key;
+            }
+            foreach($list as $key=>$l)
+            {
+                if (in_array($l['resource_id'],$k))
+                {
+                    $list[$key]['ch']=1;
+                    $list[$key]['imgtext']=$l2[$l['resource_id']]['imgtext'];
+                    unset($l2[$l['resource_id']]);
+                }
+            }
+            foreach($l2 as $item) $list[]=$item;
+
+        }
+        return $list;
     }
 
     private function filter_vax_onlynew($list,$dat)
