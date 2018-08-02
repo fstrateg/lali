@@ -252,7 +252,7 @@ $js=<<< JS
                 var msg=window.watsappmsg[0];
                 if (typ=="2")
                     msg=window.watsappmsg[1];
-                msg=msg.replace('%NAME%',list[dt].name)
+                msg=msg.replace('%NAME%',list[dt].name).replace('%STAFF%',list[dt].staff);
                 $.ajax({
                     url:'/lc/wclick',
                     type: 'POST',
@@ -306,12 +306,12 @@ $list='function getlist(){ return [';
 $r='';
 foreach($list1 as $item)
 {
-    $list.="$r{name:'".$item["name"]."',phone:'".str_replace('+','',$item['client_phone'])."'}";
+    $list.="$r{name:'".$item["name"]."',phone:'".str_replace('+','',$item['client_phone'])."',staff:'".$item['staff_name']."'}";
     $r=',';
 }
 foreach($list2 as $item)
 {
-    $list.="$r{name:'".$item["name"]."',phone:'".str_replace('+','',$item['client_phone'])."'}";
+    $list.="$r{name:'".$item["name"]."',phone:'".str_replace('+','',$item['client_phone'])."',staff:'".$item['staff_name']."'}";
     $r=',';
 }
 $list.='];}';
