@@ -67,7 +67,7 @@ JuiAsset::register($this);
     <td><?= $i ?></td>
     <td><?
         echo $item['name'];
-        if ($item['ch'])
+        if (isset($item['ch'])&&$item['ch'])
         {?>
             <br/><img src="\images\chmaster.png" width="32px" height="32px" data-toggle="tooltip" title="<?= $item['imgtext'] ?>"/>
         <?}
@@ -139,7 +139,7 @@ JuiAsset::register($this);
                     <td><?= $j++ ?></td>
                     <td><?
                         echo $item['name'];
-                        if ($item['ch'])
+                        if (isset($item['ch'])&&$item['ch'])
                         {?>
                             <br/><img src="\images\chmaster.png" width="32px" height="32px" data-toggle="tooltip" title="<?= $item['imgtext'] ?>"/>
                         <?}

@@ -39,7 +39,8 @@ WHERE a.client_id=r.id AND a.appointed=r.appointed",['dt'=>$dt->toMySqlRound()])
                     ])->execute();
             $db->createCommand('delete from sms_done where client_id=:id',['id'=>$rw['id']])->execute();
         }
-        echo 'OK';
+        echo count($rs);
+        echo '<br>OK';
     }
 
     public static function getNaprav()

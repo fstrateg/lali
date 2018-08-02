@@ -179,9 +179,10 @@ order by a.appointed
 
     private function getChMasterRecords($list, $dat,$typ)
     {
+        $qtyp=($typ=='L')?1:2;
         $sql="
-        Select rez.resource_id,c.name,ifnull(q.status,0) status,r.client_phone,r.services_id,s.title,s2.name staff_name,concat(s1.name,'<br> v <br>',s2.name) staff_change,
-concat(getNapravName(rez.naprav_last),'<br> v <br>',getNapravName(rez.naprav)) naprav_ch
+        Select rez.resource_id,c.name,ifnull(q.status,0) stat,r.client_phone,r.services_id,s.title,s2.name staff_name,concat(s1.name,'<br> v <br>',s2.name) staff_change,
+concat(n1.name,'<br> v <br>',n2.name) naprav_ch
 from
 (
     Select recs.resource_id,recs.client_id,recs.staff_id,b2.staff_id staff_id_last,recs.naprav,b2.naprav naprav_last
@@ -203,12 +204,14 @@ from
 ) rez
  inner join records r on (r.resource_id=rez.resource_id)
  inner join clients c on (rez.client_id=c.id)
- left join quality q on (q.record_id=rez.resource_id and typ=2)
+ left join quality q on (q.record_id=rez.resource_id and typ=%s)
  left join services s on (r.services_id=s.id)
  left join staff s1 on (s1.id=rez.staff_id_last)
  left join staff s2 on (s2.id=rez.staff_id)
+ left join naprav n1 on (n1.code=rez.naprav_last)
+ left join naprav n2 on (n2.code=rez.naprav)
  ";
-        $cmd= yii::$app->db->createCommand(sprintf($sql,$dat,$typ));
+        $cmd= yii::$app->db->createCommand(sprintf($sql,$dat,$typ,$qtyp));
         $l2= $cmd->queryAll();
         if ($l2)
         {
