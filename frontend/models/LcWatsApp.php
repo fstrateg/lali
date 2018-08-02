@@ -179,6 +179,7 @@ order by a.appointed
 
     private function getChMasterRecords($list, $dat,$typ)
     {
+        if (!$this->chmaster) return $list;
         $qtyp=($typ=='L')?1:2;
         $sql="
         Select rez.resource_id,c.name,ifnull(q.status,0) stat,r.client_phone,r.services_id,s.title,s2.name staff_name,concat(s1.name,'<br> v <br>',s2.name) staff_change,
