@@ -199,7 +199,7 @@ class SMS extends BaseObject
                     'client_id=' . $c['id'],
                     "appointed>'{$c['last_visit']}'"
                 ])->count();
-                if ($cnt > 0) {
+                if ($cnt > 0 || empty($rec['services_id'])) {
                     $needsms = false;
                 } else {
                     /* Проверка на напоминание */
