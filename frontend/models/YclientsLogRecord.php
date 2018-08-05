@@ -3,12 +3,12 @@ namespace frontend\models;
 
 use common\models\ClientsRecord;
 use common\models\RecordsRecord;
+use common\models\SettingsRecord;
 use \yii\db\ActiveRecord;
 use \common\models\ServicesRecord;
 
 class YclientsLogRecord extends ActiveRecord
 {
-    public static $cfg=['company'=>31224];
     public static function tableName()
     {
         return 'yclientslog';
@@ -16,13 +16,16 @@ class YclientsLogRecord extends ActiveRecord
 
     public static function doParse($rw)
     {
+        $cid=SettingsRecord::findValue('yclients','company');
+        $strip=SettingsRecord::findValue('yclients','strip');
+        $data=empty($strip)?$rw->data:stripcslashes($rw->data);
         //$rws=YclientsLogRecord::find()->where(['done'=>0])->all();
         //foreach($rws as $rw)
         //{
         $op=['create'=>'AP','update'=>'ED','delete'=>'DE'];
             if ($rw->data) {
                 try {
-                    $global = json_decode(stripslashes($rw->data), true);
+                    $global = json_decode($data, true);
                     $company_id = $global['company_id'];
                     $resource = $global['resource']; // record, service, client
                     $resource_id = $global['resource_id'];
@@ -32,7 +35,7 @@ class YclientsLogRecord extends ActiveRecord
                     $rw->resource=$resource;
                     $rw->resource_id=$resource_id;
                     $rw->oper=$op[$status];
-                    if ($company_id == YclientsLogRecord::$cfg['company']) {
+                    if ($company_id == $cid) {
                         $table = null;
                         if ($resource == 'client') {
                             $table = ClientsRecord::initRec($resource_id, $data);
