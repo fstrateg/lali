@@ -1,5 +1,5 @@
 <?php
-namespace common\components;
+namespace common\components\smsprovider;
 
 use yii\base\BaseObject;
 use common\models\SettingsRecord;

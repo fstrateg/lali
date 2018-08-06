@@ -8,6 +8,7 @@ use common\models\SMSSettings;
 use common\models\ClientsRecord;
 use common\models\RecordsRecord;
 use yii\base\BaseObject;
+use common\components\smsprovider\SMSNikita;
 
 /**
  * Class SMS
@@ -281,11 +282,29 @@ and b.type is null
     public function send()
     {
         $t=Telegram::instance();
-        $msg=$this->getMessageText();
-        $sms=new SMSNikita();
+        $msg='$this->getMessageText()';
+        $sms=new $this->getProvider(); //SMSNikita();
         $sms->sendSMS($this->client_phone,$msg,$this->transaction_id);
         //if ($this->lat) $msg=SMS::translate($msg);
         $t->sendMessageAll($msg,$this->client_phone." ({$this->transaction_id})");
+    }
+
+    private function getProvider()
+    {
+        $provider=SettingsRecord::findValue('sms','provider');
+        switch ($provider)
+        {
+            case "SMSNikita":
+                return new SMSNikita();
+        }
+        return null;
+    }
+
+    public function sendtest()
+    {
+        $msg='test';
+        $sms=$this->getProvider(); //SMSNikita();
+        $sms->sendSMS($this->client_phone,$msg,'id504');
     }
 
     public static function translate($text)
