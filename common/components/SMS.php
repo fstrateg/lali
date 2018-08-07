@@ -282,8 +282,8 @@ and b.type is null
     public function send()
     {
         $t=Telegram::instance();
-        $msg='$this->getMessageText()';
-        $sms=new $this->getProvider(); //SMSNikita();
+        $msg=$this->getMessageText();
+        $sms=$this->getProvider(); //SMSNikita();
         $sms->sendSMS($this->client_phone,$msg,$this->transaction_id);
         //if ($this->lat) $msg=SMS::translate($msg);
         $t->sendMessageAll($msg,$this->client_phone." ({$this->transaction_id})");
