@@ -107,7 +107,8 @@ class JobsController extends Controller
     {
         $id=4533;
         $sms=new SMS();
-        $sms->client_phone="555904504";
+        //$sms->client_phone="555904504";
+        $sms->client_phone="77766196331";
         $sms->sendtest();
         //echo $sms->getMessageText();
 

@@ -1,6 +1,7 @@
 <?php
 namespace common\components;
 
+use common\components\smsprovider\SMSKazinfo;
 use common\models\ServicesRecord;
 use common\models\SettingsRecord;
 use common\models\Sms_doneRecord;
@@ -282,8 +283,8 @@ and b.type is null
     public function send()
     {
         $t=Telegram::instance();
-        $msg='$this->getMessageText()';
-        $sms=new $this->getProvider(); //SMSNikita();
+        $msg=$this->getMessageText();
+        $sms=$this->getProvider(); //SMSNikita();
         $sms->sendSMS($this->client_phone,$msg,$this->transaction_id);
         //if ($this->lat) $msg=SMS::translate($msg);
         $t->sendMessageAll($msg,$this->client_phone." ({$this->transaction_id})");
@@ -296,13 +297,15 @@ and b.type is null
         {
             case "SMSNikita":
                 return new SMSNikita();
+            case "SMSKazinfo":
+                return new SMSKazinfo();
         }
         return null;
     }
 
     public function sendtest()
     {
-        $msg='test';
+        $msg='test from site';
         $sms=$this->getProvider(); //SMSNikita();
         $sms->sendSMS($this->client_phone,$msg,'id504');
     }
