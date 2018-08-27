@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use backend\models\SettingsRecord;
+use common\components\Common;
 use common\components\Date;
 use common\components\SMS;
 use common\models\SMSSettings;
@@ -55,8 +56,11 @@ class JobsController extends Controller
         $log->data=$jsonPostData;
         $log->insert();
         YclientsLogRecord::doParse($log);
+
+        // Запускаем google синхронизацию //
+        return $this->actionSgoogle();
         //$this->actionDoyclients();
-        return 'OK';
+        //return 'OK';
     }
 
     /**
@@ -105,11 +109,13 @@ class JobsController extends Controller
     */
     public function actionTest()
     {
-        $id=4533;
+        //echo \yii\helpers\Url::base(true);
+        echo \yii\helpers\Url::to('sgoogle',true);
+        /*$id=4533;
         $sms=new SMS();
         //$sms->client_phone="555904504";
         $sms->client_phone="77766196331";
-        $sms->sendtest();
+        $sms->sendtest();*/
         //echo $sms->getMessageText();
 
     }
@@ -138,5 +144,16 @@ class JobsController extends Controller
     public function actionGetnaprav()
     {
         JobsModel::getNaprav();
+    }
+
+    public function actionSgoogle()
+    {
+        JobsModel::SynchroGoogle();
+    }
+
+    public function actionFillgoogle()
+    {
+        ini_set('max_execution_time', 1200);
+        JobsModel::FillGoogle();
     }
 }

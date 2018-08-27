@@ -8,9 +8,12 @@
 
 namespace frontend\models;
 
+use backend\models\SettingsRecord;
+use common\models\ClientsRecord;
 use common\models\RecordsRecord;
 use yii;
 use common\components\Date;
+use rapidweb\googlecontacts\factories\ContactFactory;
 
 class JobsModel extends \stdClass
 {
@@ -76,5 +79,96 @@ where a.id in ($services_id)");
         }
         if ($scrub) return 'W';
         return 'A';
+    }
+
+    public static function SynchroGoogle()
+    {
+        //exit();
+        $gcfg=self::getGoogleConfig();
+        $curl="https://www.google.com/m8/feeds/contacts/{$gcfg->googleakk}/full/";
+        $cl=ClientsRecord::find()->where(['gr'=>'Y'])->limit(50)->all();
+        $i=0;
+        foreach($cl as $cli)
+        {
+            $name=self::getGName($cli->getAttribute('name'),$cli->getAttribute('phone'));
+            $cid=$cli->getAttribute('googleid');
+            $n=true;
+            if (!empty($cid))
+            {
+                $contact=ContactFactory::getBySelfURL($curl.$cid,$gcfg);
+                //exit();
+                if (!empty($contact->id)) {
+                    $contact->name = $name;
+                    $contact->phoneNumber=$cli->getAttribute('phone');
+                    $contact->email = '';
+                    try {
+                        ContactFactory::submitUpdates($contact, $gcfg);
+                    }
+                    catch(\ErrorException $err)
+                    {
+                        echo $err->getMessage().'<br>';
+                        echo $err->getTraceAsString();
+                        echo '<br>';
+                        print_r($contact);
+                        exit();
+                    }
+                    $n=false;
+                }
+            }
+            if ($n) {
+                $contact = ContactFactory::create($name, $cli->phone, '', '', $gcfg);
+                $id = basename($contact->id);
+                $cli->setAttribute('googleid',$id);
+            }
+            $cli->setAttribute('gr','N');
+            $cli->save();
+            $i++;
+        }
+        echo 'Обработано клиентов:'.$i;
+    }
+
+    public static function FillGoogle()
+    {
+        $cfg=self::getGoogleConfig();
+        $contacts = ContactFactory::getAll($cfg);
+        //$c=ContactFactory::getBySelfURL($contacts[0]->selfURL,$cfg);
+        $i=0;
+        foreach ($contacts as $contact) {
+            $i++;
+            if ($i<4000) continue;
+            if (!isset($contact->phoneNumber)) continue;
+            $phone = $contact->phoneNumber[0]['number'];
+            $client = ClientsRecord::findOne(['phone' => $phone, 'gr'=>'Y']);
+            if ($client) {
+                $id = basename($contact->id);
+                $client->googleid = $id;
+                $client->gr="N";
+                $client->save();
+            }
+
+        }
+        echo 'Обработано клиентов:'.$i;
+    }
+
+    private static function getGoogleConfig()
+    {
+        $c=\common\models\SettingsRecord::getValuesGroup("google");
+        $cfg=new \stdClass();
+        $cfg->clientID=$c['clientid'];
+        $cfg->clientSecret=$c['clientsecr'];
+        $cfg->redirectUri="";
+        $cfg->developerKey="";
+        $cfg->refreshToken=$c['refresh'];
+        $cfg->googleakk=urlencode($c['googleakk']);
+        return $cfg;
+    }
+
+    private static function getGName($name, $phone) {
+        if (!preg_match("/(\+7)|(\+8)/ui", $phone, $matches))
+            preg_match("/\+\d\d\d/ui", $phone, $matches);
+        $code = $matches[0];
+        $phone_name = str_replace($code, "", $phone);
+        $code = str_replace("+", "", $code);
+        return $name . "__" . $code . "_" . $phone_name;
     }
 }

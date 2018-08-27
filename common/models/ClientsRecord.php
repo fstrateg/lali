@@ -83,6 +83,13 @@ class ClientsRecord extends ActiveRecord
         $rez=$rez!=null?$rez:new ClientsRecord();
         $rez->id=$resource_id;
         $rw=self::getRec($data);
+
+        // нужна ли синхронизация с googlom
+        if ($rw['name']==$rez->getAttribute('name')&&$rw['phone']==$rez->getAttribute('phone'))
+            $rez->setAttribute('gr','N');
+        else
+            $rez->setAttribute('gr','Y');
+
         foreach($rw as $k=>$v)
             $rez->setAttribute($k,$v);
         return $rez;
