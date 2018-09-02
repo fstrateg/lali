@@ -65,4 +65,13 @@ class StaffRecord extends \yii\db\ActiveRecord
             }
         }
     }
+
+    public static function initRec($resource_id,$data)
+    {
+        $rez=self::findOne($resource_id);
+        $rez=$rez!=null?$rez:new StaffRecord();
+        $rez->id=$resource_id;
+        $rez->name=$data['name'];
+        return $rez;
+    }
 }

@@ -4,6 +4,7 @@ namespace frontend\models;
 use common\models\ClientsRecord;
 use common\models\RecordsRecord;
 use common\models\SettingsRecord;
+use common\models\StaffRecord;
 use \yii\db\ActiveRecord;
 use \common\models\ServicesRecord;
 
@@ -43,6 +44,8 @@ class YclientsLogRecord extends ActiveRecord
                             $table = RecordsRecord::initRec($resource_id, $data);
                         } elseif ($resource == 'service') {
                             $table = ServicesRecord::initRec($resource_id, $data);
+                        } elseif ($resource == 'staff') {
+                            $table = StaffRecord::initRec($resource_id, $data);
                         }
                         $table->status = $status;
                         $table->num=$rw->id;
