@@ -110,12 +110,13 @@ class JobsController extends Controller
     public function actionTest()
     {
         //echo \yii\helpers\Url::base(true);
-        echo \yii\helpers\Url::to('sgoogle',true);
-        /*$id=4533;
+        //echo \yii\helpers\Url::to('sgoogle',true);
+        $id=4533;
         $sms=new SMS();
         //$sms->client_phone="555904504";
         $sms->client_phone="77766196331";
-        $sms->sendtest();*/
+        //echo 'test';
+        $sms->sendtest();
         //echo $sms->getMessageText();
 
     }

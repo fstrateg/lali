@@ -305,7 +305,7 @@ and b.type is null
 
     public function sendtest()
     {
-        $msg='test from site';
+        $msg='test';
         $sms=$this->getProvider(); //SMSNikita();
         $sms->sendSMS($this->client_phone,$msg,'id504');
     }

@@ -38,7 +38,7 @@ class RecordsRecord extends \yii\db\ActiveRecord
     {
         $srv=[];
         foreach($data['services'] as $item) $srv[]=$item['id'];
-        $data['sms_before']=empty($data['sms_before'])?1:$data['sms_before'];
+        $data['sms_before']=empty($data['sms_before'])?self::getSMSBefore():$data['sms_before'];
         $rec=[
             'staff_id'=>$data['staff']['id'],
             'staff_name'=>$data['staff']['name'],
@@ -50,6 +50,12 @@ class RecordsRecord extends \yii\db\ActiveRecord
         ];
         $rec['client_id']=(isset($data['client']['id']))?$data['client']['id']:'-1';
         return $rec;
+    }
+
+    private static function getSMSBefore()
+    {
+        $min=SettingsRecord::findValue('sms','second');
+        return $min/60;
     }
 
     public function afterSave($insert, $changedAttributes)

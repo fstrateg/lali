@@ -86,7 +86,7 @@ where a.id in ($services_id)");
         //exit();
         $gcfg=self::getGoogleConfig();
         $curl="https://www.google.com/m8/feeds/contacts/{$gcfg->googleakk}/full/";
-        $cl=ClientsRecord::find()->where(['gr'=>'Y'])->limit(50)->all();
+        $cl=ClientsRecord::find()->where(['googleid'=>''])->limit(50)->all();
         $i=0;
         foreach($cl as $cli)
         {
