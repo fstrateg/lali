@@ -48,6 +48,7 @@ class JobsController extends Controller
      */
     public function actionYclients()
     {
+        ini_set('max_execution_time', 600);
         $log=new YclientsLogRecord();
         $curdate=new \DateTime('now',new \DateTimeZone('Asia/Bishkek'));
         $log->dat=$curdate->format('Y-m-d H:i:s');
@@ -111,13 +112,15 @@ class JobsController extends Controller
     {
         //echo \yii\helpers\Url::base(true);
         //echo \yii\helpers\Url::to('sgoogle',true);
-        $id=4533;
+        /*$id=4533;
         $sms=new SMS();
         //$sms->client_phone="555904504";
         $sms->client_phone="77766196331";
         //echo 'test';
         $sms->sendtest();
-        //echo $sms->getMessageText();
+        //echo $sms->getMessageText();*/
+        $imp=new YclientsImport();
+        $imp->getKlient(22772330);
 
     }
 

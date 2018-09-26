@@ -71,10 +71,15 @@ class RecordsRecord extends \yii\db\ActiveRecord
                             "Нет номера телефона!");
                     return true;
                 }
+                //$t=Telegram::instance();
+
                 $sms=new SMS();
                 $sms->setNumber(0);
                 $sms->setRecord($this);
+
+                //$t->sendMessage('Alex',"Попытка отправки СМС",$sms->client_phone);
                 if (!$sms->Dontsend) $sms->send();
+                //$t->sendMessage('Alex',"Конец попытки",$sms->client_phone);
 
                 /*$t=Telegram::instance();
                 $t->sendMessageAll($sms->getMessageText(),$sms->client_phone);*/

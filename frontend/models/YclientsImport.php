@@ -21,7 +21,7 @@ class YclientsImport
         //$cfg=yii::$app->components['yclients'];
         $this->token=$cfg['token'];
         $this->user=$cfg['user'];
-        $this->company=31224;//$cfg['company'];
+        $this->company=$cfg['company'];
     }
 
     public function import()
