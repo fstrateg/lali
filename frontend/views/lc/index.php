@@ -105,7 +105,7 @@ JuiAsset::register($this);
     <a id="laser-save" href="javascript:void(0)" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить статусы</a>
 </section>
 
-<section>
+<section class="mb-20">
 <hr>
     <div class="row mb-20">
         <div class="col-md-7" style="line-height: 34px">
@@ -178,11 +178,13 @@ JuiAsset::register($this);
     </div>
     <a id="wax-save" href="javascript:void(0)" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить статусы</a>
 </section>
+
 <script>
     window.watsappmsg=['<?= $model->getLaserMsg() ?>',
     '<?= $model->getWaxMsg() ?>'];
 
 </script>
+
 <?
 $js=<<< JS
     function setVL(typ,btn)

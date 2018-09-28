@@ -30,6 +30,8 @@ AppAsset::register($this);
 
 <div class="wrap">
     <?php
+    $cfg=\common\models\SettingsRecord::getValuesGroup('system');
+
     NavBar::begin([
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
@@ -47,6 +49,7 @@ AppAsset::register($this);
             ['label' => 'Home', 'url' => ['/st/index']],
         ];
     }
+    $menuItems[] ='<li>'.Html::a($cfg['addlinknam'],$cfg['addlink']).'</li>';
     if (Access::isAdmin())
     {
         $menuItems[] = ['label'=>'Приложения',
