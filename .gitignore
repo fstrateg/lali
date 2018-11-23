@@ -1,0 +1,12 @@
+/nb/nbproject/private/
+vendor/
+
+frontend/runtime/
+
+frontend/web/
+
+common/config/
+
+nb/
+
+\.directory
