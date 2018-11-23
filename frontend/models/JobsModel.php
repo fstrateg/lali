@@ -13,6 +13,7 @@ use common\models\ClientsRecord;
 use common\models\RecordsRecord;
 use yii;
 use common\components\Date;
+use common\components\simple_html_dom;
 use rapidweb\googlecontacts\factories\ContactFactory;
 
 class JobsModel extends \stdClass
@@ -170,5 +171,26 @@ where a.id in ($services_id)");
         $phone_name = str_replace($code, "", $phone);
         $code = str_replace("+", "", $code);
         return $name . "__" . $code . "_" . $phone_name;
+    }
+    
+    public static function getKurs()
+    {        
+        $html = simple_html_dom::file_get_html('http://demirbank.kg/ru-ru');
+        $ret=$html->find('div.pricing-table div.owl-carousel table',1);
+        //echo $ret;
+        $ret=$ret->find('tr');
+        if (count($ret)>0) unset($ret[0]);
+        $dat=new Date();
+        echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
+        echo "<CurrencyRates Name=\"Daily Exchange Rates\" Date=\"{$dat->format()}\">\n";
+        foreach ($ret as $rw)
+        {
+            $str=$rw->find("th",0)->plaintext;
+            $str=trim($str);
+            echo "<Currency ISOCode=\"{$str}\">\n";
+            $str=$rw->find('td',0)->plaintext;
+            echo "<Nominal>1</Nominal>\n<Value>{$str}</Value>\n</Currency>\n";
+        }
+        echo '</CurrencyRates>';
     }
 }

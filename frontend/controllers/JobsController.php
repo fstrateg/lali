@@ -161,6 +161,10 @@ class JobsController extends Controller
         JobsModel::FillGoogle();
     }
     
+    public function actionGetkurs() {
+        return JobsModel::getKurs();
+    }
+    
     public function actionPhpinfo()
     {
         phpinfo();
