@@ -174,22 +174,33 @@ where a.id in ($services_id)");
     }
     
     public static function getKurs()
-    {        
-        $html = simple_html_dom::file_get_html('http://demirbank.kg/ru-ru');
-        $ret=$html->find('div.pricing-table div.owl-carousel table',1);
-        //echo $ret;
-        $ret=$ret->find('tr');
-        if (count($ret)>0) unset($ret[0]);
+    {       
+        echo "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n";
         $dat=new Date();
-        echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
         echo "<CurrencyRates Name=\"Daily Exchange Rates\" Date=\"{$dat->format()}\">\n";
-        foreach ($ret as $rw)
+        $s=0;
+        try{
+            $html = simple_html_dom::file_get_html('http://demirbank.kg/ru-ru');
+            $s=1;
+            $ret=$html->find('div.pricing-table div.owl-carousel table',0);
+            //echo $ret;
+            $ret=$ret->find('tr');
+            if (count($ret)>0) unset($ret[0]); 
+            foreach ($ret as $rw)
+            {
+                $str=$rw->find("th",0)->plaintext;
+                $str=trim($str);
+                echo "<Currency ISOCode=\"{$str}\">\n";
+                $str=$rw->find('td',1)->plaintext;
+                echo "<Nominal>1</Nominal>\n<Value>{$str}</Value>\n</Currency>\n";
+            }
+        }
+        catch(yii\db\Exception $error)
         {
-            $str=$rw->find("th",0)->plaintext;
-            $str=trim($str);
-            echo "<Currency ISOCode=\"{$str}\">\n";
-            $str=$rw->find('td',0)->plaintext;
-            echo "<Nominal>1</Nominal>\n<Value>{$str}</Value>\n</Currency>\n";
+            $err[0]="Ошибка загрузки страницы";
+            $err[1]="Ошибка разбора страницы";
+            echo "<Error>{$err[$s]}</Error>\n";
+            echo "<ErrMsg>{$error->getMessage()}</ErrMsg>\n";
         }
         echo '</CurrencyRates>';
     }

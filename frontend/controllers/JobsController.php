@@ -162,6 +162,8 @@ class JobsController extends Controller
     }
     
     public function actionGetkurs() {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        Yii::$app->response->headers->add('Content-Type', 'text/xml');
         return JobsModel::getKurs();
     }
     
