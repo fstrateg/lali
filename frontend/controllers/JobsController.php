@@ -160,4 +160,15 @@ class JobsController extends Controller
         ini_set('max_execution_time', 1200);
         JobsModel::FillGoogle();
     }
+    
+    public function actionGetkurs() {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        Yii::$app->response->headers->add('Content-Type', 'text/xml');
+        return JobsModel::getKurs();
+    }
+    
+    public function actionPhpinfo()
+    {
+        phpinfo();
+    }
 }
