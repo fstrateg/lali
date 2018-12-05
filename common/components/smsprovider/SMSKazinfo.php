@@ -40,8 +40,10 @@ class SMSKazinfo extends BaseObject
         curl_setopt($ch, CURLOPT_USERAGENT, $uagent);  // useragent
         curl_setopt($ch, CURLOPT_TIMEOUT, 120);
         curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postdata));
 
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/x-www-form-urlencoded'));
         //curl_setopt($ch, CURLOPT_COOKIEJAR, "c://coo.txt");
         //curl_setopt($ch, CURLOPT_COOKIEFILE,"c://coo.txt");
 
@@ -73,16 +75,19 @@ class SMSKazinfo extends BaseObject
             'recipient'=>$phoneNumber,
             'messagedata'=>$message
         ];
-
+        //print_r($post);
         try
         {
             $result = $this->post_content($post);
             $responseXML = $result['content'];
             $response = new \SimpleXMLElement($responseXML);
+            //print_r($response);
             $ret=((int)$response->data->acceptreport->statuscode);
             if ($ret<>0)
             {
-                throw new \Exception('Ошибка от Kazinfo! Статус: '.$response->error);
+                Telegram::instance()->sendMessageAll("SMS не отправлено: {$response->error}\r\n $message",$phoneNumber);
+				throw new \Exception('Ошибка от Kazinfo! Статус: '.$response->error);
+				
             }
             return +$ret;
         }
