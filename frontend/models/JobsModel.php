@@ -239,7 +239,7 @@ where c.phone like '%77778112596%'");
         $code = $matches[0];
         $phone_name = str_replace($code, "", $phone);
         $code = str_replace("+", "", $code);
-        return $name . "__" . $code . "_" . $phone_name.'.';
+        return $name . "__" . $code . "_" . $phone_name;
     }
     
     public static function getKurs()
