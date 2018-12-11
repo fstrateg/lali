@@ -119,8 +119,9 @@ class JobsController extends Controller
         //echo 'test';
         $sms->sendtest();
         //echo $sms->getMessageText();*/
-        $imp=new YclientsImport();
-        $imp->getKlient(22772330);
+        //imp=new YclientsImport();
+        //$imp->getKlient(22772330);
+        echo JobsModel::getGName('Индира','+77019291009');
 
     }
 
@@ -165,6 +166,11 @@ class JobsController extends Controller
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         Yii::$app->response->headers->add('Content-Type', 'text/xml');
         return JobsModel::getKurs();
+    }
+
+    public function actionGoogleadd()
+    {
+        JobsModel::GoogleSynchroAdd();
     }
     
     public function actionPhpinfo()

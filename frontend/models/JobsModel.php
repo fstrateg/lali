@@ -128,6 +128,75 @@ where a.id in ($services_id)");
         echo 'Обработано клиентов:'.$i;
     }
 
+    /**
+     * Дополнительная синхронизация googla, так как не всегда контакты заходят с первого раза
+     */
+    public static function GoogleSynchroAdd()
+    {
+        $cmd= yii::$app->db->createCommand("
+SELECT c.id,c.name,c.phone,c.googleid
+FROM clients c,
+(
+	SELECT DISTINCT a.client_id
+	FROM records a,
+		(
+		SELECT DISTINCT a.resource_id
+		FROM yclientslog a
+		WHERE a.dat> DATE_SUB(NOW(), INTERVAL 8 DAY) AND a.resource='record') b
+		WHERE a.resource_id=b.resource_id AND a.client_id>0) b2
+WHERE c.id=b2.client_id
+        ");
+        $cmd=yii::$app->getDb()->createCommand("SELECT c.id,c.name,c.phone,c.googleid
+FROM clients c
+where c.phone like '%77778112596%'");
+        $rows=$cmd->queryAll();
+        if ($rows==null) return;
+        $gcfg=self::getGoogleConfig();
+        foreach($rows as $cli) {
+            $name = self::getGName($cli['name'], $cli['phone']);
+            $cid = $cli['googleid'];
+            $n = true;
+            if (!empty($cid)) {
+                $contact = self::getContact($cid,$gcfg); //ContactFactory::getBySelfURL($curl . $cid, $gcfg);
+                if (!$contact)
+                {
+                    $contact=ContactFactory::create($name,$cli['phone'],'','',$gcfg);
+                    $cid = basename($contact->id);
+                    yii::$app->getDb()->createCommand("update clients set googleid='{$cid}' where id={$cli['id']}")->execute();
+                    continue;
+                }
+                if ($contact->name==$name) continue;
+                $contact->name = $name;
+                $contact->phoneNumber=$cli['phone'];
+                $contact->email = '';
+                try {
+                    ContactFactory::submitUpdates($contact, $gcfg);
+                }
+                catch(\ErrorException $err)
+                {
+                    echo $err->getMessage().'<br>';
+                    echo $err->getTraceAsString();
+                    echo '<br>';
+                    print_r($contact);
+                    exit();
+                }
+                $n=false;
+            }
+        }
+    }
+
+    private static function getContact($id,$gcfg)
+    {
+        $curl="https://www.google.com/m8/feeds/contacts/{$gcfg->googleakk}/full/";
+        try {
+            $contact = ContactFactory::getBySelfURL($curl . $id, $gcfg);
+        }catch(\ErrorException $err){
+            return null;
+        }
+        return $contact;
+    }
+
+
     public static function FillGoogle()
     {
         $cfg=self::getGoogleConfig();
@@ -136,7 +205,7 @@ where a.id in ($services_id)");
         $i=0;
         foreach ($contacts as $contact) {
             $i++;
-            if ($i<4000) continue;
+            //if ($i<4000) continue;
             if (!isset($contact->phoneNumber)) continue;
             $phone = $contact->phoneNumber[0]['number'];
             $client = ClientsRecord::findOne(['phone' => $phone, 'gr'=>'Y']);
@@ -146,10 +215,10 @@ where a.id in ($services_id)");
                 $client->gr="N";
                 $client->save();
             }
-
         }
         echo 'Обработано клиентов:'.$i;
     }
+
 
     private static function getGoogleConfig()
     {
@@ -164,13 +233,13 @@ where a.id in ($services_id)");
         return $cfg;
     }
 
-    private static function getGName($name, $phone) {
+    public static function getGName($name, $phone) {
         if (!preg_match("/(\+7)|(\+8)/ui", $phone, $matches))
             preg_match("/\+\d\d\d/ui", $phone, $matches);
         $code = $matches[0];
         $phone_name = str_replace($code, "", $phone);
         $code = str_replace("+", "", $code);
-        return $name . "__" . $code . "_" . $phone_name;
+        return $name . "__" . $code . "_" . $phone_name.'.';
     }
     
     public static function getKurs()
