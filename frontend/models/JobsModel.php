@@ -9,6 +9,7 @@
 namespace frontend\models;
 
 use backend\models\SettingsRecord;
+use common\components\Telegram;
 use common\models\ClientsRecord;
 use common\models\RecordsRecord;
 use yii;
@@ -133,44 +134,34 @@ where a.id in ($services_id)");
      */
     public static function GoogleSynchroAdd()
     {
-        $cmd= yii::$app->db->createCommand("
-SELECT c.id,c.name,c.phone,c.googleid
-FROM clients c,
-(
-	SELECT DISTINCT a.client_id
-	FROM records a,
-		(
-		SELECT DISTINCT a.resource_id
-		FROM yclientslog a
-		WHERE a.dat> DATE_SUB(NOW(), INTERVAL 8 DAY) AND a.resource='record') b
-		WHERE a.resource_id=b.resource_id AND a.client_id>0) b2
-WHERE c.id=b2.client_id
-        ");
-        $cmd=yii::$app->getDb()->createCommand("SELECT c.id,c.name,c.phone,c.googleid
-FROM clients c
-where c.phone like '%77778112596%'");
+
+        $cmd=yii::$app->getDb()->createCommand("
+Select b.name,b.phone,b.googleid
+ from yclientslog a,clients b
+ where a.resource='client'
+ 	and a.oper<>'DE'
+	and a.dat>date_sub(now(),interval 12 hour)
+	and b.id=a.resource_id
+");
         $rows=$cmd->queryAll();
         if ($rows==null) return;
+        $cont=count($rows);
+        $rep=0;
         $gcfg=self::getGoogleConfig();
         foreach($rows as $cli) {
             $name = self::getGName($cli['name'], $cli['phone']);
             $cid = $cli['googleid'];
-            $n = true;
             if (!empty($cid)) {
                 $contact = self::getContact($cid,$gcfg); //ContactFactory::getBySelfURL($curl . $cid, $gcfg);
                 if (!$contact)
-                {
-                    $contact=ContactFactory::create($name,$cli['phone'],'','',$gcfg);
-                    $cid = basename($contact->id);
-                    yii::$app->getDb()->createCommand("update clients set googleid='{$cid}' where id={$cli['id']}")->execute();
                     continue;
-                }
                 if ($contact->name==$name) continue;
                 $contact->name = $name;
                 $contact->phoneNumber=$cli['phone'];
                 $contact->email = '';
                 try {
                     ContactFactory::submitUpdates($contact, $gcfg);
+                    $rep++;
                 }
                 catch(\ErrorException $err)
                 {
@@ -180,9 +171,10 @@ where c.phone like '%77778112596%'");
                     print_r($contact);
                     exit();
                 }
-                $n=false;
             }
         }
+
+        Telegram::instance()->sendMessageAll("На обработку: {$cont} контактов.\nИсправлено: {$rep}.","Дополнительная синхронизация Google");
     }
 
     private static function getContact($id,$gcfg)

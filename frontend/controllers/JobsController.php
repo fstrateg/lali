@@ -121,7 +121,9 @@ class JobsController extends Controller
         //echo $sms->getMessageText();*/
         //imp=new YclientsImport();
         //$imp->getKlient(22772330);
-        echo JobsModel::getGName('Индира','+77019291009');
+        //echo JobsModel::getGName('Индира','+77019291009');
+        $curdate=new \DateTime('now');
+        echo $curdate->format('Y-m-d H:i:s');
 
     }
 
