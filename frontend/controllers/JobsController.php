@@ -122,8 +122,9 @@ class JobsController extends Controller
         //imp=new YclientsImport();
         //$imp->getKlient(22772330);
         //echo JobsModel::getGName('Индира','+77019291009');
-        $curdate=new \DateTime('now');
-        echo $curdate->format('Y-m-d H:i:s');
+        /*$curdate=new \DateTime('now');
+        echo $curdate->format('Y-m-d H:i:s');*/
+        JobsModel::test();
 
     }
 
@@ -174,7 +175,12 @@ class JobsController extends Controller
     {
         JobsModel::GoogleSynchroAdd();
     }
-    
+
+    public function actionUpdgoogle($phone)
+    {
+        JobsModel::updateGoogleContact($phone);
+    }
+
     public function actionPhpinfo()
     {
         phpinfo();

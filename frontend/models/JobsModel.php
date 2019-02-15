@@ -156,11 +156,11 @@ Select b.name,b.phone,b.googleid
                 if (!$contact)
                     continue;
                 if ($contact->name==$name) continue;
-                $contact->name = $name;
-                $contact->phoneNumber=$cli['phone'];
-                $contact->email = '';
                 try {
-                    ContactFactory::submitUpdates($contact, $gcfg);
+                    ContactFactory::delete($contact,$gcfg);
+                    $contact=ContactFactory::create($name,$cli['phone'],'','',$gcfg);
+                    $cli->googleid=basename($contact->id);
+                    $cli->save();
                     $rep++;
                 }
                 catch(\ErrorException $err)
@@ -175,6 +175,48 @@ Select b.name,b.phone,b.googleid
         }
 
         Telegram::instance()->sendMessageAll("На обработку: {$cont} контактов.\nИсправлено: {$rep}.","Дополнительная синхронизация Google");
+    }
+
+    public static function test()
+    {
+        $gcfg=self::getGoogleConfig();
+        $contact=self::getContact('609595eb8e005fde',$gcfg);
+        $name=self::getGName('Анастасия','+77772032200');
+        $contact->name = $name;
+        ContactFactory::delete($contact);
+
+        $contact = ContactFactory::create($name, $cli->phone, '', '', $gcfg);
+        $id = basename($contact->id);
+        $cli->setAttribute('googleid',$id);
+
+        ContactFactory::submitUpdates($contact, $gcfg);
+        print_r($contact);
+    }
+
+    public static function updateGoogleContact($phone)
+    {
+        if (empty($phone))
+        {
+            echo 'Телефон для синхронизации не задан';
+            return;
+        }
+        $cli=ClientsRecord::find()->where("phone like '%{$phone}%'")->one();
+        if (empty($cli))
+        {
+            echo 'Клиент с номером телефона '.$phone.' не найден!';
+            return;
+        }
+        $name=self::getGName($cli->name,$cli->phone);
+        $gcfg=self::getGoogleConfig();
+        $cont=self::getContact($cli->googleid,$gcfg);
+        if (!empty($cont))
+        {
+            ContactFactory::delete($cont,$gcfg);
+        }
+        $cont=ContactFactory::create($name,$cli->phone,'','',$gcfg);
+        $cli->googleid=basename($cont->id);
+        $cli->save();
+        echo $name.' Ok!';
     }
 
     private static function getContact($id,$gcfg)
