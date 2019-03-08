@@ -11,6 +11,7 @@ use Yii;
  * @property $remind
  * @property $deleted
  * @property $laser
+ * @property $electro
  * @property $moderated
  */
 class ServicesRecord extends \yii\db\ActiveRecord
@@ -26,6 +27,7 @@ class ServicesRecord extends \yii\db\ActiveRecord
             [['scrubbing'],'integer'],
             [['remind'],'integer'],
             [['laser'],'string'],
+            [['electro'],'string'],
         ];
     }
 
@@ -37,6 +39,7 @@ class ServicesRecord extends \yii\db\ActiveRecord
             'scrubbing'=>Yii::t('app','СМС скрабироваться'),
             'remind'=>Yii::t('app','Напомнить о себе (21,42)'),
             'laser'=>Yii::t('app','Лазерная эпиляция'),
+            'electro'=>Yii::t('app','Электро эпиляция'),
 
         ];
     }

@@ -53,6 +53,13 @@ else
                         return Html::checkbox('laser[]',$model->laser=='Y',['onclick'=>'return false;']);
                     }
                 ],
+                [
+                    'attribute'=>'electro',
+                    'format' => 'raw',
+                    'value' => function ($model, $index, $widget) {
+                        return Html::checkbox('electro[]',$model->electro=='Y',['onclick'=>'return false;']);
+                    }
+                ],
                 ['class' => 'yii\grid\ActionColumn',
                     'template' => '{update}',
                     'buttons' => [
