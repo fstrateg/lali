@@ -69,7 +69,7 @@ WHERE a.client_id=r.id AND a.appointed=r.appointed",['dt'=>$dt->toMySqlRound()])
     {
         if (empty($services_id)) return 'A';
         $cmd= yii::$app->db->createCommand("
-select title,laser,scrubbing from services a
+select title,laser,electro,scrubbing from services a
 where a.id in ($services_id)");
         $rows=$cmd->queryAll();
         if ($rows==null) return 'A';
@@ -77,6 +77,7 @@ where a.id in ($services_id)");
         foreach($rows as $rw)
         {
             if ($rw['laser']=='Y') return 'L';
+            if ($rw['electro']=='Y') return 'E';
             if ($rw['scrubbing']==1) $scrub=true;
         }
         if ($scrub) return 'W';
