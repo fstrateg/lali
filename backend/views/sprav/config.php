@@ -21,7 +21,15 @@ $this->params['breadcrumbs'][] = $this->title;
     'dataProvider' => $dataProvider,
     'columns' => [
         'name',
-        'val',
+        [
+            'attribute'=>'val',
+            'format' => 'raw',
+            'value' => function ($model, $index, $widget) {
+                $text=htmlentities(mb_substr($model->val,0,50));
+                if (strlen($model->val)>50) $text.='...';
+                return $text;
+            }
+        ],
         ['class' => 'yii\grid\ActionColumn',
             'template' => '{update}',
             'buttons' => [

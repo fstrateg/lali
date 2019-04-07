@@ -14,7 +14,7 @@ yii\bootstrap\Modal::begin([
 ]);
 $form=ActiveForm::begin();
 echo $model->getAttribute('name');
-echo $form->field($model,'val')->textInput()->label(false);
+echo $form->field($model,'val')->textarea(['rows'=>'5'])->label(false);
 ?>
 <div class="form-group">
     <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
