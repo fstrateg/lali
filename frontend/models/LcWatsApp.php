@@ -25,6 +25,18 @@ class LcWatsApp
      */
     var $dat_wax;
     /**
+     * @var $dat_laser Date
+     */
+    var $dat_electrod1;
+    /**
+     * @var $dat_laser Date
+     */
+    var $dat_electrod2;
+    /**
+     * @var $dat_laser Date
+     */
+    var $dat_electrod3;
+    /**
      * @var $chmaster bool
      */
     var $chmaster;
@@ -33,25 +45,51 @@ class LcWatsApp
 
     public $days_laser;
     public $days_wax;
+    public $days_electrod1;
+    public $days_electrod2;
+    public $days_electrod3;
 
     public function init($sdat)
     {
         $this->dat=new Date();
         if ($sdat) $this->dat->set($sdat,'Ymd');
         $this->cfg=SettingsRecord::getValuesGroup('quality');
-        $day=$this->cfg['laser']; //SettingsRecord::findValue('quality',);
+        /*$day=$this->cfg['laser']; //SettingsRecord::findValue('quality',);
         $this->days_laser=$day;
         $dd=clone $this->dat;
         $dd->subDays($day);
-        $this->dat_laser=$dd;
+        $this->dat_laser=$dd;*/
 
         $this->chmaster=!empty($this->cfg['chmaster']);
 
-        $dd=clone $this->dat;
+        /*$dd=clone $this->dat;
         $day=$this->cfg['wax'];
         $this->days_wax=$day;
         $dd->subDays($day);
-        $this->dat_wax=$dd;
+        $this->dat_wax=$dd;*/
+        $this->initDays('wax');
+        $this->initDays('laser');
+        $this->initDays('electrod1');
+        $this->initDays('electrod2');
+        $this->initDays('electrod3');
+
+
+        /*$dd=clone $this->dat;
+        $day=$this->cfg['electrod1'];
+        $this->days_electro1=$day;
+        $dd->subDays($day);
+        $this->dat_ee1=$dd;*/
+    }
+
+    private function initDays($param)
+    {
+        $dd=clone $this->dat;
+        $day=$this->cfg[$param];
+        $p='days_'.$param;
+        $this->$p=$day;
+        $dd->subDays($day);
+        $p='dat_'.$param;
+        $this->$p=$dd;
     }
 
     public function getLaserMsg()
@@ -62,6 +100,10 @@ class LcWatsApp
     public function getWaxMsg()
     {
         return $this->cfg['waxmsg'];
+    }
+    public function getEEMsg($param)
+    {
+        return $this->cfg['electro'.$param];
     }
 
     public function getCaclDate()
@@ -79,6 +121,11 @@ class LcWatsApp
         return $this->dat_wax->format();
     }
 
+    public function getDateEl($type)
+    {
+        $p=dat_electrod.$type;
+        return $this->$p->format();
+    }
     public function getParamNext()
     {
         /* @var $dd Date */
@@ -103,40 +150,54 @@ select title from services a
 where a.id in ($services_id)");
         return $cmd->queryAll();
     }
-/**
- * @param $dat string
- */
+
     public function findLaserRecords()
     {
-        /*$day=SettingsRecord::findValue('quality','laser');
-        $dd=new Date();
-        $dd->set($dat);
-        $dd->subDays($day);
-        //$dat->subDays($day+60);*/
         $p1=$this->dat_laser->toMySqlRound();
-        $cmd= yii::$app->db->createCommand('
-SELECT a.resource_id,a.staff_name,a.appointed,a.services_id,a.client_phone,b.name,c.title,ifnull(q.status,0) stat
-FROM records a left join clients b on b.id=a.client_id
-	left join services c on trim(c.id)=a.services_id
-    left join quality q on a.resource_id=q.record_id and q.typ=1
-WHERE a.id IN (
-SELECT DISTINCT a.id
-FROM (
-SELECT a.*
-FROM records a
-WHERE date(appointed)=\''.$p1.'\' AND a.attendance=1 and a.deleted=0
-) a,services b
-WHERE INSTR(a.services_id,b.id)>0 AND b.laser=\'Y\'
-)
-order by a.appointed
-    ');
-        //echo $cmd->sql;
+        $query=$this->createQuery($p1,1,"laser='Y'");
+        $cmd= yii::$app->db->createCommand($query);
         $list=$cmd->queryAll();
         $list=$this->setShortName($list);
         $list=$this->getChMasterRecords($list, $p1, 'L');
         return $list;
     }
 
+    public function findElectroRecords($param)
+    {
+        $t='dat_electrod'.$param;
+        $p1=$this->$t->toMySqlRound();
+        $query=$this->createQuery($p1,$param+2,"electro='Y'");
+        $cmd= yii::$app->db->createCommand($query);
+        $list=$cmd->queryAll();
+        $list=$this->setShortName($list);
+        return $list;
+    }
+
+    private function createQuery($dat,$type,$servis)
+    {
+        /**
+         * 1 - laser
+         * 2 - wax
+         * 3 - ee1
+         * 4 - ee2
+         * 5 - ee3
+         */
+        $query="SELECT a.resource_id,a.staff_name,a.appointed,a.services_id,a.client_phone,b.name,c.title,ifnull(q.status,0) stat
+FROM records a left join clients b on b.id=a.client_id
+	left join services c on trim(c.id)=a.services_id
+    left join quality q on a.resource_id=q.record_id and q.typ=$type
+WHERE a.id IN (
+SELECT DISTINCT a.id
+FROM (
+SELECT a.*
+FROM records a
+WHERE date(appointed)='$dat' AND a.attendance=1 and a.deleted=0
+) a,services b
+WHERE INSTR(a.services_id,b.id)>0 AND b.$servis
+)
+order by a.appointed";
+        return $query;
+    }
     /**
      * @param $dat string
      * @return array

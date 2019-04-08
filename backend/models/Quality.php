@@ -21,6 +21,7 @@ class Quality extends ActiveRecord
 
         self::sinchro_staff($req->post('laser'),1);
         self::sinchro_staff($req->post('vosk'),2);
+        self::sinchro_staff($req->post('electro'),3);
         self::setkli($req->post('allcli'));
         //print_r($req->post('allcli'));
         //exit();

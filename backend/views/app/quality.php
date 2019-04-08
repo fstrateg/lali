@@ -54,6 +54,16 @@ $form = ActiveForm::begin(['action'=>$url]);
     <a class="btn btn-default pull-right" href='<?= \yii\helpers\Url::to('qualitymsg')?>'>Сообщения</a>
 </div>
 
+    <div class="panel panel-default">
+        <div class="panel-heading">Электро эпиляция</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <input id="eall" type="checkbox" name="eall"> <label for="eall">Все клиенты указанных мастеров</label>
+            </div>
+            <? outListStaff('electro',3) ?>
+        </div>
+    </div>
+
 <div class="panel panel-default">
     <div class="panel-heading">Лазерная эпиляция</div>
     <div class="panel-body">
@@ -104,6 +114,9 @@ $js = <<< JS
         $('#vall').on('click',function(e){
             $('li.vosk input').attr('checked',this.checked);
         });
+        $('#eall').on('click',function(e){
+            $('li.electro input').attr('checked',this.checked);
+        });
     });
 JS;
 $this->registerJs($js);
@@ -112,7 +125,7 @@ $css = <<< CSS
 ul.list{
     list-style-type: none;
 }
-li.vosk,li.laser{padding-bottom: 10px;}
+li.vosk,li.laser,li.electro{padding-bottom: 10px;}
 input.days{
     width: 40px;
 }

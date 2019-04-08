@@ -11,14 +11,91 @@ use yii\helpers\Html;
  */
 $this->title = 'La Letty';
 
-$list1=$model->findLaserRecords();
-$list2=$model->findWaxRecords();
-
 $i=1;
 $j=1;
 $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
 
 JuiAsset::register($this);
+
+function renderBlock($tag,$msg,$list,$i)
+{
+    $stat=['0'=>'-','1'=>'Проведен','2'=>'Ошибка'];
+    $type=['laser'=>'1','wax'=>'2','ee1'=>'3','ee2'=>'4','ee3'=>'5'];
+    ?>
+    <section class="mb-20">
+        <hr>
+    <div class="row mb-20">
+        <div class="col-md-7" style="line-height: 34px">
+            <?= $msg ?>
+        </div>
+        <div class="col-md-5">
+            <div class="pull-right">
+                Установить всем:
+                <?= HTML::dropDownList('list','0',$stat,['class'=>'form-control','style'=>'width:auto;display:inline-block']); ?>
+                <a id="<?=$tag?>-all" href="javascript:void(0)" class="btn btn-default" title="Заполнить"><span class="glyphicon glyphicon-ok"></span></a>
+            </div>
+        </div>
+    </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Клиент</th>
+                    <th>Мед. обход</th>
+                    <th>Статус мед. обхода</th>
+                    <th>Номер тел.</th>
+                    <th>Услуги</th>
+                    <th>Мастер</th>
+
+                </tr>
+                </thead>
+                <?
+                foreach ($list as $item) {
+                    ?>
+                    <tr>
+                        <td><?= $i ?></td>
+                        <td><?
+                            echo $item['name'];
+                            if (isset($item['ch'])&&$item['ch'])
+                            {?>
+                                <br/><img src="\images\chmaster.png" width="32px" height="32px" data-toggle="tooltip" title="<?= $item['imgtext'] ?>"/>
+                            <?}
+                            ?></td>
+                        <td><a class="mr-10 btn btn-primary" data-typ="<?=$type[$tag]?>" data-id="<?= ($i-1); ?>" data-rid="<?= $item['resource_id'] ?>">
+                                <span class="glyphicon whatsapp"></span>
+                                WhatsApp
+                            </a></td>
+                        <td><?= HTML::dropDownList('list',$item['stat'],$stat, ['class'=>'statlist form-control','data-id'=>$item['resource_id'], 'data-typ'=>$type[$tag]]); ?></td>
+                        <td><?= $item['client_phone'] ?></td>
+                        <td><ul>
+                                <?
+                                $s=LcWatsApp::getServices($item['services_id']);
+                                if ($s) {
+                                    foreach ($s as $ss) {
+                                        echo '<li>' . $ss['title'] . '</li>';
+                                    }
+                                }
+                                ?>
+                            </ul>
+                        </td>
+                        <td><?= $item['staff_name'] ?></td>
+
+                    </tr>
+                    <?
+                    $i++;
+                }
+                ?>
+            </table>
+        </div>
+        <div id="msgok<?=$type[$tag]?>" class="alert-success alert fade in hidden">
+            <button type="button" class="close" aria-hidden="true">×</button>
+            Данные успешно внесены в базу!
+        </div>
+        <a id="<?=$tag?>-save" href="javascript:void(0)" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить статусы</a>
+    </section>
+    <?php
+}
 ?>
 <div class="btn-toolbar" role="toolbar" aria-label="...">
     <div class="btn-group mr-2" role="group" aria-label="First group">
@@ -32,156 +109,41 @@ JuiAsset::register($this);
         <?= $model->getCaclDate(); ?>
      </div>
     </div>
-<hr>
-<section>
-<div class="row mb-20">
-    <div class="col-md-7" style="line-height: 34px">
-        Лазерная эпиляция. Клиенты посетившие студию <?=$model->days_laser; ?> дней назад. <?= $model->getDateLaser() ?>
-    </div>
-    <div class="col-md-5">
-        <div class="pull-right">
-            Установить всем:
-            <?= HTML::dropDownList('list','0',$stat,['class'=>'form-control','style'=>'width:auto;display:inline-block']); ?>
-            <a id="laser-all" href="#" class="btn btn-default" title="Заполнить"><span class="glyphicon glyphicon-ok"></span></a>
-        </div>
-    </div>
-</div>
-    <div class="table-responsive">
-<table class="table table-hover table-bordered">
-    <thead>
-    <tr>
-        <th>#</th>
-        <th>Клиент</th>
-        <th>Мед. обход</th>
-        <th>Статус мед. обхода</th>
-        <th>Номер тел.</th>
-        <th>Услуги</th>
-        <th>Мастер</th>
 
-    </tr>
-    </thead>
-    <?
-    foreach ($list1 as $item) {
-    ?>
-<tr>
-    <td><?= $i ?></td>
-    <td><?
-        echo $item['name'];
-        if (isset($item['ch'])&&$item['ch'])
-        {?>
-            <br/><img src="\images\chmaster.png" width="32px" height="32px" data-toggle="tooltip" title="<?= $item['imgtext'] ?>"/>
-        <?}
-        ?></td>
-    <td><a class="mr-10 btn btn-primary" data-typ="1" data-id="<?= ($i-1); ?>" data-rid="<?= $item['resource_id'] ?>">
-            <span class="glyphicon whatsapp"></span>
-            WhatsApp
-        </a></td>
-    <td><?= HTML::dropDownList('list',$item['stat'],$stat, ['class'=>'statlist form-control','data-id'=>$item['resource_id'], 'data-typ'=>'1']); ?></td>
-    <td><?= $item['client_phone'] ?></td>
-    <td><ul>
-        <?
-        $s=LcWatsApp::getServices($item['services_id']);
-        if ($s) {
-            foreach ($s as $ss) {
-                echo '<li>' . $ss['title'] . '</li>';
-            }
-        }
-        ?>
-        </ul>
-    </td>
-    <td><?= $item['staff_name'] ?></td>
+<?php
+$list1=$model->findLaserRecords();
+$msg='Лазерная эпиляция. Клиенты посетившие студию '.$model->days_laser.' дней назад. '.$model->getDateLaser();
+$i=1;
+renderBlock('laser',$msg,$list1,$i);
 
-</tr>
-    <?
-        $i++;
-    }
-    ?>
-</table>
-</div>
-<div id="msgok1" class="alert-success alert fade in hidden">
-<button type="button" class="close" aria-hidden="true">×</button>
-Данные успешно внесены в базу!
-</div>
-    <a id="laser-save" href="javascript:void(0)" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить статусы</a>
-</section>
+$i=$i+count($list1);
+$list2=$model->findWaxRecords();
+$msg='Воск/шугаринг эпиляция. Клиенты посетившие студию '.$model->days_wax.' дней назад. '.$model->getDateWax();
+renderBlock('wax',$msg,$list2,$i);
+$list1=array_merge($list1,$list2);
 
-<section class="mb-20">
-<hr>
-    <div class="row mb-20">
-        <div class="col-md-7" style="line-height: 34px">
-            Воск/шугаринг эпиляция. Клиенты посетившие студию <?=$model->days_wax ?> дней назад. <?= $model->getDateWax(); ?>
-            </div>
-    <div class="col-md-5">
-        <div class="pull-right">
-            Установить всем:
-            <?= HTML::dropDownList('list','0',$stat,['class'=>'form-control','style'=>'width:auto;display:inline-block']); ?>
-            <a id="wax-all" href="#" class="btn btn-default" title="Заполнить"><span class="glyphicon glyphicon-ok"></span></a>
-        </div>
-    </div>
-</div>
-    <div class="table-responsive">
-        <table class="table table-hover table-bordered">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Клиент</th>
-                <th>Мед. обход</th>
-                <th>Статус мед. обхода</th>
-                <th>Номер тел.</th>
-                <th>Услуги</th>
-                <th>Мастер</th>
-            </tr>
-            </thead>
-            <?
-            foreach ($list2 as $item) {
-                ?>
-                <tr>
-                    <td><?= $j++ ?></td>
-                    <td><?
-                        echo $item['name'];
-                        if (isset($item['ch'])&&$item['ch'])
-                        {?>
-                            <br/><img src="\images\chmaster.png" width="32px" height="32px" data-toggle="tooltip" title="<?= $item['imgtext'] ?>"/>
-                        <?}
-                        ?>
+$i=$i+count($list2);
+$list2=$model->findElectroRecords(1);
+$msg='Электро эпиляция. Клиенты посетившие студию '.$model->days_electrod1.' дней назад. '.$model->getDateEl(1);
+renderBlock('ee1',$msg,$list2,$i);
+$list1=array_merge($list1,$list2);
 
-                    </td>
-                    <td><a class="mr-10 btn btn-primary" data-typ="2" data-id="<?= ($i-1) ?>" data-rid="<?= $item['resource_id'] ?>">
-                            <span class="glyphicon whatsapp"></span>
-                            WhatsApp
-                        </a></td>
-                    <td><?= HTML::dropDownList('list',$item['stat'],$stat,['class'=>'statlist form-control','data-id'=>$item['resource_id'],'data-typ'=>2]); ?></td>
-                    <td><?= $item['client_phone'] ?></td>
-                    <td><ul>
-                            <? $s=LcWatsApp::getServices($item['services_id']);
-                            if ($s) {
-                                foreach($s as $ss)
-                                {
-                                    echo '<li>'.$ss['title'].'</li>';
-                                }
-                            }
-                            ?>
-                        </ul>
-                    </td>
-                    <td><?= $item['staff_name'] ?></td>
+$i=$i+count($list2);
+$list2=$model->findElectroRecords(2);
+$msg='Электро эпиляция. Клиенты посетившие студию '.$model->days_electrod2.' дней назад. '.$model->getDateEl(2);
+renderBlock('ee2',$msg,$list2,$i);
+$list1=array_merge($list1,$list2);
 
-                </tr>
-                <?
-                $i++;
-            }
-            ?>
-        </table>
-    </div>
-    <div id="msgok2" class="alert-success alert fade in hidden">
-        <button type="button" class="close" aria-hidden="true">×</button>
-        Данные успешно внесены в базу!
-    </div>
-    <a id="wax-save" href="javascript:void(0)" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Сохранить статусы</a>
-</section>
+$i=$i+count($list2);
+$list2=$model->findElectroRecords(3);
+$msg='Электро эпиляция. Клиенты посетившие студию '.$model->days_electrod3.' дней назад. '.$model->getDateEl(3);
+renderBlock('ee3',$msg,$list2,$i);
+$list1=array_merge($list1,$list2);
+?>
 
 <script>
     window.watsappmsg=['<?= $model->getLaserMsg() ?>',
-    '<?= $model->getWaxMsg() ?>'];
+    '<?= $model->getWaxMsg() ?>',"<?= $model->getEEMsg(1) ?>","<?= $model->getEEMsg(2) ?>",'<?= $model->getEEMsg(3) ?>'];
 
 </script>
 
@@ -254,6 +216,12 @@ $js=<<< JS
                 var msg=window.watsappmsg[0];
                 if (typ=="2")
                     msg=window.watsappmsg[1];
+                if (typ=="3")
+                    msg=window.watsappmsg[2];
+                if (typ=="4")
+                    msg=window.watsappmsg[3];
+                if (typ=="5")
+                    msg=window.watsappmsg[4];
                 msg=msg.replace('%NAME%',list[dt].name).replace('%STAFF%',list[dt].staff);
                 $.ajax({
                     url:'/lc/wclick',
@@ -282,12 +250,37 @@ $js=<<< JS
            savevl(1);
          });
 
+         $('#ee1-save').on('click',function(){
+           savevl(3);
+         });
+
+         $('#ee2-save').on('click',function(){
+           savevl(4);
+         });
+
+         $('#ee3-save').on('click',function(){
+           savevl(5);
+         });
+
+
          $('#wax-all').on('click',function(){
            setVL(2,this);
          });
 
          $('#laser-all').on('click',function(){
             setVL(1,this);
+         });
+
+         $('#ee1-all').on('click',function(){
+           setVL(3,this);
+         });
+
+         $('#ee2-all').on('click',function(){
+           setVL(4,this);
+         });
+
+         $('#ee3-all').on('click',function(){
+           setVL(5,this);
          });
 
          $('button.close').on('click',function(){
@@ -311,11 +304,11 @@ foreach($list1 as $item)
     $list.="$r{name:'".$item["name"]."',phone:'".str_replace('+','',$item['client_phone'])."',staff:'".$item['staff_name']."'}";
     $r=',';
 }
-foreach($list2 as $item)
+/*foreach($list2 as $item)
 {
     $list.="$r{name:'".$item["name"]."',phone:'".str_replace('+','',$item['client_phone'])."',staff:'".$item['staff_name']."'}";
     $r=',';
-}
+}*/
 $list.='];}';
 $this->registerJs($list);
 $this->registerJs($js);

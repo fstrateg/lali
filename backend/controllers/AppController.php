@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers;
 
+use common\models\SettingsRecord;
 use common\models\StaffRecord;
 use common\models\StaffUserRecord;
 use Yii;
@@ -56,8 +57,11 @@ class AppController extends Controller
         $post=Yii::$app->request->post();
         if($post)
         {
-            \common\models\SettingsRecord::setValue('quality','lasermsg',$post['lasermsg']);
-            \common\models\SettingsRecord::setValue('quality','waxmsg',$post['waxmsg']);
+            SettingsRecord::setValue('quality','lasermsg',$post['lasermsg']);
+            SettingsRecord::setValue('quality','waxmsg',$post['waxmsg']);
+            SettingsRecord::setValue('quality','electro1',$post['electro1']);
+            SettingsRecord::setValue('quality','electro2',$post['electro2']);
+            SettingsRecord::setValue('quality','electro3',$post['electro3']);
             Yii::$app->getSession()->setFlash('ok','Сохранено');
         }
         return $this->render('qualitymsg');
