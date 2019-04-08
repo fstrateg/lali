@@ -176,14 +176,18 @@ where a.id in ($services_id)");
     private function createQuery($dat,$type,$servis)
     {
         /**
+         * types
          * 1 - laser
          * 2 - wax
          * 3 - ee1
          * 4 - ee2
          * 5 - ee3
          */
+        $staff=in_array($type,[3,4,5])?3:$type;
         $query="SELECT a.resource_id,a.staff_name,a.appointed,a.services_id,a.client_phone,b.name,c.title,ifnull(q.status,0) stat
-FROM records a left join clients b on b.id=a.client_id
+FROM records a
+    inner join staff_prop s on a.staff_id=s.staff_id and s.prop_id=$staff
+    left join clients b on b.id=a.client_id
 	left join services c on trim(c.id)=a.services_id
     left join quality q on a.resource_id=q.record_id and q.typ=$type
 WHERE a.id IN (
