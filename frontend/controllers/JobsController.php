@@ -5,6 +5,7 @@ use backend\models\SettingsRecord;
 use common\components\Common;
 use common\components\Date;
 use common\components\SMS;
+use common\models\SMSLaser;
 use common\models\SMSSettings;
 use frontend\models\YclientsImport;
 use frontend\models\YclientsLogRecord;
@@ -136,6 +137,13 @@ class JobsController extends Controller
         if (empty($day)||!in_array($day,['5','21','42'])) return;
         ini_set('max_execution_time', 600);
         SMS::sendSmsNumber($day);
+    }
+
+    public function actionLaserday($day)
+    {
+        if (empty($day)||!in_array($day,['30'])) return;
+        ini_set('max_execution_time', 600);
+        SMSLaser::sendSmsNumber($day);
     }
 
     public function actionGetlastvisit()
