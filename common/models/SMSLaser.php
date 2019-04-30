@@ -53,9 +53,9 @@ class SMSLaser
                 $sms = new SMS();
                 $sms->setNumber($day);
                 $sms->setRecord($rec);
-                //$sms->send();
+                $sms->send();
                 //echo $c['name'].'<br>';
-                Telegram::instance()->sendMessage('Alex',$sms->getMessageText(), $sms->client_phone);
+                //Telegram::instance()->sendMessage('Alex',$sms->getMessageText(), $sms->client_phone);
                 //Telegram::instance()->sendMessageAll($sms->getMessageText(), $sms->client_phone);
             }
             $done = new Sms_doneRecord();
