@@ -5,6 +5,7 @@ use backend\models\SettingsRecord;
 use common\components\Common;
 use common\components\Date;
 use common\components\SMS;
+use common\components\Telegram;
 use common\models\SMSLaser;
 use common\models\SMSSettings;
 use frontend\models\YclientsImport;
@@ -111,6 +112,10 @@ class JobsController extends Controller
     */
     public function actionTest()
     {
+        //echo phpinfo();
+        //exit();
+        $t=new Telegram();
+        $t->sendMessageAll("test","test1");
         //echo \yii\helpers\Url::base(true);
         //echo \yii\helpers\Url::to('sgoogle',true);
         /*$id=4533;
@@ -125,7 +130,7 @@ class JobsController extends Controller
         //echo JobsModel::getGName('Индира','+77019291009');
         /*$curdate=new \DateTime('now');
         echo $curdate->format('Y-m-d H:i:s');*/
-        JobsModel::test();
+        //JobsModel::test();
 
     }
 

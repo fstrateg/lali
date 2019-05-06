@@ -5,6 +5,7 @@ use common\components\smsprovider\SMSKazinfo;
 use common\models\ServicesRecord;
 use common\models\SettingsRecord;
 use common\models\Sms_doneRecord;
+use common\models\SmsExceptionRecord;
 use common\models\SMSSettings;
 use common\models\ClientsRecord;
 use common\models\RecordsRecord;
@@ -75,8 +76,11 @@ class SMS extends BaseObject
             $i->getKlient($this->record->client_id);
             $this->client=ClientsRecord::findOne(['id'=>$this->record->client_id]);
         }
-        if ($this->client!=null)
-            $this->Dontsend=($this->client->exception_1==1);
+        if ($this->client!=null) //ищем исключение
+        {
+            $vl=SmsExceptionRecord::findOne(['client_id'=>$this->record->client_id,'sms_type'=>'wax_except_1']);
+            if ($vl) $this->Dontsend = ($vl->vl == 1);
+        }
         else
             $this->Dontsend=true;
     }
@@ -228,18 +232,27 @@ class SMS extends BaseObject
 
     private static function getClientsForReminder($day)
     {
-        /*select a.*
-        from  clients a left join sms_done b on (a.id=b.client_id and a.last_record=b.record_id and b.type=42)
-        where a.deleted=0 and a.exception_42<>1
-		  and date_add(a.last_visit,interval 42 day) between  date_sub(curdate(),interval 1 day) and curdate()
-and b.type is null
-        limit 20*/
-        $col=$day==21?'sms_21_sent':'sms_42_sent';
-        $sql = "select a.*
+        if ($day==21)
+        {
+            $exc='wax_except_21';
+            $col='wax_21';
+            $ds=SettingsRecord::findValue('sms','wax21');
+        }
+        else
+        {
+            $exc='wax_except_42';
+            $col='wax_42';
+            $ds=SettingsRecord::findValue('sms','wax42');
+        }
+        //$exc=$day==21?'wax_except_21':'wax_except_42';
+        $sql = "select a.*,IFNULL(e.vl,0) exc,IFNULL(d.vl,{$ds}) days
         from  clients a left join sms_done b on (a.id=b.client_id and a.last_record=b.record_id and b.type={$day})
-        where a.deleted=0 and a.exception_{$day}<>1
-        and date_add(a.last_visit,interval {$col} day) between  date_sub(curdate(),interval 1 day) and curdate()
+        left join sms_exception e on (e.client_id=a.id and e.sms_type='{$exc}')
+        left join sms_exception d on (d.client_id=a.id and d.sms_type='{$col}')
+        where a.deleted=0
+        and date_add(a.last_visit,interval IFNULL(d.vl,{$ds}) days day) between  date_sub(curdate(),interval 1 day) and curdate()
         and b.type is null
+        and IFNULL(e.vl,0)=0
         limit 20";
         $clients = \yii::$app->db->createCommand($sql)->queryAll();
         return $clients;
@@ -255,9 +268,11 @@ and b.type is null
         $dat->subDays($day);
         $p2 = $dat->toMySql();
 
-        $sql = "select a.*
+        $sql = "select a.*,IFNULL(e.vl,0) exc
         from  clients a left join sms_done b on (a.id=b.client_id and a.last_record=b.record_id and b.type={$day})
-        where a.deleted=0 and a.exception_5<>1 and a.last_visit between '$p1' and '$p2' and b.type is null
+              left join sms_exception e on (e.client_id=a.id and e.sms_type='wax_except_5')
+        where a.deleted=0 and a.last_visit between '$p1' and '$p2' and b.type is null
+          and IFNULL(e.vl,0)=0
         limit 20";
         $clients = \yii::$app->db->createCommand($sql)->queryAll();
         return $clients;
