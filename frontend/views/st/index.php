@@ -58,10 +58,10 @@ echo $model->staffname;
         </table>
     <div id="frmedit" class="wrap" style="width:0; background: #CCC">
     <div class="container">
-        <div id="panel">
+            <div id="panel">
 
-        </div>
-        <button id="savenote" class="btn">Сохранить</button> <button id="escape" class="btn">Отменить</button>
+            </div>
+            <button id="savenote" class="btn">Сохранить</button> <button id="escape" class="btn">Отменить</button>
     </div>
     </div>
     <?
@@ -78,6 +78,8 @@ $js=<<< JS
                 .done(function(data){
                     $('#panel').html(data);
                     $("#frmedit").css('width','100%');
+                    $("#frmedit").css('height','100%');
+                    $("#frmedit").css('overflow-y','scroll');
                     $("#frmedit").css('background','#fff');
                     //alert(id);
                 });

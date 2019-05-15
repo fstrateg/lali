@@ -23,6 +23,11 @@ class WorkStudioDetails
     public $sms_laser_30val;
     public $sms_laser_60val;
 
+    public $sms_electro_30;
+    public $sms_electro_60;
+    public $sms_electro_30val;
+    public $sms_electro_60val;
+
     public function __construct()
     {
         $ch=WorkStudioDetails::CH;
@@ -37,6 +42,10 @@ class WorkStudioDetails
         $this->sms_laser_60=$ch;
         $this->sms_laser_30val=$s['laser30'];
         $this->sms_laser_60val=$s['laser60'];
+        $this->sms_electro_30=$ch;
+        $this->sms_electro_60=$ch;
+        $this->sms_electro_30val=$s['electro30'];
+        $this->sms_electro_60val=$s['electro60'];
     }
 
     public function initRecord($id)
@@ -95,6 +104,19 @@ class WorkStudioDetails
                     $this->sms_laser_60val=$item->vl;
                     break;
 
+                case "electro_except_30":
+                    $this->sms_electro_30=$item->vl==1?"":$ch;
+                    break;
+                case "electro_except_60":
+                    $this->sms_electro_60=$item->vl==1?"":$ch;
+                    break;
+                case "electro_30":
+                    $this->sms_electro_30val=$item->vl;
+                    break;
+                case "electro_60":
+                    $this->sms_electro_60val=$item->vl;
+                    break;
+
             }
         }
         return true;
@@ -112,7 +134,7 @@ class WorkStudioDetails
         $this->id=$data->id;
         $record=RecordsRecord::findOne(['resource_id'=>$data->id]);
         $e=SmsExceptionRecord::findAll(['client_id'=>$record->client_id]);
-        $fields=explode(',','wax_except_1,wax_except_5,wax_except_21,wax_except_42,wax_21,wax_42,laser_except_30,laser_except_60,laser_30,laser_60');
+        $fields=explode(',','wax_except_1,wax_except_5,wax_except_21,wax_except_42,wax_21,wax_42,laser_except_30,laser_except_60,laser_30,laser_60,electro_except_30,electro_except_60,electro_30,electro_60');
         $i=0;
         foreach($fields as $item)
         {
@@ -170,6 +192,18 @@ class WorkStudioDetails
                 break;
             case 'laser_60':
                 $rez=$data->l60val;
+                break;
+            case 'electro_except_30':
+                $rez=$data->e30==0?1:0;
+                break;
+            case 'electro_except_60':
+                $rez=$data->e60==0?1:0;
+                break;
+            case 'electro_30':
+                $rez=$data->e30val;
+                break;
+            case 'electro_60':
+                $rez=$data->e60val;
                 break;
         }
         return $rez;

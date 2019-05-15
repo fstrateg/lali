@@ -3,6 +3,7 @@ namespace common\components\smsprovider;
 
 use yii\base\BaseObject;
 use common\models\SettingsRecord;
+use common\components\Telegram;
 /**
  * Class SMSNikita
  * @package common\components
@@ -80,6 +81,11 @@ class SMSNikita extends BaseObject
         {
             $result = $this->post_content($xml);
             $responseXML = $result['content'];
+            if ($responseXML===false)
+            {
+                Telegram::instance()->sendMessageAll("SMS не отправлено:{$message}",$phoneNumber);
+                return 0;
+            }
             $response = new \SimpleXMLElement($responseXML);
             if ($response->status<>0)
             {

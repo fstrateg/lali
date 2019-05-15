@@ -7,6 +7,7 @@ use common\components\Date;
 use common\components\SMS;
 use common\components\Telegram;
 use common\models\SMSLaser;
+use common\models\SMSElectro;
 use common\models\SMSSettings;
 use frontend\models\YclientsImport;
 use frontend\models\YclientsLogRecord;
@@ -146,9 +147,16 @@ class JobsController extends Controller
 
     public function actionLaserday($day)
     {
-        if (empty($day)||!in_array($day,['30'])) return;
+        if (empty($day)||!in_array($day,['30','60'])) return;
         ini_set('max_execution_time', 600);
         SMSLaser::sendSmsNumber($day);
+    }
+
+    public function actionElectroday($day)
+    {
+        if (empty($day)||!in_array($day,['30','60'])) return;
+        ini_set('max_execution_time', 600);
+        SMSElectro::sendSmsNumber($day);
     }
 
     public function actionGetlastvisit()

@@ -44,7 +44,7 @@ $this->title = 'La Letty';
     <div class="panel-body">
         <div class="form-check">
             <input type="checkbox" class="form-check-input" id="l30" <?= $model->sms_laser_30?> value="1">
-            <label class="form-check-label" for="d21">Напоминание 30 дней</label>
+            <label class="form-check-label" for="l30">Напоминание 30 дней</label>
         </div>
         <div class="form-group">
             <input id="l30val" type="number" value="<?= $model->sms_laser_30val?>">
@@ -55,6 +55,25 @@ $this->title = 'La Letty';
         </div>
         <div class="form-group">
             <input id="l60val" type="number" value="<?= $model->sms_laser_60val?>">
+        </div>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">Настройка индивидуальных напоминаний по услугам <b>ЭЛЕКТРОЭПИЛЯЦИИ</b> клиента:</div>
+    <div class="panel-body">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="e30" <?= $model->sms_electro_30?> value="1">
+            <label class="form-check-label" for="e30">Напоминание 30 дней</label>
+        </div>
+        <div class="form-group">
+            <input id="e30val" type="number" value="<?= $model->sms_electro_30val?>">
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="e60" <?= $model->sms_electro_60?> value="1">
+            <label class="form-check-label" for="e60">Напоминание 60 дней</label>
+        </div>
+        <div class="form-group">
+            <input id="e60val" type="number" value="<?= $model->sms_electro_60val?>">
         </div>
     </div>
 </div>
@@ -73,7 +92,11 @@ $this->title = 'La Letty';
             l30: 0,
             l30val: 30,
             l60: 0,
-            l60val: 60
+            l60val: 60,
+            e30: 0,
+            e30val: 30,
+            e60: 0,
+            e60val: 60
         };
         data.id=document.getElementById('cid').value;
         if (document.getElementById('d21').checked) data.d21=1;
@@ -89,7 +112,13 @@ $this->title = 'La Letty';
         vl=document.getElementById('l30val').value;
         if (vl>0) data.l30val=vl;
         vl=document.getElementById('l60val').value;
-        if (vl>0) data.l60val=vl;
+
+        if (document.getElementById('e30').checked) data.e30=1;
+        if (document.getElementById('e60').checked) data.e60=1;
+        vl=document.getElementById('e30val').value;
+        if (vl>0) data.e30val=vl;
+        vl=document.getElementById('e60val').value;
+        if (vl>0) data.e60val=vl;
         $.ajax({
             url: 'savenote',
             type: 'POST',

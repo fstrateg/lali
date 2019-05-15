@@ -41,7 +41,7 @@ foreach($pages as $page)
         ?>
         <div id="page<?= $page['id'] ?>" class="panel-group pt1 tab-pane fade<?= $class ?>">
             <?
-            $set=SMSSettings::find(['city'=>$page['id']])->orderBy('days')->all();
+            $set=SMSSettings::find(['city'=>$page['id']])->orderBy('ord')->all();
             foreach($set as $s) {
                 $id=$s['id'];?>
                 <div class="panel panel-default">
