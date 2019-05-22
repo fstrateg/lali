@@ -250,7 +250,7 @@ class SMS extends BaseObject
         left join sms_exception e on (e.client_id=a.id and e.sms_type='{$exc}')
         left join sms_exception d on (d.client_id=a.id and d.sms_type='{$col}')
         where a.deleted=0
-        and date_add(a.last_visit,interval IFNULL(d.vl,{$ds}) days day) between  date_sub(curdate(),interval 1 day) and curdate()
+        and date_add(a.last_visit,interval IFNULL(d.vl,{$ds}) day) between  date_sub(curdate(),interval 1 day) and curdate()
         and b.type is null
         and IFNULL(e.vl,0)=0
         limit 20";

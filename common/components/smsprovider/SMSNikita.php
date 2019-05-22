@@ -89,7 +89,8 @@ class SMSNikita extends BaseObject
             $response = new \SimpleXMLElement($responseXML);
             if ($response->status<>0)
             {
-                throw new \Exception('Ошибка от Никиты! Статус: '.$response->status);
+                Telegram::instance()->sendMessageAll("SMS не отправлено: Ошибка от Никиты! Статус: {$response->status}",$phoneNumber);
+                $response->status=0;
             }
             return +$response->status;
         }
