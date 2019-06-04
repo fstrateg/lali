@@ -274,7 +274,7 @@ Select b.name,b.phone,b.googleid
         $code = $matches[0];
         $phone_name = str_replace($code, "", $phone);
         $code = str_replace("+", "", $code);
-        return $name . "__" . $code . "_" . $phone_name;
+        return $name . "  " . $code . "_" . $phone_name;
     }
     
     public static function getKurs()
