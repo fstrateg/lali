@@ -62,7 +62,7 @@ class JobsController extends Controller
         YclientsLogRecord::doParse($log);
 
         // Запускаем google синхронизацию //
-        return $this->actionSgoogle();
+        //return $this->actionSgoogle(); // синронизация не успевает отработать
         //$this->actionDoyclients();
         //return 'OK';
     }
@@ -133,15 +133,10 @@ class JobsController extends Controller
         echo $curdate->format('Y-m-d H:i:s');*/
         //JobsModel::test();
         echo "<a href='https://accounts.google.com/o/oauth2/auth?"
-            . "access_type=offline&client_id=1019497334371-mnh8gtto6bvm7ol4kvb8f7666hhgj58v.apps.googleusercontent.com&"
+            . "access_type=offline&client_id=XXXX&"
             . "scope=".urlencode("https://www.google.com/m8/feeds")."&response_type=code&"
             . "redirect_uri=http://fix.laletty.ru/jobs/test2'>Google</a>";
 
-        echo "<a href='https://accounts.google.com/o/oauth2/auth?"
-            ."response_type=token&"
-            ."client_id=1019497334371-mnh8gtto6bvm7ol4kvb8f7666hhgj58v.apps.googleusercontent.com&client_secret=RkuJd0kgbVgP39TRPhOHtGsk&"
-            ."scope=".urlencode("https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
-            ."code=4%2FXAHQvxZcTBuSW5e4i0lVvlwRjazqoox2Ra72PoDMGA2bHQpT4c51F4Z5uCU5kOf01PvXJmcurlcPTyR9UdDqLpw&redirect_uri=http://fix.laletty.ru/jobs/test2'>Google2</a>";
 
     }
 
@@ -151,9 +146,9 @@ class JobsController extends Controller
         global $client_secret;
         global $redirect_uri;
 
-        $redirect_uri="http://fix.laletty.ru/jobs/test2";
-        $client_secret="RkuJd0kgbVgP39TRPhOHtGsk";
-        $client_id="1019497334371-mnh8gtto6bvm7ol4kvb8f7666hhgj58v.apps.googleusercontent.com";
+        $redirect_uri="XXX";
+        $client_secret="XXX";
+        $client_id="XXX";
 
         $oauth2token_url = "https://accounts.google.com/o/oauth2/token";
         $clienttoken_post = array(
