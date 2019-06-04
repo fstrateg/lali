@@ -29,8 +29,13 @@ class RecordsRecord extends \yii\db\ActiveRecord
             $rez->created = $ct->format('Y-m-d H:i:s');
         }
         $rw=self::getRec($data);
-        foreach($rw as $k=>$v)
-            $rez->setAttribute($k,$v);
+        foreach($rw as $k=>$v) {
+            if (!$rez->isNewRecord&&$k=='services_id')
+            {
+                if ($rez->getAttribute(services_id)!=$v) $rez->setAttribute('naprav','N');
+            }
+            $rez->setAttribute($k, $v);
+        }
         return $rez;
     }
 

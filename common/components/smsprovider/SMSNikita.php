@@ -80,10 +80,14 @@ class SMSNikita extends BaseObject
         try
         {
             $result = $this->post_content($xml);
-            $responseXML = $result['content'];
+            $responseXML = false;
+            if (isset($result['content']))
+                $responseXML=$result['content'];
             if ($responseXML===false)
             {
-                Telegram::instance()->sendMessageAll("SMS не отправлено:{$message}",$phoneNumber);
+                $result=$result['errmsg'];
+                Telegram::instance()->sendMessageAll("SMS не отправлено: {$result}",$phoneNumber);
+                //Telegram::instance()->sendMessageAll("SMS не отправлено:{$message}",$phoneNumber);
                 return 0;
             }
             $response = new \SimpleXMLElement($responseXML);

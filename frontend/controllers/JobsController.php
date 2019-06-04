@@ -115,8 +115,8 @@ class JobsController extends Controller
     {
         //echo phpinfo();
         //exit();
-        $t=new Telegram();
-        $t->sendMessageAll("test","test1");
+        //$t=new Telegram();
+        //$t->sendMessageAll("test","test1");
         //echo \yii\helpers\Url::base(true);
         //echo \yii\helpers\Url::to('sgoogle',true);
         /*$id=4533;
@@ -132,9 +132,62 @@ class JobsController extends Controller
         /*$curdate=new \DateTime('now');
         echo $curdate->format('Y-m-d H:i:s');*/
         //JobsModel::test();
+        echo "<a href='https://accounts.google.com/o/oauth2/auth?"
+            . "access_type=offline&client_id=1019497334371-mnh8gtto6bvm7ol4kvb8f7666hhgj58v.apps.googleusercontent.com&"
+            . "scope=".urlencode("https://www.google.com/m8/feeds")."&response_type=code&"
+            . "redirect_uri=http://fix.laletty.ru/jobs/test2'>Google</a>";
+
+        echo "<a href='https://accounts.google.com/o/oauth2/auth?"
+            ."response_type=token&"
+            ."client_id=1019497334371-mnh8gtto6bvm7ol4kvb8f7666hhgj58v.apps.googleusercontent.com&client_secret=RkuJd0kgbVgP39TRPhOHtGsk&"
+            ."scope=".urlencode("https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile")
+            ."code=4%2FXAHQvxZcTBuSW5e4i0lVvlwRjazqoox2Ra72PoDMGA2bHQpT4c51F4Z5uCU5kOf01PvXJmcurlcPTyR9UdDqLpw&redirect_uri=http://fix.laletty.ru/jobs/test2'>Google2</a>";
 
     }
 
+    public function actionTest2()
+    {
+        global $client_id;
+        global $client_secret;
+        global $redirect_uri;
+
+        $redirect_uri="http://fix.laletty.ru/jobs/test2";
+        $client_secret="RkuJd0kgbVgP39TRPhOHtGsk";
+        $client_id="1019497334371-mnh8gtto6bvm7ol4kvb8f7666hhgj58v.apps.googleusercontent.com";
+
+        $oauth2token_url = "https://accounts.google.com/o/oauth2/token";
+        $clienttoken_post = array(
+            "code" => $_REQUEST['code'],
+            "client_id" => $client_id,
+            "client_secret" => $client_secret,
+            "redirect_uri" => $redirect_uri,
+            "grant_type" => "authorization_code"
+        );
+
+        $curl = curl_init($oauth2token_url);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $clienttoken_post);
+        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+        $json_response = curl_exec($curl);
+        curl_close($curl);
+
+        $authObj = json_decode($json_response);
+        print_r($authObj);
+        if (isset($authObj->refresh_token)){
+            //refresh token only granted on first authorization for offline access
+            //save to db for future use (db saving not included in example)
+            global $refreshToken;
+            $refreshToken = $authObj->refresh_token;
+        }
+
+        $accessToken = $authObj->access_token;
+        return $accessToken;
+
+    }
     /**
     * Напоминание через N дней
     */
