@@ -119,12 +119,13 @@ class JobsController extends Controller
         //$t->sendMessageAll("test","test1");
         //echo \yii\helpers\Url::base(true);
         //echo \yii\helpers\Url::to('sgoogle',true);
-        /*$id=4533;
+        $id=4533;
         $sms=new SMS();
         //$sms->client_phone="555904504";
         $sms->client_phone="77766196331";
         //echo 'test';
         $sms->sendtest();
+        echo 'test'.$id;
         //echo $sms->getMessageText();*/
         //imp=new YclientsImport();
         //$imp->getKlient(22772330);
@@ -183,6 +184,33 @@ class JobsController extends Controller
         return $accessToken;
 
     }
+
+    public function actionTest3()
+    {
+        $data=[];
+        $data['parse_mode']='html';
+        $data['chat_id']=527282719;
+        $data['text'] = "Test msg";
+
+        $url='XXX';
+        $token='XXX';
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "{$url}bot{$token}/sendMessage"); # URL to post to
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); # return into a variable
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/x-www-form-urlencoded/r/n")); # custom headers, see above
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); # Ignore Cert
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); # Ignore Cert
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST'); # This POST is special, and uses its specified Content-type
+            $result = curl_exec($ch); # run!
+            curl_close($ch);
+        }catch(\Exception $e)
+        {
+            print_r($e);
+        }
+        print_r($result);
+    }
     /**
     * Напоминание через N дней
     */
@@ -233,7 +261,12 @@ class JobsController extends Controller
         ini_set('max_execution_time', 1200);
         JobsModel::FillGoogle();
     }
-    
+
+    public function actionControldeleted()
+    {
+        JobsModel::ControlDeleted();
+    }
+
     public function actionGetkurs() {
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         Yii::$app->response->headers->add('Content-Type', 'text/xml');
