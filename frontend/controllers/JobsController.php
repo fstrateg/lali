@@ -211,6 +211,14 @@ class JobsController extends Controller
         }
         print_r($result);
     }
+
+    /**
+     * Проверка на отмененные заказы: чтобы клиенты не приходили зря
+     */
+    public function actionCheckdeleted()
+    {
+        JobsModel::ControlDeleted();
+    }
     /**
     * Напоминание через N дней
     */
