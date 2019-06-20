@@ -1,9 +1,11 @@
 <?php
 namespace backend\controllers;
 
+use backend\models\MessagesSearch;
 use common\models\SettingsRecord;
 use common\models\StaffRecord;
 use common\models\StaffUserRecord;
+use common\models\SysMessagesRecord;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
@@ -24,7 +26,7 @@ class AppController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['quality','qualitysave','qualitymsg','masters'],
+                        'actions' => ['quality','qualitysave','qualitymsg','masters','msg'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -52,16 +54,30 @@ class AppController extends Controller
         return parent::beforeAction($action);
     }
 
+    public function actionMsg()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => SysMessagesRecord::find(),
+            'sort' => [ // сортировка по умолчанию
+                'defaultOrder' => ['id' => SORT_DESC],
+            ],
+            'pagination' => [ // постраничная разбивка
+                'pageSize' => 50, // 10 новостей на странице
+            ],
+        ]);
+        $searchModel = new MessagesSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render("msglog",['dataProvider'=>$dataProvider,'searchModel'=>$searchModel]);
+    }
+
     public function actionQualitymsg()
     {
         $post=Yii::$app->request->post();
         if($post)
         {
-            SettingsRecord::setValue('quality','lasermsg',$post['lasermsg']);
-            SettingsRecord::setValue('quality','waxmsg',$post['waxmsg']);
-            SettingsRecord::setValue('quality','electro1',$post['electro1']);
-            SettingsRecord::setValue('quality','electro2',$post['electro2']);
-            SettingsRecord::setValue('quality','electro3',$post['electro3']);
+            SettingsRecord::setValue('quality','fixmsg',$post['fixmsg']);
             Yii::$app->getSession()->setFlash('ok','Сохранено');
         }
         return $this->render('qualitymsg');

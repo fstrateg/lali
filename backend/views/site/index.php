@@ -16,6 +16,11 @@ $this->title = 'La-Litty';
         'url'=>\yii\helpers\Url::toRoute('/app/masters'),
         'img'=>'female',
     ]);
+    $panel->addPanelBtn([
+        'text'=>'Сообщения',
+        'url'=>\yii\helpers\Url::toRoute('/app/msg'),
+        'img'=>'msg',
+    ]);
     $panel->end();
     ?>
 </div>
