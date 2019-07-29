@@ -77,7 +77,11 @@ class AppController extends Controller
         $post=Yii::$app->request->post();
         if($post)
         {
-            SettingsRecord::setValue('quality','fixmsg',$post['fixmsg']);
+            SettingsRecord::setValue('quality','lasermsg',$post['lasermsg']);
+            SettingsRecord::setValue('quality','waxmsg',$post['waxmsg']);
+            SettingsRecord::setValue('quality','electro1',$post['electro1']);
+            SettingsRecord::setValue('quality','electro2',$post['electro2']);
+            SettingsRecord::setValue('quality','electro3',$post['electro3']);
             Yii::$app->getSession()->setFlash('ok','Сохранено');
         }
         return $this->render('qualitymsg');
