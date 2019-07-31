@@ -297,12 +297,12 @@ class SMS extends BaseObject
 
     public function send()
     {
-        $t=Telegram::instance();
+        //$t=Telegram::instance();
         $msg=$this->getMessageText();
         $sms=$this->getProvider(); //SMSNikita();
         $sms->sendSMS($this->client_phone,$msg,$this->transaction_id);
         //if ($this->lat) $msg=SMS::translate($msg);
-        $t->sendMessageAll($msg,$this->client_phone." ({$this->transaction_id})");
+        //$t->sendMessageAll($msg,$this->client_phone." ({$this->transaction_id})");
         Messages::sendMessage($msg,$this->client_phone." ({$this->transaction_id})",$this->client_phone,"sms");
     }
 
