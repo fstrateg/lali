@@ -1,6 +1,7 @@
 <?php
 namespace common\components\smsprovider;
 
+use common\components\Messages;
 use yii\base\BaseObject;
 use common\models\SettingsRecord;
 use common\components\Telegram;
@@ -86,14 +87,16 @@ class SMSNikita extends BaseObject
             if ($responseXML===false)
             {
                 $result=$result['errmsg'];
-                Telegram::instance()->sendMessageAll("SMS не отправлено: {$result}",$phoneNumber);
+                //Telegram::instance()->sendMessageAll("SMS не отправлено: {$result}",$phoneNumber);
+                Messages::sendMessage("SMS не отправлено: {$result}",$phoneNumber,$phoneNumber,"err");
                 //Telegram::instance()->sendMessageAll("SMS не отправлено:{$message}",$phoneNumber);
                 return 0;
             }
             $response = new \SimpleXMLElement($responseXML);
             if ($response->status<>0)
             {
-                Telegram::instance()->sendMessageAll("SMS не отправлено: Ошибка от Никиты! Статус: {$response->status}",$phoneNumber);
+                //Telegram::instance()->sendMessageAll("SMS не отправлено: Ошибка от Никиты! Статус: {$response->status}",$phoneNumber);
+                Messages::sendMessage("SMS не отправлено: Ошибка от Никиты! Статус: {$response->status}",$phoneNumber,$phoneNumber,"err");
                 $response->status=0;
             }
             return +$response->status;
@@ -102,7 +105,8 @@ class SMSNikita extends BaseObject
         {
             echo 'Caught exception: ',  $e->getMessage(), "\n";
             var_dump($e->getTrace());
-            Telegram::instance()->sendMessageAll("SMS не отправлено: {$e->getMessage()}\r\n $message",$phoneNumber);
+            //Telegram::instance()->sendMessageAll("SMS не отправлено: {$e->getMessage()}\r\n $message",$phoneNumber);
+            Messages::sendMessage("SMS не отправлено: {$e->getMessage()}\r\n $message",$phoneNumber,$phoneNumber,"err");
         }
         return 12;
     }

@@ -9,6 +9,7 @@
 namespace frontend\models;
 
 use backend\models\SettingsRecord;
+use common\components\Messages;
 use common\components\Telegram;
 use common\models\ClientsRecord;
 use common\models\RecordsRecord;
@@ -175,8 +176,8 @@ Select b.name,b.phone,b.googleid
                 }
             }
         }
-
-        Telegram::instance()->sendMessageAll("На обработку: {$cont} контактов.\nИсправлено: {$rep}.","Дополнительная синхронизация Google");
+        Messages::sendMessage("На обработку: {$cont} контактов.\nИсправлено: {$rep}.","Дополнительная синхронизация Google","-","info");
+        //Telegram::instance()->sendMessageAll("На обработку: {$cont} контактов.\nИсправлено: {$rep}.","Дополнительная синхронизация Google");
     }
 
     public static function test()
