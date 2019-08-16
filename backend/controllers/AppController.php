@@ -125,7 +125,7 @@ class AppController extends Controller
                 'defaultOrder' => ['name' => SORT_DESC],
             ],
             'pagination' => [ // постраничная разбивка
-                'pageSize' => 10, // 10 новостей на странице
+                'pageSize' => 20, // 10 новостей на странице
             ],
         ]);
 

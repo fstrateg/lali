@@ -20,7 +20,8 @@ class StaffRecord extends \yii\db\ActiveRecord
     {
         return [
         [['id'],'integer'],
-        [['name'],'string'],
+        [['name','video'],'string'],
+        [['fil'],'string'],
         [['created'],'string'],
         ];
     }

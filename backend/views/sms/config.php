@@ -32,7 +32,7 @@ foreach($pages as $page)
 } ?>
 </ul>
 <div class="tab-content tab-bordered">
-<span id="helpBlock" class="help-block small">Используйте вырожения %NAME%, %DATE%, %TIME%, %MASTER%, %HH% для подстановки значений в SMS</span>
+<span id="helpBlock" class="help-block small">Используйте вырожения %NAME%, %DATE%, %TIME%, %MASTER%, %VIDEO%, %HH% для подстановки значений в SMS</span>
     <?
     $class=' in active';
     foreach($pages as $page)

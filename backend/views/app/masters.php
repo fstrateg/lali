@@ -29,12 +29,27 @@ echo GridView::widget([
 //'value' => function($data) { return $data->name; },
 ],
     [
+        'label' => 'Филиал',
+        'attribute' => 'fil',
+],
+    [
+        'label' => 'Видео',
+        'attribute' => 'video',
+    ],
+    [
         'label'=>'Пользователь',
         'value'=>function($data){
             global $susers;
             if (!isset($susers[$data->id])) return null;
             return $susers[$data->id]['username'];
 }
+    ],
+    [
+        'label'=>'Работает',
+        'value'=>function($data){
+            //$vl=$data->iswork=='Y'?'Да':'-';
+            return $data->iswork=='Y'?'Да':'-';
+        }
     ],
 ['class' => 'yii\grid\ActionColumn',
 'template' => '{update}',

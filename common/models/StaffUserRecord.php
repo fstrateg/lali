@@ -25,12 +25,18 @@ class StaffUserRecord extends \yii\db\ActiveRecord
 
     public static function saveForm($staff_id,$user_id)
     {
-        if (empty($user_id))
+        /*if (empty($user_id))
         {
             Yii::$app->session->setFlash("error","Не выбран пользователь!");
             return false;
-        }
+        }*/
+        $staff=StaffRecord::findOne(['id'=>$staff_id]);
+        $staff->setAttribute('fil',$_POST['fil']);
+        $staff->setAttribute('video',$_POST['video']);
+        $staff->setAttribute('iswork',$_POST['iswork']);
+        $staff->save();
         $obj=self::findOne(['staff_id'=>$staff_id]);
+
         if ($obj==null)
         {
             $obj=new StaffUserRecord();

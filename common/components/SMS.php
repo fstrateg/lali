@@ -9,6 +9,7 @@ use common\models\SmsExceptionRecord;
 use common\models\SMSSettings;
 use common\models\ClientsRecord;
 use common\models\RecordsRecord;
+use common\models\StaffRecord;
 use yii\base\BaseObject;
 use common\components\smsprovider\SMSNikita;
 
@@ -34,6 +35,7 @@ class SMS extends BaseObject
      * @var ClientsRecord
      */
     public $client;
+    public $staff;
     public $error;
 
     public function getMessageText()
@@ -65,6 +67,7 @@ class SMS extends BaseObject
         $this->client_phone=$record->client_phone;
         $this->transaction_id.=$record->resource_id;
         $this->client=ClientsRecord::findOne(['id'=>$this->record->client_id]);
+        $this->staff=StaffRecord::findOne(['id'=>$this->record->staff_id]);
         if (!$this->client)
         {
             sleep(10); // Подождем 10 сек, возможно клиент идет следом.
@@ -97,6 +100,7 @@ class SMS extends BaseObject
         $staff=$this->record->staff_name;
         // NAME
         $msg=$this->message;
+        $video=$this->staff->video;
         if (strpos($msg,'%NAME%')>=0)
         {
             if (!$this->client)
@@ -120,9 +124,9 @@ class SMS extends BaseObject
 
         $msg=str_replace('%DATE%',$date,
                 str_replace('%TIME%',$time,
-                    str_replace('%MASTER%',$staff, $msg)
-                )
-        );
+                    str_replace('%MASTER%',$staff,
+                        str_replace('%VIDEO%',$video,$msg
+                ))));
         if ($this->lat) $msg=SMS::translate($msg);
 
         return $msg;

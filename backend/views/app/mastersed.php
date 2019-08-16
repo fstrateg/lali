@@ -11,6 +11,16 @@ $this->title="Мастер подвязка пользователя";
 $users=Users::getUsersList();
 $susers=\common\models\StaffUserRecord::getUsersForStaff();
 $dd=isset($susers[$model->id])?$susers[$model->id]['user_id']:0;
+if ($model->iswork=='Y')
+{
+    $checked='checked';
+    $uncheck='';
+}
+else
+{
+    $checked='';
+    $uncheck='checked';
+}
 ?>
 <form class="form-vertical" method="post">
     <div class="form-group">
@@ -19,10 +29,45 @@ $dd=isset($susers[$model->id])?$susers[$model->id]['user_id']:0;
     </div>
     <div class="form-group">
         <div class="row">
-            <label class="col-sm-3">Подвязать пользователя:</label>
+            <label class="col-sm-4">Филиал:</label>
         </div>
         <div class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-4">
+                <?= Html::textInput("fil",$model->fil,['class'=>'form-control']); ?>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <label class="col-sm-4">Видео:</label>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <?= Html::textInput("video",$model->video,['class'=>'form-control']); ?>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <label class="col-sm-4">Работает:</label>
+        </div>
+        <div class="row">
+            <div class="col-sm-2">
+                <input id="iswork" type="radio" name="iswork" value="Y" <?= $checked?>>
+                <label for="iswork">Да</label>
+            </div>
+            <div class="col-sm-2">
+                <input id="nowork" type="radio" name="iswork" value="N" <?= $uncheck?>>
+                <label for="nowork">Нет</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <label class="col-sm-4">Подвязать пользователя:</label>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
                 <?= Html::dropDownList('userid',$dd,$users,['class'=>'form-control']) ?>
             </div>
         </div>

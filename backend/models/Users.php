@@ -144,6 +144,7 @@ class Users extends ActiveRecord
     {
         $arr=self::find()->all();
         $list=[];
+        $list[0]='Не задано!';
         foreach($arr as $item)
             $list[$item->id]=$item->username;
         return $list;
