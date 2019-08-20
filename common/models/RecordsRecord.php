@@ -32,7 +32,7 @@ class RecordsRecord extends \yii\db\ActiveRecord
         foreach($rw as $k=>$v) {
             if (!$rez->isNewRecord&&$k=='services_id')
             {
-                if ($rez->getAttribute(services_id)!=$v) $rez->setAttribute('naprav','N');
+                if ($rez->getAttribute('services_id')!=$v) $rez->setAttribute('naprav','N');
             }
             $rez->setAttribute($k, $v);
         }
